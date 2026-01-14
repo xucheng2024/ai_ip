@@ -1,21 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
-import dynamic from 'next/dynamic'
 import { useI18n } from '@/lib/i18n/context'
-
-// Dynamically import react-player to avoid SSR issues
-const ReactPlayer = dynamic(() => import('react-player'), {
-  ssr: false,
-  loading: () => (
-    <div className="aspect-video bg-gradient-to-br from-slate-100 via-slate-50 to-slate-100 rounded-xl flex items-center justify-center border border-gray-200/50">
-      <div className="text-center">
-        <div className="text-4xl mb-2 opacity-60">▶</div>
-        <p className="text-sm text-gray-500 font-medium">Loading video...</p>
-      </div>
-    </div>
-  ),
-}) as any
 
 interface VideoPlayerProps {
   url: string | null
@@ -49,6 +35,7 @@ export default function VideoPlayer({
 
   // Fetch signed URL if videoId is provided and url is not available
   useEffect(() => {
+    console.log('[VideoPlayer] useEffect triggered:', { url, videoId, urlType: typeof url, urlValue: url })
     if (videoId && !url) {
       console.log('[VideoPlayer] Fetching video URL for:', videoId)
       setLoading(true)
@@ -71,7 +58,7 @@ export default function VideoPlayer({
           setLoading(false)
         })
     } else {
-      console.log('[VideoPlayer] Using provided URL:', { hasUrl: !!url, videoId })
+      console.log('[VideoPlayer] Using provided URL:', { hasUrl: !!url, videoId, url, urlLength: url?.length })
       setVideoUrl(url)
     }
   }, [videoId, url])
@@ -90,7 +77,10 @@ export default function VideoPlayer({
     )
   }
 
+  console.log('[VideoPlayer] Render state:', { videoUrl, hasError, loading, videoUrlType: typeof videoUrl })
+  
   if (!videoUrl) {
+    console.log('[VideoPlayer] Rendering "not available" - videoUrl is:', videoUrl)
     return (
       <div className={`aspect-video bg-gradient-to-br from-slate-100 via-slate-50 to-slate-100 rounded-xl flex items-center justify-center border border-gray-200/50 ${className}`}>
         <div className="text-center">
@@ -117,41 +107,49 @@ export default function VideoPlayer({
 
   return (
     <div className={`relative rounded-xl overflow-hidden border border-gray-200/80 bg-black ${className}`}>
-      <div className="aspect-video">
-        <ReactPlayer
-          ref={playerRef}
-          url={videoUrl}
-          width="100%"
-          height="100%"
-          controls={controls}
-          light={light}
-          playing={isPlaying}
-          onPlay={() => {
-            setIsPlaying(true)
-            onPlay?.()
-          }}
-          onPause={() => {
-            setIsPlaying(false)
-            onPause?.()
-          }}
-          onError={() => {
-            setHasError(true)
-          }}
-          config={{
-            file: {
-              attributes: {
-                controlsList: 'nodownload',
-                disablePictureInPicture: true,
-              },
-            } as any,
-          } as any}
-          style={{
-            borderRadius: '0.75rem',
-          }}
-        />
-      </div>
+      <video
+        ref={playerRef}
+        className="w-full h-full aspect-video"
+        controls={controls}
+        controlsList="nodownload"
+        disablePictureInPicture
+        playsInline
+        src={videoUrl}
+        onPlay={() => {
+          setIsPlaying(true)
+          onPlay?.()
+        }}
+        onPause={() => {
+          setIsPlaying(false)
+          onPause?.()
+        }}
+        onError={(e) => {
+          const video = e.currentTarget as HTMLVideoElement
+          const error = video.error
+          console.error('[VideoPlayer] Native video error:', {
+            code: error?.code,
+            message: error?.message,
+            MEDIA_ERR_ABORTED: error?.code === 1,
+            MEDIA_ERR_NETWORK: error?.code === 2,
+            MEDIA_ERR_DECODE: error?.code === 3,
+            MEDIA_ERR_SRC_NOT_SUPPORTED: error?.code === 4,
+            src: video.src,
+            currentSrc: video.currentSrc
+          })
+          setHasError(true)
+        }}
+        onLoadedData={() => {
+          console.log('[VideoPlayer] Video loaded successfully')
+        }}
+        style={{
+          borderRadius: '0.75rem',
+          display: 'block',
+        }}
+      >
+        Your browser does not support the video tag.
+      </video>
       {title && (
-        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4">
+        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4 pointer-events-none">
           <p className="text-sm font-medium text-white">{title}</p>
         </div>
       )}
