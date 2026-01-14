@@ -25,6 +25,12 @@ function NavbarSafe({ user }: { user: any }) {
           </Link>
           <div className="flex items-center gap-3">
             <Link 
+              href="/manual" 
+              className="hidden text-sm font-medium text-gray-700 transition-colors hover:text-gray-900 sm:block"
+            >
+              {t.common.userManual}
+            </Link>
+            <Link 
               href="/verify" 
               className="hidden text-sm font-medium text-gray-700 transition-colors hover:text-gray-900 sm:block"
             >
