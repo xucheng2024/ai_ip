@@ -52,26 +52,32 @@ export default function TransparencyContent({
                 ? `${format(new Date(dateRange.earliest), 'MMM d, yyyy')} - ${format(new Date(dateRange.latest), 'MMM d, yyyy')}`
                 : t.transparency.noBatches}
             </p>
-            {totalBatches === 0 && t.transparency.coldStartMessage && (
+            {totalBatches === 0 && t.transparency.totalBatchesEmptyMessage && (
               <p className="mt-2 text-xs text-blue-600 italic">
-                {t.transparency.coldStartMessage}
+                {t.transparency.totalBatchesEmptyMessage}
               </p>
             )}
           </div>
           <div className="rounded-xl bg-white p-6 shadow-sm">
             <p className="text-sm font-medium text-gray-600">{t.transparency.totalCertifications}</p>
             <p className="mt-2 text-3xl font-bold text-gray-900">{totalCertifications}</p>
-            <p className="mt-1 text-xs text-gray-500">{t.transparency.anchoredToBlockchain}</p>
-            {totalCertifications === 0 && t.transparency.coldStartNote && (
+            <p className="mt-1 text-xs text-gray-500">
+              {totalCertifications > 0 
+                ? (t.transparency.totalCertificationsDesc || t.transparency.anchoredToBlockchain)
+                : t.transparency.anchoredToBlockchain}
+            </p>
+            {totalCertifications === 0 && t.transparency.totalCertificationsEmptyMessage && (
               <p className="mt-2 text-xs text-blue-600 italic">
-                {t.transparency.coldStartNote}
+                {t.transparency.totalCertificationsEmptyMessage}
               </p>
             )}
           </div>
           <div className="rounded-xl bg-white p-6 shadow-sm">
             <p className="text-sm font-medium text-gray-600">{t.transparency.network}</p>
             <p className="mt-2 text-3xl font-bold text-gray-900">Polygon</p>
-            <p className="mt-1 text-xs text-gray-500">{t.transparency.proofOfStake}</p>
+            <p className="mt-1 text-xs text-gray-500">
+              {t.transparency.networkDesc || t.transparency.proofOfStake}
+            </p>
           </div>
         </div>
 
@@ -202,16 +208,11 @@ export default function TransparencyContent({
               <p className="mt-1 text-sm text-gray-500">
                 {t.transparency.noBatchesDesc}
               </p>
-              {t.transparency.coldStartMessage && (
+              {t.transparency.noBatchesGuide && (
                 <div className="mt-4 rounded-lg border border-blue-200 bg-blue-50 p-4 text-left max-w-md mx-auto">
                   <p className="text-sm text-blue-800">
-                    {t.transparency.coldStartMessage}
+                    {t.transparency.noBatchesGuide}
                   </p>
-                  {t.transparency.coldStartNote && (
-                    <p className="mt-1 text-xs text-blue-700 italic">
-                      {t.transparency.coldStartNote}
-                    </p>
-                  )}
                 </div>
               )}
             </div>
@@ -221,7 +222,12 @@ export default function TransparencyContent({
         {/* Footer Info */}
         <div className="mt-8 rounded-lg border border-blue-200 bg-blue-50 p-6">
           <h3 className="text-sm font-semibold text-blue-900">{t.transparency.aboutTitle}</h3>
-          <ul className="mt-2 space-y-1 text-xs text-blue-800">
+          {t.transparency.aboutIntro && (
+            <p className="mt-2 text-sm text-blue-800 leading-relaxed">
+              {t.transparency.aboutIntro}
+            </p>
+          )}
+          <ul className="mt-3 space-y-1 text-xs text-blue-800">
             <li>• {t.transparency.aboutItem1}</li>
             <li>• {t.transparency.aboutItem2}</li>
             <li>• {t.transparency.aboutItem3}</li>
