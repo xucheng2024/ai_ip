@@ -7,6 +7,7 @@ import { format } from 'date-fns'
 import { generateFileHash } from '@/lib/utils/hash'
 import HashDisplay from '@/components/HashDisplay'
 import EvidenceStatusBadge, { getEvidenceStatus } from '@/components/EvidenceStatusBadge'
+import { useI18n } from '@/lib/i18n/context'
 
 interface VerificationResult {
   exists: boolean
@@ -18,6 +19,7 @@ interface VerificationResult {
 }
 
 function VerifyPageContent() {
+  const { t } = useI18n()
   const searchParams = useSearchParams()
   const [certificationId, setCertificationId] = useState(searchParams.get('id') || '')
   const [file, setFile] = useState<File | null>(null)
@@ -33,7 +35,7 @@ function VerifyPageContent() {
 
   const handleVerifyById = async () => {
     if (!certificationId.trim()) {
-      setError('Please enter a certification ID')
+      setError(t.verify.pleaseEnterCertId || 'Please enter a certification ID')
       return
     }
 
@@ -96,7 +98,7 @@ function VerifyPageContent() {
 
   const handleVerifyByFile = async () => {
     if (!file) {
-      setError('Please select a video file')
+      setError(t.verify.pleaseSelectFile || 'Please select a video file')
       return
     }
 
@@ -156,23 +158,28 @@ function VerifyPageContent() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
             </svg>
           </div>
-          <h1 className="text-2xl font-semibold text-gray-900 sm:text-3xl">Verify Authorship Evidence</h1>
+          <h1 className="text-2xl font-semibold text-gray-900 sm:text-3xl">{t.verify.title}</h1>
           <p className="mt-2 text-sm text-gray-500">
-            Public verification - No login required
+            {t.verify.subtitle}
           </p>
+          {t.verify.whoUsesThis && (
+            <p className="mt-3 text-sm text-gray-600 bg-blue-50 border border-blue-200 rounded-lg px-4 py-2 inline-block">
+              {t.verify.whoUsesThis}
+            </p>
+          )}
         </div>
 
         <div className="space-y-6">
           {/* Verify by ID */}
           <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-            <h2 className="mb-4 text-sm font-semibold text-gray-900">Verify by Certification ID</h2>
+            <h2 className="mb-4 text-sm font-semibold text-gray-900">{t.verify.verifyByIdTitle || t.verify.verifyById}</h2>
             <div className="flex flex-col gap-3 sm:flex-row">
               <input
                 type="text"
                 value={certificationId}
                 onChange={(e) => setCertificationId(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleVerifyById()}
-                placeholder="Enter Certification ID (e.g., AIV-1234567890-abc123)"
+                placeholder={t.verify.enterCertId}
                 className="flex-1 rounded-lg border border-gray-300 px-4 py-2.5 text-gray-900 shadow-sm transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 sm:text-sm"
               />
               <button
@@ -180,14 +187,14 @@ function VerifyPageContent() {
                 disabled={loading || !certificationId.trim()}
                 className="rounded-lg bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white transition-all hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Verify
+                {t.verify.verify}
               </button>
             </div>
           </div>
 
           {/* Verify by File */}
           <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-            <h2 className="mb-4 text-sm font-semibold text-gray-900">Verify by Video File</h2>
+            <h2 className="mb-4 text-sm font-semibold text-gray-900">{t.verify.verifyByFileTitle || t.verify.verifyByFile}</h2>
             <div className="flex flex-col gap-3 sm:flex-row">
               <div className="flex-1">
                 <input
@@ -198,7 +205,7 @@ function VerifyPageContent() {
                 />
                 {file && (
                   <p className="mt-2 text-sm text-gray-600">
-                    Selected: {file.name} ({(file.size / 1024 / 1024).toFixed(2)} MB)
+                    {t.verify.selectedFile} {file.name} ({(file.size / 1024 / 1024).toFixed(2)} MB)
                   </p>
                 )}
               </div>
@@ -207,7 +214,7 @@ function VerifyPageContent() {
                 disabled={loading || !file}
                 className="rounded-lg bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white transition-all hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Verify
+                {t.verify.verify}
               </button>
             </div>
           </div>
@@ -224,7 +231,7 @@ function VerifyPageContent() {
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
               </svg>
-              <p className="mt-4 text-sm font-medium text-gray-600">Verifying certification...</p>
+              <p className="mt-4 text-sm font-medium text-gray-600">{t.verify.verifyingCertification || t.verify.verifying}</p>
             </div>
           )}
 
@@ -247,6 +254,13 @@ function VerifyPageContent() {
                         <EvidenceStatusBadge 
                           status={getEvidenceStatus(result.certification, result.batchStatus)} 
                         />
+                      )}
+                    </div>
+                    <div className="mt-3 space-y-1 text-sm text-green-800">
+                      <p className="font-medium">✅ {t.verify.verificationSuccess || 'This video matches the certified fingerprint'}</p>
+                      <p>{t.verify.verificationSuccessCreated || 'Created on:'} {format(new Date(result.certification?.timestamp_utc), 'PPp')}</p>
+                      {result.batchStatus === 'anchored' && t.verify.verificationSuccessAnchored && (
+                        <p>{t.verify.verificationSuccessAnchored}</p>
                       )}
                     </div>
                   </div>

@@ -52,11 +52,21 @@ export default function TransparencyContent({
                 ? `${format(new Date(dateRange.earliest), 'MMM d, yyyy')} - ${format(new Date(dateRange.latest), 'MMM d, yyyy')}`
                 : t.transparency.noBatches}
             </p>
+            {totalBatches === 0 && t.transparency.coldStartMessage && (
+              <p className="mt-2 text-xs text-blue-600 italic">
+                {t.transparency.coldStartMessage}
+              </p>
+            )}
           </div>
           <div className="rounded-xl bg-white p-6 shadow-sm">
             <p className="text-sm font-medium text-gray-600">{t.transparency.totalCertifications}</p>
             <p className="mt-2 text-3xl font-bold text-gray-900">{totalCertifications}</p>
             <p className="mt-1 text-xs text-gray-500">{t.transparency.anchoredToBlockchain}</p>
+            {totalCertifications === 0 && t.transparency.coldStartNote && (
+              <p className="mt-2 text-xs text-blue-600 italic">
+                {t.transparency.coldStartNote}
+              </p>
+            )}
           </div>
           <div className="rounded-xl bg-white p-6 shadow-sm">
             <p className="text-sm font-medium text-gray-600">{t.transparency.network}</p>
@@ -192,6 +202,18 @@ export default function TransparencyContent({
               <p className="mt-1 text-sm text-gray-500">
                 {t.transparency.noBatchesDesc}
               </p>
+              {t.transparency.coldStartMessage && (
+                <div className="mt-4 rounded-lg border border-blue-200 bg-blue-50 p-4 text-left max-w-md mx-auto">
+                  <p className="text-sm text-blue-800">
+                    {t.transparency.coldStartMessage}
+                  </p>
+                  {t.transparency.coldStartNote && (
+                    <p className="mt-1 text-xs text-blue-700 italic">
+                      {t.transparency.coldStartNote}
+                    </p>
+                  )}
+                </div>
+              )}
             </div>
           )}
         </div>

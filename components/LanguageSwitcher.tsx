@@ -1,32 +1,70 @@
 'use client'
 
+import { useState, useRef, useEffect } from 'react'
 import { useI18n } from '@/lib/i18n/context'
 
 export default function LanguageSwitcher() {
   const { language, setLanguage } = useI18n()
+  const [isOpen, setIsOpen] = useState(false)
+  const dropdownRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
+  const languages = [
+    { code: 'en', label: 'English' },
+    { code: 'zh', label: '中文' }
+  ]
+
+  const currentLanguage = languages.find(lang => lang.code === language) || languages[0]
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="relative" ref={dropdownRef}>
       <button
-        onClick={() => setLanguage('en')}
-        className={`px-3 py-1.5 text-sm font-medium rounded-lg transition-colors ${
-          language === 'en'
-            ? 'bg-blue-600 text-white'
-            : 'text-gray-700 hover:bg-gray-100'
-        }`}
+        onClick={() => setIsOpen(!isOpen)}
+        className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-gray-700 rounded-lg transition-colors hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
       >
-        EN
+        <span className="text-base">🌐</span>
+        <span>{currentLanguage.code.toUpperCase()}</span>
+        <svg
+          className={`h-4 w-4 transition-transform ${isOpen ? 'rotate-180' : ''}`}
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+        </svg>
       </button>
-      <button
-        onClick={() => setLanguage('zh')}
-        className={`px-3 py-1.5 text-sm font-medium rounded-lg transition-colors ${
-          language === 'zh'
-            ? 'bg-blue-600 text-white'
-            : 'text-gray-700 hover:bg-gray-100'
-        }`}
-      >
-        中文
-      </button>
+      {isOpen && (
+        <div className="absolute right-0 mt-2 w-40 rounded-lg border border-gray-200 bg-white shadow-lg z-50">
+          <div className="py-1">
+            {languages.map((lang) => (
+              <button
+                key={lang.code}
+                onClick={() => {
+                  setLanguage(lang.code)
+                  setIsOpen(false)
+                }}
+                className={`w-full text-left px-4 py-2 text-sm transition-colors ${
+                  language === lang.code
+                    ? 'bg-blue-50 text-blue-700 font-medium'
+                    : 'text-gray-700 hover:bg-gray-50'
+                }`}
+              >
+                {lang.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   )
 }

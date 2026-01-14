@@ -1,5 +1,7 @@
 'use client'
 
+import { useI18n } from '@/lib/i18n/context'
+
 interface CertificationBadgeProps {
   certificationId: string
   certifiedDate: string
@@ -15,6 +17,7 @@ export default function CertificationBadge({
   embeddable = false,
   size = 'medium',
 }: CertificationBadgeProps) {
+  const { t } = useI18n()
   const sizeClasses = {
     small: 'text-xs px-2 py-1',
     medium: 'text-sm px-3 py-1.5',
@@ -37,8 +40,8 @@ export default function CertificationBadge({
         />
       </svg>
       <div className="flex flex-col">
-        <span className="font-semibold">Verified by AIVerify</span>
-        <span className="text-xs opacity-75">Certified on {certifiedDate}</span>
+        <span className="font-semibold">{t.certificate.verifiedByAIVerify || 'Verified by AIVerify'}</span>
+        <span className="text-xs opacity-75">{t.certificate.certifiedOn || 'Certified on'} {certifiedDate}</span>
       </div>
     </a>
   )

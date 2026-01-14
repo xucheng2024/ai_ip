@@ -31,7 +31,7 @@ export default function Home() {
             </Link>
             <Link
               href="/verify"
-              className="w-full rounded-lg border-2 border-gray-300 bg-white px-8 py-3.5 text-base font-semibold text-gray-900 transition-all hover:border-gray-400 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 sm:w-auto"
+              className="w-full rounded-lg border-2 border-gray-300 bg-white px-8 py-3.5 text-base font-semibold text-gray-700 transition-all hover:border-gray-400 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 sm:w-auto"
             >
               {t.home.verifyButton} <span aria-hidden="true" className="ml-2">→</span>
             </Link>
@@ -55,9 +55,15 @@ export default function Home() {
               <p className="mt-3 text-base leading-relaxed text-gray-600">
                 {t.home.coreValue1Desc}
               </p>
+              {t.home.coreValue1Risk && (
+                <p className="mt-3 text-sm leading-relaxed text-amber-700 bg-amber-50 rounded-lg p-2 border border-amber-200">
+                  {t.home.coreValue1Risk}
+                </p>
+              )}
               <div className="mt-4 space-y-2 text-sm text-gray-500">
                 <p>• {t.home.coreValue1Feature1}</p>
                 <p>• {t.home.coreValue1Feature2}</p>
+                {t.home.coreValue1Feature3 && <p>• {t.home.coreValue1Feature3}</p>}
               </div>
             </div>
             <div className="group rounded-xl bg-white p-8 shadow-sm transition-all hover:shadow-md">
@@ -66,9 +72,15 @@ export default function Home() {
               <p className="mt-3 text-base leading-relaxed text-gray-600">
                 {t.home.coreValue2Desc}
               </p>
+              {t.home.coreValue2Risk && (
+                <p className="mt-3 text-sm leading-relaxed text-amber-700 bg-amber-50 rounded-lg p-2 border border-amber-200">
+                  {t.home.coreValue2Risk}
+                </p>
+              )}
               <div className="mt-4 space-y-2 text-sm text-gray-500">
                 <p>• {t.home.coreValue2Feature1}</p>
                 <p>• {t.home.coreValue2Feature2}</p>
+                {t.home.coreValue2Feature3 && <p>• {t.home.coreValue2Feature3}</p>}
               </div>
             </div>
             <div className="group rounded-xl bg-white p-8 shadow-sm transition-all hover:shadow-md">
@@ -77,6 +89,11 @@ export default function Home() {
               <p className="mt-3 text-base leading-relaxed text-gray-600">
                 {t.home.coreValue3Desc}
               </p>
+              {t.home.coreValue3Risk && (
+                <p className="mt-3 text-sm leading-relaxed text-amber-700 bg-amber-50 rounded-lg p-2 border border-amber-200">
+                  {t.home.coreValue3Risk}
+                </p>
+              )}
               <div className="mt-4 space-y-2 text-sm text-gray-500">
                 <p>• {t.home.coreValue3Feature1}</p>
                 <p>• {t.home.coreValue3Feature2}</p>
@@ -133,20 +150,21 @@ export default function Home() {
                 </div>
                 <div className="space-y-2 text-sm text-gray-600">
                   <div className="flex justify-between">
-                    <span className="font-medium">Creator:</span>
+                    <span className="font-medium">{t.home.creatorLabel || 'Creator:'}</span>
                     <span>AI Creator</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="font-medium">Certified:</span>
+                    <span className="font-medium">{t.home.certifiedOnLabel || 'Certified on:'}</span>
                     <span>2024-01-15</span>
                   </div>
                   <div className="mt-3 pt-3 border-t border-gray-200">
+                    <div className="mb-1 text-xs font-medium text-gray-500">{t.home.statusLabel || 'Status:'}</div>
                     <div className="flex flex-wrap gap-2">
                       <span className="inline-flex items-center rounded bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700">
-                        Time-Stamped
+                        {t.home.timeStamped || 'Time-Stamped'}
                       </span>
                       <span className="inline-flex items-center rounded bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700">
-                        Blockchain Anchored
+                        {t.home.blockchainAnchored || 'Blockchain Anchored'}
                       </span>
                     </div>
                   </div>
@@ -192,12 +210,18 @@ export default function Home() {
               </ul>
             </div>
             <div className="relative rounded-xl border-2 border-blue-600 bg-white p-8 shadow-lg transition-all hover:shadow-xl">
-              <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                <span className="rounded-full bg-blue-600 px-3 py-1 text-xs font-semibold text-white">
-                  {t.home.pricingPopular}
-                </span>
-              </div>
-              <h3 className="text-xl font-semibold text-gray-900">{t.home.pricingBasic}</h3>
+              {t.home.pricingPopular && !t.home.pricingPopular.includes('基础版') && (
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2">
+                  <span className="rounded-full bg-blue-600 px-3 py-1 text-xs font-semibold text-white">
+                    {t.home.pricingPopular}
+                  </span>
+                </div>
+              )}
+              <h3 className="text-xl font-semibold text-gray-900">
+                {t.home.pricingPopular && t.home.pricingPopular.includes('基础版') 
+                  ? t.home.pricingPopular
+                  : t.home.pricingBasic}
+              </h3>
               <div className="mt-4 flex items-baseline">
                 <p className="text-4xl font-bold text-gray-900">$9.9</p>
                 <p className="ml-2 text-sm text-gray-600">{t.home.pricingPerMonth}</p>

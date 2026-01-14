@@ -19,6 +19,7 @@ export default function CertifyPage() {
   const [promptPrivate, setPromptPrivate] = useState(false)
   const [hasThirdPartyMaterials, setHasThirdPartyMaterials] = useState(false)
   const [legalAgreement, setLegalAgreement] = useState(false)
+  const [showFullDisclaimer, setShowFullDisclaimer] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [isDragging, setIsDragging] = useState(false)
@@ -319,17 +320,31 @@ export default function CertifyPage() {
           </div>
 
           {/* Third Party Materials */}
-          <div className="flex items-start rounded-lg border border-gray-200 bg-gray-50 p-4">
-            <input
-              type="checkbox"
-              id="hasThirdPartyMaterials"
-              checked={hasThirdPartyMaterials}
-              onChange={(e) => setHasThirdPartyMaterials(e.target.checked)}
-              className="mt-0.5 h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-            />
-            <label htmlFor="hasThirdPartyMaterials" className="ml-3 text-sm text-gray-700">
-              {t.certify.thirdPartyMaterials}
-            </label>
+          <div className="rounded-lg border border-amber-200 bg-amber-50 p-4">
+            <div className="flex items-start">
+              <input
+                type="checkbox"
+                id="hasThirdPartyMaterials"
+                checked={hasThirdPartyMaterials}
+                onChange={(e) => setHasThirdPartyMaterials(e.target.checked)}
+                className="mt-0.5 h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+              />
+              <label 
+                htmlFor="hasThirdPartyMaterials" 
+                className="ml-3 text-sm text-gray-700 cursor-pointer"
+                title={t.certify.thirdPartyMaterialsTooltip}
+              >
+                {t.certify.thirdPartyMaterials}
+                {t.certify.thirdPartyMaterialsTooltip && (
+                  <span className="ml-2 text-xs text-gray-500">(ℹ️ {t.certify.thirdPartyMaterialsTooltip})</span>
+                )}
+              </label>
+            </div>
+            {hasThirdPartyMaterials && t.certify.thirdPartyMaterialsWarning && (
+              <p className="mt-2 text-xs font-medium text-amber-800 bg-amber-100 rounded p-2 border border-amber-300">
+                ⚠️ {t.certify.thirdPartyMaterialsWarning}
+              </p>
+            )}
           </div>
 
           {/* Legal Agreement */}
@@ -347,6 +362,20 @@ export default function CertifyPage() {
                 {t.certify.legalAgreement} <span className="text-red-500">*</span>
               </label>
             </div>
+            {t.certify.readFullDisclaimer && (
+              <button
+                type="button"
+                onClick={() => setShowFullDisclaimer(!showFullDisclaimer)}
+                className="mt-2 ml-7 text-xs text-blue-600 hover:text-blue-700 underline focus:outline-none"
+              >
+                {showFullDisclaimer ? (t.certify.hideFullDisclaimer || 'Hide') : t.certify.readFullDisclaimer}
+              </button>
+            )}
+            {showFullDisclaimer && t.certify.legalAgreementFull && (
+              <div className="mt-3 ml-7 rounded-lg border border-gray-200 bg-white p-3 text-xs leading-relaxed text-gray-600">
+                {t.certify.legalAgreementFull}
+              </div>
+            )}
           </div>
 
           <div className="flex flex-col gap-3 sm:flex-row sm:justify-end">
