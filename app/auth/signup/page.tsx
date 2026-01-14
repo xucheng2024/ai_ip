@@ -19,6 +19,7 @@ export default function SignupPage() {
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
+    setSuccess('')
     setLoading(true)
 
     try {
@@ -62,7 +63,7 @@ export default function SignupPage() {
       if (!sessionData?.session) {
         // No session - email confirmation is required
         setLoading(false)
-        setError('Registration successful! Please check your email to confirm your account before logging in.')
+        setSuccess(t.auth.signupSuccess)
         // Clear form after showing message
         setTimeout(() => {
           setEmail('')
@@ -98,6 +99,11 @@ export default function SignupPage() {
           {error && (
             <div className="rounded-lg border border-red-200 bg-red-50 p-4">
               <p className="text-sm font-medium text-red-800">{error}</p>
+            </div>
+          )}
+          {success && (
+            <div className="rounded-lg border border-green-200 bg-green-50 p-4">
+              <p className="text-sm font-medium text-green-800">{success}</p>
             </div>
           )}
           <div className="space-y-5">
