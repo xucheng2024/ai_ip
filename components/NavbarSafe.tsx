@@ -30,8 +30,14 @@ function NavbarSafe({ user }: { user: any }) {
             <div className="hidden items-center gap-1 sm:flex">
               <Link 
                 href="/videos" 
-                className="rounded-lg px-3 py-1.5 text-sm font-medium text-gray-700 transition-all duration-200 hover:bg-gray-100 hover:text-gray-900"
+                className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-gray-700 transition-all duration-200 hover:bg-gray-100 hover:text-gray-900 group"
               >
+                <div className="relative">
+                  <svg className="h-4 w-4 text-blue-600 group-hover:text-blue-700 transition-colors" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M2 6a2 2 0 012-2h6a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V6zM14.553 7.106A1 1 0 0014 8v4a1 1 0 00.553.894l2 1A1 1 0 0018 13V7a1 1 0 00-1.447-.894l-2 1z" />
+                  </svg>
+                  <span className="absolute -top-0.5 -right-0.5 h-1.5 w-1.5 bg-blue-500 rounded-full animate-pulse"></span>
+                </div>
                 {t.common.videos}
               </Link>
             </div>
@@ -107,9 +113,15 @@ function NavbarSafe({ user }: { user: any }) {
             <div className="px-4 py-3 space-y-1">
               <Link
                 href="/videos"
-                className="block rounded-lg px-3 py-2 text-sm font-medium text-gray-700 transition-all duration-200 hover:bg-gray-100 hover:text-gray-900"
+                className="flex items-center gap-2 block rounded-lg px-3 py-2 text-sm font-medium text-gray-700 transition-all duration-200 hover:bg-gray-100 hover:text-gray-900 group"
                 onClick={() => setMobileMenuOpen(false)}
               >
+                <div className="relative">
+                  <svg className="h-4 w-4 text-blue-600 group-hover:text-blue-700 transition-colors" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M2 6a2 2 0 012-2h6a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V6zM14.553 7.106A1 1 0 0014 8v4a1 1 0 00.553.894l2 1A1 1 0 0018 13V7a1 1 0 00-1.447-.894l-2 1z" />
+                  </svg>
+                  <span className="absolute -top-0.5 -right-0.5 h-1.5 w-1.5 bg-blue-500 rounded-full animate-pulse"></span>
+                </div>
                 {t.common.videos}
               </Link>
               <div className="border-t border-gray-200/80 pt-2 mt-2">
