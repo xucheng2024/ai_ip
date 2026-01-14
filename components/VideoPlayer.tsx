@@ -16,7 +16,6 @@ interface VideoPlayerProps {
   playing?: boolean
   onPlay?: () => void
   onPause?: () => void
-  lazy?: boolean // Lazy load video
 }
 
 export default function VideoPlayer({
@@ -29,44 +28,31 @@ export default function VideoPlayer({
   playing = false,
   onPlay,
   onPause,
-  lazy = false,
 }: VideoPlayerProps) {
   const { t } = useI18n()
   const [isPlaying, setIsPlaying] = useState(playing)
   const [hasError, setHasError] = useState(false)
   const [videoUrl, setVideoUrl] = useState<string | null>(url)
   const [loading, setLoading] = useState(false)
-  const [shouldLoad, setShouldLoad] = useState(!lazy)
-  const playerRef = useRef<any>(null)
-  const observerRef = useRef<IntersectionObserver | null>(null)
+  const playerRef = useRef<HTMLVideoElement>(null)
 
-  // Lazy load with Intersection Observer
-  useEffect(() => {
-    if (!lazy || shouldLoad) return
-
-    const videoElement = playerRef.current
-    if (!videoElement) return
-
-    observerRef.current = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting) {
-          setShouldLoad(true)
-          observerRef.current?.disconnect()
-        }
-      },
-      { rootMargin: '50px' } // Start loading 50px before visible
-    )
-
-    observerRef.current.observe(videoElement)
-
-    return () => {
-      observerRef.current?.disconnect()
+  // Memoize video props for performance
+  const videoProps = useMemo(() => ({
+    className: "w-full h-full aspect-video",
+    controls,
+    controlsList: "nodownload" as const,
+    disablePictureInPicture: true,
+    playsInline: true,
+    preload: "metadata" as const, // Load metadata only, not full video
+    style: {
+      borderRadius: '0.75rem',
+      display: 'block' as const,
     }
-  }, [lazy, shouldLoad])
+  }), [controls])
 
   // Fetch signed URL if videoId is provided and url is not available
   useEffect(() => {
-    if (!shouldLoad) return
+    console.log('[VideoPlayer] URL fetch effect:', { videoId, url })
 
     // Check cache first
     if (videoId && !url) {
@@ -93,7 +79,9 @@ export default function VideoPlayer({
               // Clean old cache entries
               if (urlCache.size > 50) {
                 const firstKey = urlCache.keys().next().value
-                urlCache.delete(firstKey)
+                if (firstKey) {
+                  urlCache.delete(firstKey)
+                }
               }
             }
           } else {
@@ -111,7 +99,7 @@ export default function VideoPlayer({
     } else {
       setVideoUrl(url)
     }
-  }, [videoId, url, shouldLoad])
+  }, [videoId, url])
 
   if (loading) {
     return (
@@ -150,34 +138,6 @@ export default function VideoPlayer({
           </svg>
           <p className="text-sm font-medium text-red-600">{t.certificate.videoLoadError || 'Failed to load video'}</p>
           <p className="text-xs text-red-500 mt-1">{t.certificate.videoLoadErrorDesc || 'Please try again later'}</p>
-        </div>
-      </div>
-    )
-  }
-
-  // Memoize video props for performance
-  const videoProps = useMemo(() => ({
-    className: "w-full h-full aspect-video",
-    controls,
-    controlsList: "nodownload" as const,
-    disablePictureInPicture: true,
-    playsInline: true,
-    preload: lazy ? "none" : "metadata" as const, // Lazy: no preload, otherwise metadata only
-    style: {
-      borderRadius: '0.75rem',
-      display: 'block' as const,
-    }
-  }), [controls, lazy])
-
-  if (!shouldLoad && lazy) {
-    return (
-      <div 
-        ref={playerRef}
-        className={`relative rounded-xl overflow-hidden border border-gray-200/80 bg-black aspect-video flex items-center justify-center ${className}`}
-      >
-        <div className="text-center">
-          <div className="text-4xl mb-2 opacity-60">▶</div>
-          <p className="text-sm text-gray-400 font-medium">Click to load video</p>
         </div>
       </div>
     )

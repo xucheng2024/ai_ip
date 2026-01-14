@@ -152,7 +152,15 @@ export default function VideosPage() {
         ) : (
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {videos.map((video, index) => {
-              const videoId = video.fileUrl ? (video.videoId || video.id) : null
+              // Use videoId from API response (this is the actual video UUID)
+              // video.id is the certification ID, not the video ID
+              const videoId = video.videoId || null
+              console.log('[VideosPage] Video data:', { 
+                id: video.id, 
+                videoId: video.videoId, 
+                fileUrl: video.fileUrl,
+                hasVideoId: !!videoId 
+              })
               
               return (
                 <article
@@ -162,13 +170,20 @@ export default function VideosPage() {
                 >
                   {/* Video Player - Larger, More Prominent */}
                   <div className="relative aspect-[16/10] overflow-hidden bg-gray-900">
-                    <VideoPlayer 
-                      url={null}
-                      videoId={videoId}
-                      className="h-full w-full"
-                      light={!videoId}
-                      lazy={true}
-                    />
+                    {videoId ? (
+                      <VideoPlayer 
+                        url={null}
+                        videoId={videoId}
+                        className="h-full w-full"
+                      />
+                    ) : (
+                      <div className="h-full w-full flex items-center justify-center bg-gray-800">
+                        <div className="text-center">
+                          <div className="text-4xl mb-2 opacity-60 text-white">▶</div>
+                          <p className="text-sm text-gray-400 font-medium">Video not available</p>
+                        </div>
+                      </div>
+                    )}
                     {/* Verified Badge - Top Left */}
                     <div className="absolute top-3 left-3 z-10">
                       <div className="flex items-center gap-1.5 rounded-full bg-white/95 backdrop-blur-sm px-2.5 py-1 shadow-sm">
