@@ -3,10 +3,17 @@ import { createClient } from '@/lib/supabase/server'
 import LogoutButton from './LogoutButton'
 
 export default async function Navbar() {
-  const supabase = await createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  let user = null
+  try {
+    const supabase = await createClient()
+    const {
+      data: { user: authUser },
+    } = await supabase.auth.getUser()
+    user = authUser
+  } catch (error) {
+    // Silently fail - show unauthenticated navbar
+    console.error('Navbar auth error:', error)
+  }
 
   return (
     <nav className="border-b border-gray-200 bg-white">
