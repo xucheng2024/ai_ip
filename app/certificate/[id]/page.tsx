@@ -4,7 +4,8 @@ import { format } from 'date-fns'
 import CertificatePDFWrapper from '@/components/CertificatePDFWrapper'
 import Link from 'next/link'
 
-export default async function CertificatePage({ params }: { params: { id: string } }) {
+export default async function CertificatePage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
   const supabase = await createClient()
   const { data: certification, error } = await supabase
     .from('certifications')
@@ -21,7 +22,7 @@ export default async function CertificatePage({ params }: { params: { id: string
       )
     `
     )
-    .eq('id', params.id)
+    .eq('id', id)
     .eq('status', 'valid')
     .single()
 
