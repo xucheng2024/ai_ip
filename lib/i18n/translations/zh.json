@@ -62,6 +62,7 @@
     "videoPreview": "视频预览",
     "verifiedByAIVerify": "✓ 已通过AIVerify验证",
     "creatorLabel": "Creator:",
+    "certifiedLabel": "认证：",
     "certifiedOnLabel": "Certified on:",
     "statusLabel": "Status:",
     "timeStamped": "Time-Stamped",

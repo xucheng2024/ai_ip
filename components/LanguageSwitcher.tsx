@@ -21,8 +21,8 @@ export default function LanguageSwitcher() {
 
   const languages = [
     { code: 'en', label: 'English' },
-    { code: 'zh', label: '中文' }
-  ]
+    { code: 'zh', label: '中文' },
+  ] as const
 
   const currentLanguage = languages.find(lang => lang.code === language) || languages[0]
 

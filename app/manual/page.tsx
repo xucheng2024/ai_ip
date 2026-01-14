@@ -15,7 +15,11 @@ async function getManualContent(locale: string) {
     const content = await readFile(filePath, 'utf-8')
     return content
   } catch (error) {
-    console.error('Error reading manual:', error)
+    const err = error as any
+    const isMissingFile = err?.code === 'ENOENT'
+    if (!isMissingFile) {
+      console.error('Error reading manual:', error)
+    }
     // Fallback to English if Chinese version doesn't exist
     if (locale === 'zh') {
       try {

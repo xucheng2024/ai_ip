@@ -8,6 +8,7 @@ import CertificationBadge from '@/components/CertificationBadge'
 import RevokeCertificateButton from '@/components/RevokeCertificateButton'
 import ComplaintEvidencePackage from '@/components/ComplaintEvidencePackage'
 import EvidenceStatusBadge, { getEvidenceStatus } from '@/components/EvidenceStatusBadge'
+import type { EvidenceStatus } from '@/lib/types'
 import VerificationGuide from '@/components/VerificationGuide'
 import EvidenceUsageScenarios from '@/components/EvidenceUsageScenarios'
 import CreatorContinuityChain from '@/components/CreatorContinuityChain'
@@ -30,7 +31,7 @@ export default async function CertificatePage({ params }: { params: Promise<{ id
   let metadata: any = null
   let isOwner = false
   let batchStatus: string | null = null
-  let evidenceStatus = 'certified'
+  let evidenceStatus: EvidenceStatus = 'certified'
 
   if (isDemo) {
     // Create demo data
