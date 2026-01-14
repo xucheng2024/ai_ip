@@ -16,6 +16,7 @@ import CreatorContinuityChain from './CreatorContinuityChain'
 import CertificateHero from './CertificateHero'
 import SummaryCard from './SummaryCard'
 import VerificationAction from './VerificationAction'
+import type { EvidenceStatus } from '@/lib/types'
 
 interface CertificateContentProps {
   certification: any
@@ -23,7 +24,7 @@ interface CertificateContentProps {
   metadata: any
   isOwner: boolean
   isDemo: boolean
-  evidenceStatus: string
+  evidenceStatus: EvidenceStatus
   timelineEvents: any[]
 }
 

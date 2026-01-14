@@ -4,13 +4,21 @@ import DashboardContent from '@/components/DashboardContent'
 
 export default async function DashboardPage() {
   const supabase = await createClient()
+  
+  if (!supabase) {
+    console.error('Dashboard error: Supabase client not initialized. Check environment variables.')
+    redirect('/auth/login')
+  }
+
   const {
     data: { user },
     error: authError,
   } = await supabase.auth.getUser()
 
   if (authError || !user) {
-    console.error('Dashboard auth error:', authError?.message || 'No user')
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Dashboard auth error:', authError?.message || 'No user')
+    }
     redirect('/auth/login')
   }
 
