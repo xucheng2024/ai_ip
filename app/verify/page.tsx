@@ -186,7 +186,7 @@ function VerifyPageContent() {
               <button
                 onClick={handleVerifyById}
                 disabled={loading || !certificationId.trim()}
-                className="rounded-lg bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:from-blue-700 hover:to-blue-800 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-shrink-0 self-start rounded-lg bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:from-blue-700 hover:to-blue-800 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {t.verify.verify}
               </button>
@@ -213,7 +213,7 @@ function VerifyPageContent() {
               <button
                 onClick={handleVerifyByFile}
                 disabled={loading || !file}
-                className="rounded-lg bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:from-blue-700 hover:to-blue-800 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-shrink-0 self-start rounded-lg bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:from-blue-700 hover:to-blue-800 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {t.verify.verify}
               </button>
@@ -257,11 +257,13 @@ function VerifyPageContent() {
                         />
                       )}
                     </div>
-                    <div className="mt-3 space-y-1 text-sm text-green-800">
+                    <div className="mt-3 space-y-1.5 text-sm text-green-800">
                       <p className="font-medium">✅ {t.verify.verificationSuccess}</p>
-                      <p>{t.verify.verificationSuccessCreated} {format(new Date(result.certification?.timestamp_utc), 'PPp')}</p>
+                      {result.certification?.timestamp_utc && (
+                        <p>{t.verify.verificationSuccessCreated} {format(new Date(result.certification.timestamp_utc), 'PPp')}</p>
+                      )}
                       {result.batchStatus === 'anchored' && t.verify.verificationSuccessAnchored && (
-                        <p>{t.verify.verificationSuccessAnchored}</p>
+                        <p className="text-xs text-green-700">{t.verify.verificationSuccessAnchored}</p>
                       )}
                     </div>
                   </div>
@@ -275,7 +277,7 @@ function VerifyPageContent() {
                       <p className="mt-1 text-sm font-semibold text-gray-900">{result.video?.title}</p>
                     </div>
                     <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
-                      <p className="text-xs font-medium uppercase tracking-wide text-gray-500">{t.verify.certifiedAt}</p>
+                      <p className="text-xs font-medium uppercase tracking-wide text-gray-500">{t.verify.certificationRecordTime || t.verify.certifiedAt}</p>
                       <p className="mt-1 text-sm font-semibold text-gray-900">
                         {format(new Date(result.certification?.timestamp_utc), 'PPp')}
                       </p>
@@ -288,7 +290,10 @@ function VerifyPageContent() {
                     )}
                   </div>
                   <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
-                    <p className="text-xs font-medium uppercase tracking-wide text-gray-500 mb-3">{t.verify.contentFingerprint}</p>
+                    <p className="text-xs font-medium uppercase tracking-wide text-gray-500 mb-1">{t.verify.contentFingerprint}</p>
+                    {t.verify.contentFingerprintDesc && (
+                      <p className="text-xs text-gray-600 mb-3">{t.verify.contentFingerprintDesc}</p>
+                    )}
                     <HashDisplay hash={result.video?.file_hash || ''} />
                   </div>
                   <div className="pt-2">

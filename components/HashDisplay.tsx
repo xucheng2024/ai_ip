@@ -25,20 +25,21 @@ export default function HashDisplay({ hash, className = '', collapsible = false,
     return segments
   }
 
-  // Generate heatmap colors based on character values
+  // Generate subtle colors - unified neutral blue/gray-blue tones
   const getHeatmapColor = (segment: string) => {
     const avg = segment.split('').reduce((sum: number, char) => {
       const val = parseInt(char, 16) || 0
       return sum + val
     }, 0) / segment.length
 
-    // Map average value to color intensity
+    // Map average value to subtle blue/gray-blue tones
     const intensity = Math.floor((avg / 15) * 100)
     
-    if (intensity < 30) return 'bg-blue-100 text-blue-800'
-    if (intensity < 50) return 'bg-green-100 text-green-800'
-    if (intensity < 70) return 'bg-yellow-100 text-yellow-800'
-    return 'bg-orange-100 text-orange-800'
+    // Unified color scheme: neutral blue and gray-blue tones
+    if (intensity < 25) return 'bg-slate-100 text-slate-700'
+    if (intensity < 50) return 'bg-blue-50 text-blue-700'
+    if (intensity < 75) return 'bg-slate-50 text-slate-600'
+    return 'bg-blue-100 text-blue-800'
   }
 
   const handleCopy = async () => {
