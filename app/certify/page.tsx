@@ -194,7 +194,7 @@ export default function CertifyPage() {
       // Use enhanced certification API
       const formData = new FormData()
       formData.append('file', videoFile)
-      formData.append('title', title || file.name)
+      formData.append('title', title || videoFile.name)
       formData.append('fileHash', fileHash)
       if (frameHash) formData.append('frameHash', frameHash)
       if (audioHash) formData.append('audioHash', audioHash)

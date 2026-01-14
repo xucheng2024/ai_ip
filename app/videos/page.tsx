@@ -228,7 +228,7 @@ export default function VideosPage() {
                         href={`/certificate/${video.id}`}
                         className="flex w-full items-center justify-center rounded-full border border-gray-300 px-3 py-2 text-sm text-gray-600 transition-all duration-200 hover:border-gray-400 hover:text-gray-700"
                       >
-                        <span>{t.certificate.viewFullCertificate || t.home.viewFullEvidence || t.home.viewProofPage || '查看完整作者证明'}</span>
+                        <span>{t.verify.viewFullCertificate || t.home.viewFullEvidence || t.home.viewProofPage || '查看完整作者证明'}</span>
                       </Link>
                     </div>
                   </div>
