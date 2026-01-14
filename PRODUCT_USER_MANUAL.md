@@ -19,9 +19,9 @@
 
 ## Overview
 
-**AIVerify** is a blockchain-backed platform that provides trusted timestamps and content fingerprinting for AI-generated video content. It helps creators prove authorship and creation time, serving as evidence infrastructure for copyright disputes and intellectual property protection.
+**AIVerify** is a trusted publishing layer and evidence infrastructure platform for AI-generated video content. Every AI video published on AIVerify comes with independently verifiable creation evidence, providing a public, verifiable proof page that can be watched, verified, and cited.
 
-**Key Value Proposition:** Prove when it was created. Prove who created it.
+**Key Value Proposition:** Publish AI Videos with Verifiable Proof. Each video gets a public, verifiable proof page.
 
 ---
 
@@ -57,9 +57,15 @@ The dashboard shows:
 
 ## Core Features
 
-### 1. Video Certification
+### 1. Video Certification & Publishing
 
-Certify your AI-generated videos with cryptographic proof of:
+Certify and publish your AI-generated videos with cryptographic proof. Each certified video gets its own verifiable proof page where you can:
+- **Watch the Video:** Play the certified video directly on the proof page
+- **See Creator & Date:** View who created it and when it was certified
+- **Verify Evidence:** Independently verify all evidence without trusting the platform
+- **Share or Cite:** Use one link to share or cite the verified video
+
+The certification provides cryptographic proof of:
 - **Creation Time:** Timestamp when the video was certified
 - **Content Fingerprint:** Unique hash of the video file
 - **Author Identity:** Your account information
@@ -103,11 +109,21 @@ Generate professional PDF certificates for:
 - Archive records
 - Sharing with stakeholders
 
-### 6. Public Verification
+### 6. Verifiable Video Pages
+
+Each certified video gets its own public proof page:
+- **Public Access:** Anyone can view the proof page without logging in
+- **Video Playback:** Watch the certified video directly on the page
+- **Evidence Display:** See all verification badges and metadata
+- **Shareable Link:** One URL to share or cite the verified video
+- **Independent Verification:** Verify evidence without trusting the platform
+
+### 7. Public Verification
 
 Anyone can verify certifications without logging in:
 - By certification ID
 - By uploading the original video file
+- By visiting the video's proof page
 
 ---
 
@@ -115,11 +131,12 @@ Anyone can verify certifications without logging in:
 
 ### Step-by-Step Guide
 
-#### Step 1: Start Certification
+#### Step 1: Start Certification & Publishing
 
 1. Log in to your AIVerify account
-2. Click "Certify New Video" from the dashboard or navigate to `/certify`
-3. You'll see the certification form
+2. Click "Certify & Publish a Video" from the homepage or "Certify New Video" from the dashboard
+3. Navigate to `/certify` page
+4. You'll see the certification form
 
 #### Step 2: Upload Video File
 
@@ -131,9 +148,10 @@ Anyone can verify certifications without logging in:
 - Maximum file size: 500MB
 
 **Important:** 
-- Ensure the video file is the final version you want to certify
+- Ensure the video file is the final version you want to certify and publish
 - Any subsequent edits will create a different fingerprint
 - The file is processed client-side for hashing (privacy-preserving)
+- Once certified, your video will have its own verifiable proof page
 
 #### Step 3: Enter Video Information
 
@@ -168,12 +186,14 @@ Check the box to confirm agreement.
 
 **Processing Time:** Typically 30-60 seconds depending on file size
 
-#### Step 6: View Certificate
+#### Step 6: View Certificate & Proof Page
 
 After successful certification:
 - You'll be redirected to the certificate page
+- Your video now has its own verifiable proof page
 - Your monthly usage count is incremented
 - Certificate is immediately available for verification
+- You can share the proof page link with others
 
 **If you've reached your monthly limit:**
 - You'll see an error message
@@ -186,7 +206,7 @@ After successful certification:
 
 ### Certificate Page Features
 
-Each certificate includes:
+Each certificate includes its own verifiable proof page with:
 
 #### 1. Certificate Information
 
@@ -264,10 +284,11 @@ Each template includes:
 - Complete JSON file with all verification data
 - Includes Merkle proofs and chain of custody
 
-**View Verification Page:**
-- Click "Verify Certificate"
-- See the public verification view
-- Share this link with others
+**View Verification Page / Proof Page:**
+- Click "Verify Certificate" or visit the proof page URL
+- See the public verification view with video playback
+- Share this link with others - it's a citable proof page
+- Anyone can watch, verify, and cite your video from this page
 
 **Embeddable Badge:**
 - Copy the certification badge code
@@ -346,39 +367,41 @@ Anyone can verify a certification using two methods:
 ### Free Tier
 
 **Included:**
-- 1 certification per month
+- 1 video published with proof per month
 - All basic features
 - PDF certificate downloads
 - Public verification
 - Evidence package downloads
+- Verifiable proof page for each video
 
 **Best For:** Individual creators testing the platform
 
-**Upgrade When:** You need to certify multiple videos per month
+**Upgrade When:** You need to publish multiple videos with proof per month
 
 ### Basic Tier ($9.9/month)
 
 **Included:**
-- 10 certifications per month
+- 10 videos published with proof per month
 - All Free tier features
 - Priority processing
 - Email support
 
 **Best For:** Regular content creators, small studios
 
-**Value:** Perfect for creators who produce multiple videos monthly
+**Value:** Perfect for creators who produce multiple videos monthly. Plans are based on how many videos you publish with proof.
 
 ### Pro Tier ($19.9/month)
 
 **Included:**
-- Unlimited certifications
+- Unlimited videos published with proof
 - All Basic tier features
 - Priority support
+- API & publishing integrations (coming soon)
 - Advanced analytics (coming soon)
 
 **Best For:** Content studios, professional filmmakers, high-volume creators
 
-**Value:** Cost-effective for creators certifying 3+ videos per month
+**Value:** Cost-effective for creators publishing 3+ videos per month with proof
 
 ### Upgrading Your Subscription
 
@@ -499,7 +522,7 @@ A: The edited video will have a different hash and won't match the original cert
 A: No. Only you (the owner) can access the video file. Public verification only shows metadata and hashes, not the video itself.
 
 **Q: How do I share my certification with others?**
-A: Share the verification URL (e.g., `/verify?id=AIV-1234567890-abc123`) or the certificate page URL. Others can verify without logging in.
+A: Share the verification URL (e.g., `/verify?id=AIV-1234567890-abc123`) or the certificate proof page URL. Each video has its own verifiable proof page that can be watched, verified, and cited. Others can verify without logging in.
 
 **Q: What if someone steals my video and certifies it?**
 A: The first certification is the proof. If you certified it first, you have the earlier timestamp. This is valuable evidence in disputes.
@@ -535,7 +558,7 @@ A: Use your evidence package and certificate as proof of creation time. The cryp
 ### Account & Subscription Questions
 
 **Q: What happens if I exceed my monthly limit?**
-A: You'll see an error when trying to certify. Upgrade your subscription or wait until next month when limits reset.
+A: You'll see an error when trying to certify. Upgrade your subscription or wait until next month when limits reset. Remember: Plans are based on how many videos you publish with proof.
 
 **Q: Can I downgrade my subscription?**
 A: Yes, but you'll keep access until the end of your current billing period. New limits apply at the next billing cycle.

@@ -1,13 +1,15 @@
 # AIVerify - Product Feature Document
-## AI Video Originality Certification & Creation Proof Platform
+## AI Video Publishing & Trust Infrastructure Platform
 
 ---
 
 ## Executive Summary
 
-**AIVerify** is a blockchain-backed evidence infrastructure platform that provides trusted timestamps and content fingerprinting for AI-generated video content. The platform enables creators to prove authorship and creation time, serving as critical evidence infrastructure for copyright disputes and intellectual property protection.
+**AIVerify** is a trusted publishing layer and evidence infrastructure platform for AI-generated video content. Every AI video published on AIVerify comes with independently verifiable creation evidence, providing a public, verifiable proof page that can be watched, verified, and cited.
 
-**Tagline:** *Prove when it was created. Prove who created it.*
+**Core Value Proposition:** AIVerify is not just a certification tool—it's the infrastructure entry point for AI video publishing and trust verification. Each certified video gets its own verifiable proof page, transforming how AI content is published, shared, and trusted.
+
+**Tagline:** *Publish AI Videos with Verifiable Proof*
 
 ---
 
@@ -15,14 +17,16 @@
 
 ### Problem Statement
 - AI video generation tools (Runway, Pika, Sora) are creating unprecedented volumes of content
-- Copyright disputes and authorship claims require verifiable evidence
+- There's no trusted infrastructure for publishing AI videos with verifiable proof
+- Copyright disputes and authorship claims require independently verifiable evidence
 - Traditional copyright registration is slow, expensive, and not designed for AI content
-- Creators need instant, cryptographically verifiable proof of creation time and content integrity
+- Creators need a publishing platform where each video has its own verifiable proof page
 
 ### Target Market
-- **Primary:** AI video creators, content studios, independent filmmakers
-- **Secondary:** Legal professionals, platforms requiring content verification
+- **Primary:** AI video creators, content studios, independent filmmakers seeking trusted publishing infrastructure
+- **Secondary:** Legal professionals, platforms requiring content verification, investors in AI content
 - **Market Size:** Growing AI video generation market (projected $XXB by 2027)
+- **Positioning:** Infrastructure entry point for AI video publishing, not just a certification tool
 
 ---
 
@@ -47,20 +51,28 @@
 - **Chain of Custody:** Append-only event logs with hash-linked audit trail
 - **Third-Party Verifiable:** No server trust required - cryptographic proofs
 
-### 4. User Experience
-- **Simple Upload Flow:** Drag-and-drop video certification
+### 4. Verifiable Video Pages
+- **Public Proof Pages:** Each certified video gets its own verifiable proof page
+- **Video Playback:** Watch the certified video directly on the proof page
+- **Evidence Display:** See creator, certification date, and all evidence badges
+- **Shareable Links:** One link to share or cite the verified video
+- **Independent Verification:** Anyone can verify evidence without trusting the platform
+- **Infrastructure Positioning:** Moving from tool to publishing infrastructure
+
+### 5. User Experience
+- **Simple Upload Flow:** Drag-and-drop video certification and publishing
 - **PDF Certificates:** Professional certificates for records and legal use
 - **Public Verification:** Anyone can verify certifications via ID or file hash
 - **Dashboard:** Usage tracking, certification history, subscription management
 - **Evidence Status Display:** Clear evidence maturity indicators (Certified/Timestamped/Anchored/Revoked)
 - **Usage Scenario Templates:** Pre-configured templates for YouTube DMCA, TikTok IP reports, etc.
 
-### 5. AI Tool Integration
+### 6. AI Tool Integration
 - **Metadata Capture:** Records AI tool used (Runway, Pika, Sora, etc.)
 - **Prompt Preservation:** Optional prompt storage (hash-only or plaintext)
 - **Creation Metadata:** Model versions, third-party material declarations
 
-### 6. Evidence Status Model
+### 7. Evidence Status Model
 Clear evidence maturity levels displayed to users and investors:
 - 🟡 **Certified:** Server + Hash complete
 - 🟢 **Timestamped:** TSA timestamp received
@@ -69,7 +81,7 @@ Clear evidence maturity levels displayed to users and investors:
 
 Critical UI feature that answers investor and legal team questions about evidence quality.
 
-### 7. Third-Party Verification Guide
+### 8. Third-Party Verification Guide
 - **Independent Verification:** Detailed guide for verifying evidence packages without platform dependency
 - **Hash Recalculation:** Instructions for recalculating evidence hashes
 - **Merkle Proof Verification:** How to verify Merkle proofs
@@ -78,7 +90,7 @@ Critical UI feature that answers investor and legal team questions about evidenc
 
 Extremely valuable for legal teams and platforms, demonstrating serious infrastructure approach.
 
-### 8. Evidence Usage Scenario Templates
+### 9. Evidence Usage Scenario Templates
 Pre-configured templates for different use cases:
 - **YouTube DMCA Takedown:** Required fields and step-by-step instructions
 - **TikTok IP Report:** Platform-specific submission guidance
@@ -87,13 +99,13 @@ Pre-configured templates for different use cases:
 
 Key differentiator: Moving from "tool" to "infrastructure."
 
-### 9. Hash Manifest in Evidence Packages
+### 10. Hash Manifest in Evidence Packages
 - **Complete Index:** manifest.json in evidence package root
 - **Hash Inventory:** evidence_hash, merkle_root, tx_hash, block_time
 - **File Index:** included_files with all related hashes
 - **Audit-Ready:** Facilitates third-party auditing and long-term archival
 
-### 10. Creator Continuity Proof
+### 11. Creator Continuity Proof
 - **Hash Chain Linking:** New evidence links to previous evidence hash
 - **Continuity Proof:** Demonstrates long-term creative trajectory from same creator
 - **Off-Chain Storage:** Stored in evidence packages only (zero cost)
@@ -101,7 +113,7 @@ Key differentiator: Moving from "tool" to "infrastructure."
 
 Second moat feature.
 
-### 11. Public Transparency Log Page
+### 12. Public Transparency Log Page
 - **Public Auditability:** Daily batch counts, Merkle roots, chain transactions
 - **Time Range:** Complete historical records
 - **Certificate Transparency Style:** But for AI content evidence
@@ -175,9 +187,10 @@ Public transparency log page showing all batches and transactions, similar to Ce
 ## Business Model
 
 ### Pricing Tiers
-- **Free:** 1 certification/month (freemium acquisition)
-- **Basic ($9.9/month):** 10 certifications/month (target: individual creators)
-- **Pro ($19.9/month):** Unlimited certifications (target: studios/professionals)
+- **Free:** 1 video published with proof/month (freemium acquisition)
+- **Basic ($9.9/month):** 10 videos published with proof/month (target: individual creators)
+- **Pro ($19.9/month):** Unlimited videos published with proof (target: studios/professionals)
+- **Note:** Plans are based on how many videos you publish with proof
 
 ### Revenue Projections
 - **Assumptions:**
@@ -240,7 +253,8 @@ Public transparency log page showing all batches and transactions, similar to Ce
 - ✅ Public transparency log page
 
 ### Phase 2 (Planned)
-- API access for integrations
+- API & publishing integrations for platforms
+- Video gallery and discovery features
 - Multi-chain support (additional blockchains)
 - Enhanced identity verification (L1-L3 levels)
 - Bulk certification tools
@@ -280,18 +294,19 @@ Public transparency log page showing all batches and transactions, similar to Ce
 
 ### Why Invest in AIVerify?
 
-1. **First-Mover Advantage:** Early in AI video certification market
+1. **First-Mover Advantage:** Early in AI video publishing and trust infrastructure market
 2. **Defensible Technology:** Cryptographic proof infrastructure is difficult to replicate
-3. **Network Effects:** More certifications = more trusted platform
+3. **Network Effects:** More videos published = more trusted platform = more citations
 4. **Scalable Business Model:** High gross margins, serverless architecture
-5. **Clear Market Need:** AI content explosion requires verification infrastructure
-6. **Multiple Revenue Streams:** Subscriptions, API access, enterprise features
+5. **Clear Market Need:** AI content explosion requires trusted publishing infrastructure
+6. **Multiple Revenue Streams:** Subscriptions, API & publishing integrations, enterprise features
 7. **Moat Features:**
+   - Verifiable video pages transform each certification into a citable proof page
    - Evidence Status Model provides clarity for legal teams and investors (not just a concept)
    - Creator Continuity Proof forms second moat (appeals to MCNs/studios)
    - Third-party verification guides enhance platform trust
    - Public transparency log demonstrates integrity and auditability
-8. **Infrastructure Positioning:** Moving from tool to infrastructure with usage scenario templates - extremely practical
+8. **Infrastructure Positioning:** Not just a certification tool—it's the infrastructure entry point for AI video publishing. Each video gets a public, verifiable proof page that can be watched, verified, and cited with one link.
 
 ### Market Timing
 - AI video generation is accelerating (Runway, Pika, Sora gaining traction)

@@ -25,10 +25,10 @@ function NavbarSafe({ user }: { user: any }) {
           </Link>
           <div className="flex items-center gap-3">
             <Link 
-              href="/manual" 
+              href="/videos" 
               className="hidden text-sm font-medium text-gray-700 transition-colors hover:text-gray-900 sm:block"
             >
-              {t.common.userManual}
+              {t.common.videos}
             </Link>
             <Link 
               href="/verify" 
@@ -40,7 +40,13 @@ function NavbarSafe({ user }: { user: any }) {
               href="/transparency" 
               className="hidden text-sm font-medium text-gray-700 transition-colors hover:text-gray-900 sm:block"
             >
-              Transparency
+              {t.common.transparency}
+            </Link>
+            <Link 
+              href="/manual" 
+              className="hidden text-sm font-medium text-gray-700 transition-colors hover:text-gray-900 sm:block"
+            >
+              {t.common.docs}
             </Link>
             {user ? (
               <>
