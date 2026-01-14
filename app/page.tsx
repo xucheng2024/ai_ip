@@ -10,13 +10,13 @@ export default function Home() {
     <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50/50">
       <main className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-20 lg:px-8">
         {/* Hero Section */}
-        <div className="text-center animate-fade-in">
-          <h1 className="text-3xl font-bold tracking-tight sm:text-5xl lg:text-6xl leading-[1.15]">
+        <div className="text-center animate-fade-in py-6 sm:py-10 lg:py-12">
+          <h1 className="text-3xl font-bold tracking-tight sm:text-5xl lg:text-6xl xl:text-7xl leading-[1.15]">
             <span className="gradient-text block">
               {t.home.title}
             </span>
             {t.home.titleLine2 && (
-              <span className="block mt-3 text-lg font-medium text-gray-500 sm:text-2xl lg:text-3xl">
+              <span className="block mt-3 sm:mt-4 text-lg font-medium text-gray-500 sm:text-2xl lg:text-3xl xl:text-4xl">
                 {t.home.titleLine2}
               </span>
             )}
@@ -25,19 +25,19 @@ export default function Home() {
             <div className="flex flex-col items-center justify-center gap-4 sm:flex-row sm:gap-x-4">
             <Link
               href="/certify"
-              className="w-full rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 px-8 py-3.5 text-base font-semibold text-white shadow-lg transition-all duration-200 hover:from-blue-700 hover:to-blue-800 hover:shadow-xl hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:ring-offset-2 sm:w-auto"
+              className="w-full sm:w-auto rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 px-9 py-3.5 sm:px-10 sm:py-4 text-base sm:text-lg font-semibold text-white shadow-lg transition-all duration-200 hover:from-blue-700 hover:to-blue-800 hover:shadow-xl hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:ring-offset-2"
             >
               {t.home.certifyButton}
             </Link>
             <Link
               href="/verify"
-              className="w-full rounded-xl border border-gray-300/80 bg-white px-8 py-3.5 text-base font-semibold text-gray-700 shadow-sm transition-all duration-200 hover:border-gray-400 hover:bg-gray-50 hover:shadow-md hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-gray-400/50 focus:ring-offset-2 sm:w-auto"
+              className="w-full sm:w-auto rounded-xl border-2 border-gray-300/80 bg-white px-9 py-3.5 sm:px-10 sm:py-4 text-base sm:text-lg font-semibold text-gray-700 shadow-sm transition-all duration-200 hover:border-gray-400 hover:bg-gray-50 hover:shadow-md hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-gray-400/50 focus:ring-offset-2"
             >
               {t.home.verifyButton}
             </Link>
           </div>
           </div>
-          <p className="mt-8 text-sm text-gray-600 sm:text-base lg:text-lg max-w-2xl mx-auto leading-relaxed">
+          <p className="mt-8 sm:mt-10 lg:mt-12 text-sm text-gray-600 sm:text-base lg:text-lg max-w-2xl mx-auto leading-relaxed">
             {t.home.subtitle}
           </p>
         </div>
