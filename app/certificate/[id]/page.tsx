@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { format } from 'date-fns'
-import CertificatePDF from '@/components/CertificatePDF'
+import CertificatePDFWrapper from '@/components/CertificatePDFWrapper'
 import Link from 'next/link'
 
 export default async function CertificatePage({ params }: { params: { id: string } }) {
@@ -98,7 +98,7 @@ export default async function CertificatePage({ params }: { params: { id: string
             </div>
 
             <div className="flex space-x-4">
-              <CertificatePDF
+              <CertificatePDFWrapper
                 certification={certification}
                 video={video}
                 metadata={metadata}
