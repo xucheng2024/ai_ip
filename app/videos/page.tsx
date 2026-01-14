@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useI18n } from "@/lib/i18n/context";
+import VideoPlayer from "@/components/VideoPlayer";
 
 export default function VideosPage() {
   const { t } = useI18n()
@@ -149,11 +150,12 @@ export default function VideosPage() {
                 key={video.id}
                 className="rounded-xl border border-gray-200/80 bg-white p-7 shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
               >
-                <div className="aspect-video bg-gradient-to-br from-slate-100 via-slate-50 to-slate-100 rounded-xl flex items-center justify-center mb-4 relative overflow-hidden border border-gray-200/50">
-                  <div className="text-center">
-                    <div className="text-4xl mb-2">▶</div>
-                    <p className="text-xs text-gray-500">{t.home.videoPreview || 'Video Preview'}</p>
-                  </div>
+                <div className="mb-4">
+                  <VideoPlayer 
+                    url={null} 
+                    className="shadow-sm"
+                    light={true}
+                  />
                 </div>
                 
                 {/* Evidence Status - Most Prominent */}

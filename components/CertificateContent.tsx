@@ -12,6 +12,7 @@ import EvidenceStatusBadge, { getEvidenceStatus } from './EvidenceStatusBadge'
 import CertificateHero from './CertificateHero'
 import SummaryCard from './SummaryCard'
 import VerificationAction from './VerificationAction'
+import VideoPlayer from './VideoPlayer'
 import type { EvidenceStatus } from '@/lib/types'
 
 // Lazy load heavy components
@@ -95,6 +96,19 @@ export default function CertificateContent({
                        evidenceStatus === 'timestamped' ? t.certificate.timeStamped : t.certificate.timeStamped
               }}
             />
+
+            {/* Video Player */}
+            {(video?.file_url || video?.id) && (
+              <div>
+                <h3 className="text-sm font-semibold text-gray-900 mb-3">{t.certificate.video || 'Video'}</h3>
+                <VideoPlayer 
+                  url={video.file_url || null}
+                  videoId={video?.id || null}
+                  title={video?.title}
+                  className="shadow-sm"
+                />
+              </div>
+            )}
 
             {/* Creation Timeline - Reduced prominence */}
             <CreationTimeline events={timelineEvents.map(event => {

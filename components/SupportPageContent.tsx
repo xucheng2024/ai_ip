@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { useI18n } from '@/lib/i18n/context'
 import { format } from 'date-fns'
+import VideoPlayer from './VideoPlayer'
 import type { SupportAllocation } from '@/lib/types'
 
 interface SupportPageContentProps {
@@ -144,28 +145,26 @@ export default function SupportPageContent({
 
         {/* Top: Work + Evidence Badge */}
         <div className="mb-8 rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-          <div className="flex items-start gap-4">
-            <div className="flex-shrink-0">
-              <div className="h-24 w-40 rounded-lg bg-gradient-to-br from-slate-100 via-slate-50 to-slate-100 flex items-center justify-center border border-gray-200">
-                <div className="text-center">
-                  <div className="text-3xl mb-1 opacity-60">▶</div>
-                  <p className="text-xs text-gray-500">Video</p>
-                </div>
-              </div>
+          <div className="mb-4">
+            <h1 className="text-xl font-bold text-gray-900 mb-2">{video?.title}</h1>
+            <div className="flex items-center gap-2 mb-3">
+              <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-1 text-xs font-semibold text-green-800 border border-green-300">
+                ✓ {t.home.hasVerifiableEvidence || 'Has Generated Verifiable Authorship Evidence'}
+              </span>
             </div>
-            <div className="flex-1">
-              <h1 className="text-xl font-bold text-gray-900 mb-2">{video?.title}</h1>
-              <div className="flex items-center gap-2 mb-2">
-                <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-1 text-xs font-semibold text-green-800 border border-green-300">
-                  ✓ {t.home.hasVerifiableEvidence || 'Has Generated Verifiable Authorship Evidence'}
-                </span>
-              </div>
-              <div className="text-sm text-gray-600">
-                <p>{t.promotionSupport.creator}: {video?.users?.display_name || video?.users?.email || 'Anonymous'}</p>
-                <p>{t.promotionSupport.certifiedOn}: {format(new Date(certification.timestamp_utc), 'MMM d, yyyy')}</p>
-              </div>
+            <div className="text-sm text-gray-600 mb-4">
+              <p>{t.promotionSupport.creator}: {video?.users?.display_name || video?.users?.email || 'Anonymous'}</p>
+              <p>{t.promotionSupport.certifiedOn}: {format(new Date(certification.timestamp_utc), 'MMM d, yyyy')}</p>
             </div>
           </div>
+          {(video?.file_url || video?.id) && (
+            <VideoPlayer 
+              url={video.file_url || null}
+              videoId={video?.id || null}
+              title={video?.title}
+              className="shadow-sm"
+            />
+          )}
         </div>
 
         {/* Support Module */}

@@ -3,6 +3,7 @@
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useI18n } from "@/lib/i18n/context";
+import VideoPlayer from "@/components/VideoPlayer";
 
 // Lazy load heavy sections
 const FeaturesSection = dynamic(() => import('@/components/home/FeaturesSection'), {
@@ -124,11 +125,12 @@ export default function Home() {
                 </div>
               </div>
               <div className="relative rounded-2xl border border-gray-200/80 bg-white p-6 shadow-lg">
-                <div className="aspect-video bg-gradient-to-br from-slate-100 via-slate-50 to-slate-100 rounded-xl flex items-center justify-center mb-4 border border-gray-200/50">
-                  <div className="text-center">
-                    <div className="text-4xl mb-2 opacity-60">▶</div>
-                    <p className="text-sm text-gray-500 font-medium">Video Player</p>
-                  </div>
+                <div className="mb-4">
+                  <VideoPlayer 
+                    url={null} 
+                    className="shadow-sm"
+                    light={true}
+                  />
                 </div>
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-2">
