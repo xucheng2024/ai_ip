@@ -123,8 +123,10 @@ export default function CertifyPage() {
           setCompressing(true)
           setCompressionProgress(0)
           
-          // Dynamically import and use compressVideo
-          const { compressVideo: compress } = await import('@/lib/utils/video-compress')
+          // Dynamically import the compression module
+          const videoCompressModule = await import('@/lib/utils/video-compress')
+          const compress = videoCompressModule.compressVideo
+          
           videoFile = await compress(file, {
             quality: compressionQuality,
             format: 'mp4',
@@ -136,7 +138,7 @@ export default function CertifyPage() {
           setCompressionProgress(100)
           setCompressing(false)
         } catch (compressionError) {
-          console.warn('Video compression failed, using original file:', compressionError)
+          console.error('Video compression failed:', compressionError)
           setCompressing(false)
           setCompressionProgress(0)
           // Continue with original file if compression fails

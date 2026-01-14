@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { format } from 'date-fns'
-import { getEvidenceStatus } from '@/components/EvidenceStatusBadge'
+import { getEvidenceStatus } from '@/lib/utils/evidence'
 import type { EvidenceStatus } from '@/lib/types'
 import CertificateContent from '@/components/CertificateContent'
 

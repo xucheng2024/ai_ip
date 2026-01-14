@@ -6,7 +6,8 @@ import { createClient } from '@/lib/supabase/client'
 import { format } from 'date-fns'
 import { generateFileHash } from '@/lib/utils/hash'
 import HashDisplay from '@/components/HashDisplay'
-import EvidenceStatusBadge, { getEvidenceStatus } from '@/components/EvidenceStatusBadge'
+import EvidenceStatusBadge from '@/components/EvidenceStatusBadge'
+import { getEvidenceStatus } from '@/lib/utils/evidence'
 import { useI18n } from '@/lib/i18n/context'
 
 interface VerificationResult {

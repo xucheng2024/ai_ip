@@ -1,56 +1,73 @@
 // Client-side video compression using ffmpeg.wasm
 // Lossless compression for Vercel + Supabase architecture
-import { FFmpeg } from '@ffmpeg/ffmpeg'
-import { fetchFile, toBlobURL } from '@ffmpeg/util'
+// Note: This module should only be imported dynamically on the client side
+import type { FFmpeg } from '@ffmpeg/ffmpeg'
+import type { fetchFile as FetchFileType, toBlobURL as ToBlobURLType } from '@ffmpeg/util'
 
 let ffmpegInstance: FFmpeg | null = null
 let isLoaded = false
 
 /**
  * Initialize FFmpeg instance (lazy loading)
+ * This must be called only from client-side code
  */
 async function getFFmpeg(): Promise<FFmpeg> {
+  if (typeof window === 'undefined') {
+    throw new Error('FFmpeg can only be used on the client side')
+  }
+
   if (ffmpegInstance && isLoaded) {
     return ffmpegInstance
   }
 
-  const ffmpeg = new FFmpeg()
-  const baseURL = 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/esm'
-
   try {
-    // Try loading with blob URLs first
-    const coreURL = await toBlobURL(`${baseURL}/ffmpeg-core.js`, 'text/javascript')
-    const wasmURL = await toBlobURL(`${baseURL}/ffmpeg-core.wasm`, 'application/wasm')
-    
-    await ffmpeg.load({
-      coreURL,
-      wasmURL,
-    })
+    // Dynamically import FFmpeg modules
+    const [{ FFmpeg: FFmpegClass }, { toBlobURL, fetchFile: _ }] = await Promise.all([
+      import('@ffmpeg/ffmpeg'),
+      import('@ffmpeg/util')
+    ])
 
-    ffmpegInstance = ffmpeg
-    isLoaded = true
-    return ffmpeg
-  } catch (error) {
-    console.error('Failed to load FFmpeg:', error)
-    // Reset state on error so we can retry
-    ffmpegInstance = null
-    isLoaded = false
-    
-    // Try alternative loading method (direct URLs)
+    const ffmpeg = new FFmpegClass()
+    const baseURL = 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/esm'
+
     try {
-      console.log('Retrying FFmpeg load with direct URLs...')
-      const ffmpegRetry = new FFmpeg()
-      await ffmpegRetry.load({
-        coreURL: `${baseURL}/ffmpeg-core.js`,
-        wasmURL: `${baseURL}/ffmpeg-core.wasm`,
+      // Try loading with blob URLs first
+      const coreURL = await toBlobURL(`${baseURL}/ffmpeg-core.js`, 'text/javascript')
+      const wasmURL = await toBlobURL(`${baseURL}/ffmpeg-core.wasm`, 'application/wasm')
+      
+      await ffmpeg.load({
+        coreURL,
+        wasmURL,
       })
-      ffmpegInstance = ffmpegRetry
+
+      ffmpegInstance = ffmpeg
       isLoaded = true
-      return ffmpegRetry
-    } catch (retryError) {
-      console.error('FFmpeg retry also failed:', retryError)
-      throw new Error('Failed to initialize video compression engine')
+      return ffmpeg
+    } catch (error) {
+      console.error('Failed to load FFmpeg:', error)
+      // Reset state on error so we can retry
+      ffmpegInstance = null
+      isLoaded = false
+      
+      // Try alternative loading method (direct URLs)
+      try {
+        console.log('Retrying FFmpeg load with direct URLs...')
+        const ffmpegRetry = new FFmpegClass()
+        await ffmpegRetry.load({
+          coreURL: `${baseURL}/ffmpeg-core.js`,
+          wasmURL: `${baseURL}/ffmpeg-core.wasm`,
+        })
+        ffmpegInstance = ffmpegRetry
+        isLoaded = true
+        return ffmpegRetry
+      } catch (retryError) {
+        console.error('FFmpeg retry also failed:', retryError)
+        throw new Error('Failed to initialize video compression engine')
+      }
     }
+  } catch (importError) {
+    console.error('Failed to import FFmpeg modules:', importError)
+    throw new Error('Failed to load video compression modules')
   }
 }
 
@@ -84,6 +101,9 @@ export async function compressVideo(
     const ffmpeg = await getFFmpeg()
     const inputFileName = 'input.' + (file.name.split('.').pop() || 'mp4')
     const outputFileName = `output.${format}`
+
+    // Import fetchFile dynamically
+    const { fetchFile } = await import('@ffmpeg/util')
 
     // Write input file to FFmpeg virtual file system
     await ffmpeg.writeFile(inputFileName, await fetchFile(file))
