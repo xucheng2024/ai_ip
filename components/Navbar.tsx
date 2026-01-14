@@ -20,7 +20,11 @@ export default async function Navbar() {
       } = await supabase.auth.getUser()
       
       if (authError) {
-        console.error('Navbar auth error:', authError.message)
+        // "Auth session missing!" is normal when user is not logged in
+        // Only log other errors in development
+        if (authError.message !== 'Auth session missing!' && process.env.NODE_ENV === 'development') {
+          console.warn('Navbar auth error:', authError.message)
+        }
       } else {
         user = authUser
       }
