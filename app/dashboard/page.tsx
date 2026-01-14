@@ -4,10 +4,17 @@ import Link from 'next/link'
 import { format } from 'date-fns'
 
 export default async function DashboardPage() {
-  const supabase = await createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  let user = null
+  try {
+    const supabase = await createClient()
+    const {
+      data: { user: authUser },
+    } = await supabase.auth.getUser()
+    user = authUser
+  } catch (error) {
+    console.error('Dashboard auth error:', error)
+    redirect('/auth/login')
+  }
 
   if (!user) {
     redirect('/auth/login')
