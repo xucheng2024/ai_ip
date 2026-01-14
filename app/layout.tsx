@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import NavbarSafe from "@/components/NavbarSafe";
+import I18nClientWrapper from "@/components/I18nClientWrapper";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -34,13 +35,15 @@ export default async function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {hasEnvVars ? <Navbar /> : <NavbarSafe user={null} />}
-        {!hasEnvVars && (
-          <div className="bg-red-50 border-b border-red-200 px-4 py-2 text-center text-sm text-red-800">
-            ⚠️ Missing environment variables. Please configure NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in Vercel.
-          </div>
-        )}
-        {children}
+        <I18nClientWrapper>
+          {hasEnvVars ? <Navbar /> : <NavbarSafe user={null} />}
+          {!hasEnvVars && (
+            <div className="bg-red-50 border-b border-red-200 px-4 py-2 text-center text-sm text-red-800">
+              ⚠️ Missing environment variables. Please configure NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in Vercel.
+            </div>
+          )}
+          {children}
+        </I18nClientWrapper>
       </body>
     </html>
   );

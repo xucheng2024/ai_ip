@@ -6,9 +6,11 @@ import { createClient } from '@/lib/supabase/client'
 import { generateFileHash } from '@/lib/utils/hash'
 import { extractVideoMetadata } from '@/lib/utils/video'
 import Link from 'next/link'
+import { useI18n } from '@/lib/i18n/context'
 
 export default function CertifyPage() {
   const router = useRouter()
+  const { t } = useI18n()
   const [file, setFile] = useState<File | null>(null)
   const [title, setTitle] = useState('')
   const [creatorName, setCreatorName] = useState('')
@@ -32,7 +34,7 @@ export default function CertifyPage() {
           setTitle(selectedFile.name.replace(/\.[^/.]+$/, ''))
         }
       } else {
-        setError('Please select a video file')
+        setError(t.certify.selectVideoFile)
       }
     }
   }
@@ -59,7 +61,7 @@ export default function CertifyPage() {
           setTitle(selectedFile.name.replace(/\.[^/.]+$/, ''))
         }
       } else {
-        setError('Please select a video file')
+        setError(t.certify.selectVideoFile)
       }
     }
   }
@@ -69,12 +71,12 @@ export default function CertifyPage() {
     setError('')
 
     if (!file) {
-      setError('Please select a video file')
+      setError(t.certify.selectVideoFile)
       return
     }
 
     if (!legalAgreement) {
-      setError('You must agree to the legal terms')
+      setError(t.certify.agreeToTerms)
       return
     }
 
@@ -87,7 +89,7 @@ export default function CertifyPage() {
       } = await supabase.auth.getUser()
 
       if (!user) {
-        throw new Error('Please login first')
+        throw new Error(t.certify.loginFirst)
       }
 
       // Check usage limits
@@ -101,7 +103,7 @@ export default function CertifyPage() {
         userProfile &&
         userProfile.monthly_certifications_used >= userProfile.monthly_certifications_limit
       ) {
-        throw new Error('Monthly certification limit reached. Please upgrade your plan.')
+        throw new Error(t.certify.limitReached)
       }
 
       // Generate file hash
@@ -157,9 +159,9 @@ export default function CertifyPage() {
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
       <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 lg:px-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 sm:text-4xl">Certify Your Video</h1>
+          <h1 className="text-3xl font-bold text-gray-900 sm:text-4xl">{t.certify.title}</h1>
           <p className="mt-2 text-base text-gray-600">
-            Upload your AI video to get a trusted timestamp and certification
+            {t.certify.subtitle}
           </p>
         </div>
 
@@ -173,7 +175,7 @@ export default function CertifyPage() {
           {/* File Upload */}
           <div>
             <label className="block text-sm font-medium text-gray-700">
-              Video File <span className="text-red-500">*</span>
+              {t.certify.videoFile} <span className="text-red-500">*</span>
             </label>
             <div className="mt-2">
               <div
@@ -200,12 +202,12 @@ export default function CertifyPage() {
                     className="cursor-pointer text-sm font-medium text-blue-600 hover:text-blue-700"
                   >
                     {file ? (
-                      <span className="block">Change video file</span>
+                      <span className="block">{t.certify.changeVideoFile}</span>
                     ) : (
-                      <span className="block">Click to upload or drag and drop</span>
+                      <span className="block">{t.certify.uploadOrDragDrop}</span>
                     )}
                   </label>
-                  <p className="mt-1 text-xs text-gray-500">MP4, MOV, AVI, or other video formats</p>
+                  <p className="mt-1 text-xs text-gray-500">{t.certify.fileFormats}</p>
                 </div>
               </div>
               {file && (
@@ -230,7 +232,7 @@ export default function CertifyPage() {
                       }}
                       className="text-sm text-red-600 hover:text-red-700"
                     >
-                      Remove
+                      {t.certify.remove}
                     </button>
                   </div>
                 </div>
@@ -241,7 +243,7 @@ export default function CertifyPage() {
           {/* Title */}
           <div>
             <label htmlFor="title" className="block text-sm font-medium text-gray-700">
-              Video Title <span className="text-red-500">*</span>
+              {t.certify.videoTitle} <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
@@ -250,14 +252,14 @@ export default function CertifyPage() {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               className="mt-2 block w-full rounded-lg border border-gray-300 px-4 py-2.5 text-gray-900 shadow-sm transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 sm:text-sm"
-              placeholder="Enter video title"
+              placeholder={t.certify.placeholderTitle}
             />
           </div>
 
           {/* Creator Name */}
           <div>
             <label htmlFor="creatorName" className="block text-sm font-medium text-gray-700">
-              Creator Name / Account <span className="text-red-500">*</span>
+              {t.certify.creatorName} <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
@@ -266,14 +268,14 @@ export default function CertifyPage() {
               value={creatorName}
               onChange={(e) => setCreatorName(e.target.value)}
               className="mt-2 block w-full rounded-lg border border-gray-300 px-4 py-2.5 text-gray-900 shadow-sm transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 sm:text-sm"
-              placeholder="Your name or account name"
+              placeholder={t.certify.placeholderCreator}
             />
           </div>
 
           {/* AI Tool */}
           <div>
             <label htmlFor="aiTool" className="block text-sm font-medium text-gray-700">
-              AI Tool <span className="text-gray-400">(Optional)</span>
+              {t.certify.aiTool} <span className="text-gray-400">{t.certify.aiToolOptional}</span>
             </label>
             <select
               id="aiTool"
@@ -281,18 +283,18 @@ export default function CertifyPage() {
               onChange={(e) => setAiTool(e.target.value)}
               className="mt-2 block w-full rounded-lg border border-gray-300 px-4 py-2.5 text-gray-900 shadow-sm transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 sm:text-sm"
             >
-              <option value="">Select AI Tool</option>
-              <option value="runway">Runway</option>
-              <option value="pika">Pika</option>
-              <option value="sora">Sora</option>
-              <option value="other">Other</option>
+              <option value="">{t.certify.selectAITool}</option>
+              <option value="runway">{t.certify.aiToolRunway}</option>
+              <option value="pika">{t.certify.aiToolPika}</option>
+              <option value="sora">{t.certify.aiToolSora}</option>
+              <option value="other">{t.certify.aiToolOther}</option>
             </select>
           </div>
 
           {/* Prompt */}
           <div>
             <label htmlFor="prompt" className="block text-sm font-medium text-gray-700">
-              Prompt <span className="text-gray-400">(Optional)</span>
+              {t.certify.prompt} <span className="text-gray-400">{t.certify.promptOptional}</span>
             </label>
             <textarea
               id="prompt"
@@ -300,7 +302,7 @@ export default function CertifyPage() {
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
               className="mt-2 block w-full rounded-lg border border-gray-300 px-4 py-2.5 text-gray-900 shadow-sm transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 sm:text-sm"
-              placeholder="Enter the prompt used to generate this video"
+              placeholder={t.certify.placeholderPrompt}
             />
             <div className="mt-2 flex items-center">
               <input
@@ -311,7 +313,7 @@ export default function CertifyPage() {
                 className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
               />
               <label htmlFor="promptPrivate" className="ml-2 text-sm text-gray-600">
-                Keep prompt private (store as hash only)
+                {t.certify.keepPromptPrivate}
               </label>
             </div>
           </div>
@@ -326,7 +328,7 @@ export default function CertifyPage() {
               className="mt-0.5 h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
             />
             <label htmlFor="hasThirdPartyMaterials" className="ml-3 text-sm text-gray-700">
-              This video contains third-party materials
+              {t.certify.thirdPartyMaterials}
             </label>
           </div>
 
@@ -342,10 +344,7 @@ export default function CertifyPage() {
                 className="mt-0.5 h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
               />
               <label htmlFor="legalAgreement" className="ml-3 text-sm leading-relaxed text-gray-700">
-                I declare that this content is my legal creation. I understand that this platform
-                provides creation time and content consistency proof (Authorship Evidence), and does not constitute
-                government copyright registration or legal judgment. <strong>This platform does not judge
-                the legality of infringement.</strong> <span className="text-red-500">*</span>
+                {t.certify.legalAgreement} <span className="text-red-500">*</span>
               </label>
             </div>
           </div>
@@ -355,7 +354,7 @@ export default function CertifyPage() {
               href="/dashboard"
               className="flex items-center justify-center rounded-lg border border-gray-300 bg-white px-6 py-2.5 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
             >
-              Cancel
+              {t.common.cancel}
             </Link>
             <button
               type="submit"
@@ -368,10 +367,10 @@ export default function CertifyPage() {
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                   </svg>
-                  Processing...
+                  {t.certify.processing}
                 </>
               ) : (
-                'Certify Video'
+                t.certify.certifyVideo
               )}
             </button>
           </div>

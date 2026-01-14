@@ -63,8 +63,8 @@ export async function GET(
 
         if (batchCerts) {
           const hashes = batchCerts
-            .map((c) => c.evidence_hash)
-            .filter((h): h is string => h !== null && h !== undefined)
+            .map((c: any) => c.evidence_hash)
+            .filter((h: any): h is string => h !== null && h !== undefined)
           const certHash = certification.evidence_hash
           if (certHash) {
             merkleProof = await generateMerkleProofAsync(hashes, certHash)

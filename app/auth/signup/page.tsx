@@ -4,9 +4,11 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
+import { useI18n } from '@/lib/i18n/context'
 
 export default function SignupPage() {
   const router = useRouter()
+  const { t } = useI18n()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [displayName, setDisplayName] = useState('')
@@ -58,10 +60,10 @@ export default function SignupPage() {
       <div className="w-full max-w-md space-y-8">
         <div className="text-center">
           <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-            Create your AIVerify account
+            {t.auth.signupTitle}
           </h2>
           <p className="mt-2 text-sm text-gray-600">
-            Get started with AI video certification today
+            {t.auth.signupSubtitle}
           </p>
         </div>
         <form className="mt-8 space-y-6 rounded-xl bg-white p-8 shadow-lg" onSubmit={handleSignup}>
@@ -73,7 +75,7 @@ export default function SignupPage() {
           <div className="space-y-5">
             <div>
               <label htmlFor="displayName" className="block text-sm font-medium text-gray-700">
-                Display Name <span className="text-gray-400">(optional)</span>
+                {t.auth.displayName} <span className="text-gray-400">{t.auth.displayNameOptional}</span>
               </label>
               <input
                 id="displayName"
@@ -82,12 +84,12 @@ export default function SignupPage() {
                 value={displayName}
                 onChange={(e) => setDisplayName(e.target.value)}
                 className="mt-2 block w-full rounded-lg border border-gray-300 px-4 py-2.5 text-gray-900 placeholder-gray-400 shadow-sm transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 sm:text-sm"
-                placeholder="Your name"
+                placeholder={t.auth.placeholderName}
               />
             </div>
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                Email address
+                {t.auth.email}
               </label>
               <input
                 id="email"
@@ -98,12 +100,12 @@ export default function SignupPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="mt-2 block w-full rounded-lg border border-gray-300 px-4 py-2.5 text-gray-900 placeholder-gray-400 shadow-sm transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 sm:text-sm"
-                placeholder="you@example.com"
+                placeholder={t.auth.placeholderEmail}
               />
             </div>
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                Password
+                {t.auth.password}
               </label>
               <input
                 id="password"
@@ -114,10 +116,10 @@ export default function SignupPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="mt-2 block w-full rounded-lg border border-gray-300 px-4 py-2.5 text-gray-900 placeholder-gray-400 shadow-sm transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 sm:text-sm"
-                placeholder="Minimum 6 characters"
+                placeholder={t.auth.placeholderPasswordNew}
                 minLength={6}
               />
-              <p className="mt-1 text-xs text-gray-500">Password must be at least 6 characters</p>
+              <p className="mt-1 text-xs text-gray-500">{t.auth.passwordMinLength}</p>
             </div>
           </div>
 
@@ -133,18 +135,18 @@ export default function SignupPage() {
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                   </svg>
-                  Creating account...
+                  {t.auth.creatingAccount}
                 </>
               ) : (
-                'Sign up'
+                t.auth.signUp
               )}
             </button>
           </div>
 
           <div className="text-center text-sm">
-            <span className="text-gray-600">Already have an account? </span>
+            <span className="text-gray-600">{t.auth.alreadyHaveAccount} </span>
             <Link href="/auth/login" className="font-semibold text-blue-600 transition-colors hover:text-blue-700">
-              Sign in
+              {t.auth.signIn}
             </Link>
           </div>
         </form>

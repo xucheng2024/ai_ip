@@ -87,8 +87,8 @@ export async function POST(request: NextRequest) {
 
     // Extract evidence hashes (these are the Merkle tree leaves)
     const evidenceHashes = pendingCerts
-      .map((cert) => cert.evidence_hash)
-      .filter((hash): hash is string => hash !== null && hash !== undefined)
+      .map((cert: any) => cert.evidence_hash)
+      .filter((hash: any): hash is string => hash !== null && hash !== undefined)
 
     if (evidenceHashes.length === 0) {
       return NextResponse.json({
@@ -154,8 +154,8 @@ export async function POST(request: NextRequest) {
     
     // Update certifications with batch reference and Merkle proofs in parallel
     const updatePromises = pendingCerts
-      .filter((cert) => cert.evidence_hash && proofsMap.has(cert.evidence_hash))
-      .map(async (cert) => {
+      .filter((cert: any) => cert.evidence_hash && proofsMap.has(cert.evidence_hash))
+      .map(async (cert: any) => {
         const proof = proofsMap.get(cert.evidence_hash!)
         if (!proof) return { success: false, certId: cert.id }
 
@@ -182,7 +182,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Log events for each certification in parallel
-    const logPromises = pendingCerts.map(async (cert) => {
+    const logPromises = pendingCerts.map(async (cert: any) => {
       try {
         await logEvent(cert.id, 'anchored_on_chain', {
           batchId: batch.id,
