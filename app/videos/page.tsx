@@ -51,35 +51,35 @@ export default function VideosPage() {
   ]
   
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 via-white to-gray-50">
-      <main className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-        <div className="text-center">
-          <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50/50">
+      <main className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+        <div className="text-center animate-fade-in">
+          <h1 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
             {t.common.videos}
           </h1>
-          <p className="mt-6 text-lg text-gray-600">
+          <p className="mt-6 text-base text-gray-600 leading-relaxed">
             {t.home.videosPageDesc || "Verified AI video gallery coming soon."}
           </p>
         </div>
 
         {/* Demo Videos Section */}
         {(t.home.videosPageDemoTitle || t.home.videosPageDemoDesc) && (
-          <div className="mt-16">
-            <div className="text-center mb-8">
-              <h2 className="text-2xl font-bold text-gray-900 sm:text-3xl">
+          <div className="mt-20">
+            <div className="text-center mb-10">
+              <h2 className="text-xl font-bold text-gray-900 sm:text-2xl">
                 {t.home.videosPageDemoTitle || "AIVerify Sample Certifications"}
               </h2>
-              <p className="mt-2 text-base text-gray-600">
+              <p className="mt-3 text-sm text-gray-600">
                 {t.home.videosPageDemoDesc || "Explore example certifications to see how proof pages work."}
               </p>
             </div>
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid grid-cols-1 gap-7 sm:grid-cols-2 lg:grid-cols-3">
               {demoVideos.map((video) => (
                 <div
                   key={video.id}
-                  className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm transition-all hover:shadow-md"
+                  className="rounded-xl border border-gray-200/80 bg-white p-7 shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
                 >
-                  <div className="aspect-video bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg flex items-center justify-center mb-4 relative overflow-hidden">
+                  <div className="aspect-video bg-gradient-to-br from-slate-100 via-slate-50 to-slate-100 rounded-xl flex items-center justify-center mb-4 relative overflow-hidden border border-gray-200/50">
                     <div className="text-center">
                       <div className="text-4xl mb-2">▶</div>
                       <p className="text-xs text-gray-500">{t.home.videoPreview || 'Video Preview'}</p>
@@ -110,7 +110,7 @@ export default function VideosPage() {
                   </div>
                   <Link
                     href={`/certificate/${video.id}`}
-                    className="inline-flex items-center w-full justify-center rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition-all hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                    className="inline-flex items-center w-full justify-center rounded-lg bg-gradient-to-r from-blue-600 to-blue-700 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:from-blue-700 hover:to-blue-800 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:ring-offset-2"
                   >
                     {t.home.viewProofPage || 'View Proof Page'}
                     <svg className="ml-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -123,10 +123,10 @@ export default function VideosPage() {
           </div>
         )}
 
-        <div className="mt-16 text-center">
+        <div className="mt-20 text-center">
           <Link
             href="/verify"
-            className="inline-flex items-center rounded-lg bg-blue-600 px-6 py-3 text-base font-semibold text-white shadow-lg transition-all hover:bg-blue-700 hover:shadow-xl"
+            className="inline-flex items-center rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 px-8 py-3.5 text-base font-semibold text-white shadow-lg transition-all duration-200 hover:from-blue-700 hover:to-blue-800 hover:shadow-xl hover:scale-[1.02]"
           >
             {t.common.verify} <span aria-hidden="true" className="ml-2">→</span>
           </Link>

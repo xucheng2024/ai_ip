@@ -177,12 +177,12 @@ export default async function CertificatePage({ params }: { params: Promise<{ id
   ]
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
-      <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
-        <div className="mb-6">
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50/50">
+      <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6 lg:px-8">
+        <div className="mb-8">
           <Link
             href={isDemo ? "/videos" : "/dashboard"}
-            className="inline-flex items-center text-sm font-medium text-blue-600 transition-colors hover:text-blue-700"
+            className="inline-flex items-center text-sm font-medium text-blue-600 transition-all duration-200 hover:text-blue-700"
           >
             <svg className="mr-1 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -191,15 +191,15 @@ export default async function CertificatePage({ params }: { params: Promise<{ id
           </Link>
         </div>
 
-        <div className="rounded-xl bg-white p-8 shadow-lg sm:p-10">
-          <div className="mb-8 text-center">
-            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-blue-100">
+        <div className="rounded-2xl border border-gray-200/80 bg-white p-8 shadow-lg sm:p-10 animate-fade-in">
+          <div className="mb-10 text-center">
+            <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-blue-100 shadow-sm">
               <svg className="h-8 w-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
-            <h1 className="text-3xl font-bold text-gray-900 sm:text-4xl">Authorship Evidence Certificate</h1>
-            <p className="mt-2 text-base text-gray-600">
+            <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">Authorship Evidence Certificate</h1>
+            <p className="mt-4 text-sm text-gray-600 leading-relaxed">
               Creation Proof & Content Fingerprint
             </p>
             <div className="mt-4 flex justify-center">
@@ -207,12 +207,12 @@ export default async function CertificatePage({ params }: { params: Promise<{ id
             </div>
           </div>
 
-          <div className="space-y-6 border-t border-gray-200 pt-6">
+          <div className="space-y-7 border-t border-gray-200 pt-7">
             {/* Creation Timeline */}
             <CreationTimeline events={timelineEvents} />
 
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+              <div className="rounded-xl border border-gray-200/80 bg-gray-50/80 p-4 shadow-sm">
                 <p className="text-xs font-medium uppercase tracking-wide text-gray-500">Certification ID</p>
                 <p className="mt-2 font-mono text-base font-semibold text-gray-900 break-all">
                   {certification.id}

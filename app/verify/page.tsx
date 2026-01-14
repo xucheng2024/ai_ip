@@ -150,16 +150,16 @@ function VerifyPageContent() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50/50">
       <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
-        <div className="mb-12 text-center">
-          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full border-2 border-gray-200">
-            <svg className="h-6 w-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <div className="mb-12 text-center animate-fade-in">
+          <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-full border-2 border-gray-200/80 bg-white shadow-sm">
+            <svg className="h-7 w-7 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
             </svg>
           </div>
-          <h1 className="text-2xl font-semibold text-gray-900 sm:text-3xl">{t.verify.title}</h1>
-          <p className="mt-2 text-sm text-gray-500">
+          <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">{t.verify.title}</h1>
+          <p className="mt-4 text-sm text-gray-600 leading-relaxed">
             {t.verify.subtitle}
           </p>
           {t.verify.whoUsesThis && (
@@ -169,10 +169,10 @@ function VerifyPageContent() {
           )}
         </div>
 
-        <div className="space-y-6">
+        <div className="space-y-7">
           {/* Verify by ID */}
-          <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-            <h2 className="mb-4 text-sm font-semibold text-gray-900">{t.verify.verifyByIdTitle || t.verify.verifyById}</h2>
+          <div className="rounded-xl border border-gray-200/80 bg-white p-7 shadow-sm">
+            <h2 className="mb-5 text-sm font-semibold text-gray-900">{t.verify.verifyByIdTitle || t.verify.verifyById}</h2>
             <div className="flex flex-col gap-3 sm:flex-row">
               <input
                 type="text"
@@ -180,12 +180,12 @@ function VerifyPageContent() {
                 onChange={(e) => setCertificationId(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleVerifyById()}
                 placeholder={t.verify.enterCertId}
-                className="flex-1 rounded-lg border border-gray-300 px-4 py-2.5 text-gray-900 shadow-sm transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 sm:text-sm"
+                className="flex-1 rounded-lg border border-gray-300/80 px-4 py-2.5 text-gray-900 shadow-sm transition-all duration-200 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:ring-offset-0 sm:text-sm"
               />
               <button
                 onClick={handleVerifyById}
                 disabled={loading || !certificationId.trim()}
-                className="rounded-lg bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white transition-all hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="rounded-lg bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:from-blue-700 hover:to-blue-800 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {t.verify.verify}
               </button>
@@ -193,8 +193,8 @@ function VerifyPageContent() {
           </div>
 
           {/* Verify by File */}
-          <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-            <h2 className="mb-4 text-sm font-semibold text-gray-900">{t.verify.verifyByFileTitle || t.verify.verifyByFile}</h2>
+          <div className="rounded-xl border border-gray-200/80 bg-white p-7 shadow-sm">
+            <h2 className="mb-5 text-sm font-semibold text-gray-900">{t.verify.verifyByFileTitle || t.verify.verifyByFile}</h2>
             <div className="flex flex-col gap-3 sm:flex-row">
               <div className="flex-1">
                 <input
@@ -212,7 +212,7 @@ function VerifyPageContent() {
               <button
                 onClick={handleVerifyByFile}
                 disabled={loading || !file}
-                className="rounded-lg bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white transition-all hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="rounded-lg bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:from-blue-700 hover:to-blue-800 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {t.verify.verify}
               </button>
@@ -236,11 +236,11 @@ function VerifyPageContent() {
           )}
 
           {result && (
-            <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-              <h2 className="mb-6 text-sm font-semibold text-gray-900">Verification Result</h2>
+            <div className="rounded-xl border border-gray-200/80 bg-white p-7 shadow-sm animate-fade-in">
+              <h2 className="mb-7 text-sm font-semibold text-gray-900">Verification Result</h2>
               {result.exists ? (
-                <div className="space-y-6">
-                  <div className="rounded-lg border border-green-200 bg-green-50 p-4">
+                <div className="space-y-7">
+                  <div className="rounded-xl border border-green-200/80 bg-green-50/80 p-4 shadow-sm">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center">
                         <svg className="h-5 w-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -293,7 +293,7 @@ function VerifyPageContent() {
                   <div className="pt-2">
                     <a
                       href={`/certificate/${result.certification?.id}`}
-                      className="inline-flex items-center rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                      className="inline-flex items-center rounded-lg bg-gradient-to-r from-blue-600 to-blue-700 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:from-blue-700 hover:to-blue-800 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:ring-offset-2"
                     >
                       View Full Certificate
                       <svg className="ml-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">

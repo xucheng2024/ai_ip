@@ -2,15 +2,22 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #171717;
-  --primary: #2563eb;
-  --primary-hover: #1d4ed8;
+  --foreground: #0f172a;
+  --primary: #3b82f6;
+  --primary-hover: #2563eb;
+  --primary-light: #dbeafe;
   --secondary: #64748b;
   --success: #10b981;
   --warning: #f59e0b;
   --error: #ef4444;
-  --border: #e5e7eb;
-  --muted: #6b7280;
+  --border: #e2e8f0;
+  --muted: #64748b;
+  --card-bg: #ffffff;
+  --card-border: #e2e8f0;
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
 }
 
 @theme inline {
@@ -22,8 +29,11 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #0f172a;
+    --foreground: #f1f5f9;
+    --card-bg: #1e293b;
+    --card-border: #334155;
+    --border: #334155;
   }
 }
 
@@ -33,16 +43,26 @@ body {
   font-family: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  letter-spacing: -0.01em;
 }
 
 /* Smooth transitions */
 button, a, input, select, textarea {
-  @apply transition-colors duration-200;
+  @apply transition-all duration-200 ease-out;
 }
 
 /* Focus styles */
 *:focus-visible {
-  @apply outline-none ring-2 ring-blue-500 ring-offset-2;
+  @apply outline-none ring-2 ring-blue-500/50 ring-offset-2 ring-offset-white;
+}
+
+/* Modern card styles */
+.card {
+  @apply rounded-xl border border-gray-200/80 bg-white shadow-sm transition-all duration-200;
+}
+
+.card:hover {
+  @apply shadow-md border-gray-300/80;
 }
 
 /* Loading spinner */
@@ -54,4 +74,25 @@ button, a, input, select, textarea {
 
 .animate-spin {
   animation: spin 1s linear infinite;
+}
+
+/* Subtle fade-in animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-out;
+}
+
+/* Gradient text */
+.gradient-text {
+  @apply bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 bg-clip-text text-transparent;
 }

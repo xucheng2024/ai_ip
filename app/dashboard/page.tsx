@@ -46,18 +46,18 @@ export default async function DashboardPage() {
   const isNearLimit = percentage >= 80
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 sm:text-4xl">Dashboard</h1>
-          <p className="mt-2 text-base text-gray-600">
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50/50">
+      <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+        <div className="mb-10">
+          <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">Dashboard</h1>
+          <p className="mt-3 text-sm text-gray-600">
             Welcome back, <span className="font-semibold text-gray-900">{userProfile?.display_name || user.email}</span>
           </p>
         </div>
 
         {/* Usage Stats */}
-        <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
-          <div className="rounded-xl bg-white p-6 shadow-sm transition-shadow hover:shadow-md">
+        <div className="mb-10 grid grid-cols-1 gap-5 sm:grid-cols-3">
+          <div className="rounded-xl border border-gray-200/80 bg-white p-7 shadow-sm transition-all duration-200 hover:shadow-md">
             <p className="text-sm font-medium text-gray-600">Subscription Tier</p>
             <p className="mt-2 text-2xl font-bold text-gray-900 capitalize">
               {userProfile?.subscription_tier || 'free'}
@@ -68,11 +68,11 @@ export default async function DashboardPage() {
               {userProfile?.subscription_tier === 'pro' && 'Unlimited certifications'}
             </p>
           </div>
-          <div className="rounded-xl bg-white p-6 shadow-sm transition-shadow hover:shadow-md">
+          <div className="rounded-xl border border-gray-200/80 bg-white p-7 shadow-sm transition-all duration-200 hover:shadow-md">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">This Month</p>
-                <p className="mt-2 text-2xl font-bold text-gray-900">
+                <p className="mt-3 text-2xl font-bold text-gray-900">
                   {used} / {limit === Infinity ? '∞' : limit}
                 </p>
               </div>
@@ -113,10 +113,10 @@ export default async function DashboardPage() {
               </div>
             )}
           </div>
-          <div className="rounded-xl bg-gradient-to-br from-blue-600 to-blue-700 p-6 shadow-sm transition-shadow hover:shadow-md">
+          <div className="rounded-xl bg-gradient-to-br from-blue-600 to-blue-700 p-7 shadow-lg transition-all duration-200 hover:shadow-xl hover:-translate-y-0.5">
             <Link
               href="/certify"
-              className="flex h-full items-center justify-center rounded-lg bg-white px-4 py-3 text-center text-sm font-semibold text-blue-600 transition-all hover:bg-blue-50"
+              className="flex h-full items-center justify-center rounded-lg bg-white px-4 py-3.5 text-center text-sm font-semibold text-blue-600 transition-all duration-200 hover:bg-blue-50 hover:scale-[1.02]"
             >
               Certify New Video
             </Link>
@@ -124,14 +124,14 @@ export default async function DashboardPage() {
         </div>
 
         {/* Recent Certifications */}
-        <div className="rounded-xl bg-white shadow-sm">
-          <div className="border-b border-gray-200 px-6 py-4">
-            <h2 className="text-lg font-semibold text-gray-900">Recent Certifications</h2>
+        <div className="rounded-xl border border-gray-200/80 bg-white shadow-sm">
+          <div className="border-b border-gray-200/80 px-7 py-5">
+            <h2 className="text-base font-semibold text-gray-900">Recent Certifications</h2>
           </div>
-          <div className="divide-y divide-gray-200">
+          <div className="divide-y divide-gray-200/80">
             {certifications && certifications.length > 0 ? (
               certifications.map((cert: any) => (
-                <div key={cert.id} className="px-6 py-4 transition-colors hover:bg-gray-50">
+                <div key={cert.id} className="px-7 py-5 transition-all duration-200 hover:bg-gray-50/50">
                   <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
                     <div className="flex-1">
                       <p className="text-base font-semibold text-gray-900">
@@ -147,13 +147,13 @@ export default async function DashboardPage() {
                     <div className="flex gap-2">
                       <Link
                         href={`/certificate/${cert.id}`}
-                        className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                        className="rounded-lg bg-gradient-to-r from-blue-600 to-blue-700 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:from-blue-700 hover:to-blue-800 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:ring-offset-2"
                       >
                         View
                       </Link>
                       <Link
                         href={`/verify?id=${cert.id}`}
-                        className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+                        className="rounded-lg border border-gray-300/80 bg-white px-4 py-2 text-sm font-semibold text-gray-700 shadow-sm transition-all duration-200 hover:bg-gray-50 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500/50 focus:ring-offset-2"
                       >
                         Verify
                       </Link>
@@ -172,7 +172,7 @@ export default async function DashboardPage() {
                 <p className="mt-1 text-sm text-gray-500">Get started by certifying your first video</p>
                 <Link
                   href="/certify"
-                  className="mt-6 inline-block rounded-lg bg-blue-600 px-6 py-3 text-sm font-semibold text-white transition-all hover:bg-blue-700 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                  className="mt-6 inline-block rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-3 text-sm font-semibold text-white shadow-lg transition-all duration-200 hover:from-blue-700 hover:to-blue-800 hover:shadow-xl hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:ring-offset-2"
                 >
                   Certify Your First Video
                 </Link>

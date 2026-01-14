@@ -157,16 +157,16 @@ export default function CertifyPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
-      <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 lg:px-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 sm:text-4xl">{t.certify.title}</h1>
-          <p className="mt-2 text-base text-gray-600">
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50/50">
+      <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6 lg:px-8">
+        <div className="mb-10">
+          <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">{t.certify.title}</h1>
+          <p className="mt-3 text-sm text-gray-600 leading-relaxed">
             {t.certify.subtitle}
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6 rounded-xl bg-white p-6 shadow-lg sm:p-8">
+        <form onSubmit={handleSubmit} className="space-y-7 rounded-2xl border border-gray-200/80 bg-white p-7 shadow-lg sm:p-9">
           {error && (
             <div className="rounded-lg border border-red-200 bg-red-50 p-4">
               <p className="text-sm font-medium text-red-800">{error}</p>
@@ -183,10 +183,10 @@ export default function CertifyPage() {
                 onDragOver={handleDragOver}
                 onDragLeave={handleDragLeave}
                 onDrop={handleDrop}
-                className={`flex items-center justify-center rounded-lg border-2 border-dashed p-6 transition-colors ${
+                className={`flex items-center justify-center rounded-xl border-2 border-dashed p-8 transition-all duration-200 ${
                   isDragging
-                    ? 'border-blue-500 bg-blue-100'
-                    : 'border-gray-300 bg-gray-50 hover:border-blue-400 hover:bg-blue-50'
+                    ? 'border-blue-500 bg-blue-50/80 shadow-inner'
+                    : 'border-gray-300/80 bg-gray-50/50 hover:border-blue-400 hover:bg-blue-50/50'
                 }`}
               >
                 <div className="text-center">
@@ -212,10 +212,10 @@ export default function CertifyPage() {
                 </div>
               </div>
               {file && (
-                <div className="mt-3 rounded-lg border border-gray-200 bg-gray-50 p-3">
+                <div className="mt-3 rounded-xl border border-gray-200/80 bg-gray-50/80 p-4 shadow-sm">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-3">
-                      <div className="flex h-10 w-10 items-center justify-center rounded bg-blue-100">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-100">
                         <svg className="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
                         </svg>
@@ -252,7 +252,7 @@ export default function CertifyPage() {
               required
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="mt-2 block w-full rounded-lg border border-gray-300 px-4 py-2.5 text-gray-900 shadow-sm transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 sm:text-sm"
+              className="mt-2 block w-full rounded-lg border border-gray-300/80 px-4 py-2.5 text-gray-900 shadow-sm transition-all duration-200 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:ring-offset-0 sm:text-sm"
               placeholder={t.certify.placeholderTitle}
             />
           </div>
@@ -388,7 +388,7 @@ export default function CertifyPage() {
             <button
               type="submit"
               disabled={loading}
-              className="flex items-center justify-center rounded-lg bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-blue-700 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex items-center justify-center rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-2.5 text-sm font-semibold text-white shadow-lg transition-all duration-200 hover:from-blue-700 hover:to-blue-800 hover:shadow-xl hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
             >
               {loading ? (
                 <>
