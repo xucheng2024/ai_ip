@@ -15,26 +15,35 @@ export default async function DashboardPage() {
   let user = null
   let authError = null
   
+  console.log('[Dashboard] Attempting to get user...')
   const userResult = await supabase.auth.getUser()
   user = userResult.data.user
   authError = userResult.error
+  console.log('[Dashboard] getUser result:', { hasUser: !!user, error: authError?.message })
 
   // If getUser fails, try getSession as fallback (handles timing issues)
   if (!user && authError?.message?.includes('session')) {
+    console.log('[Dashboard] Trying session fallback...')
     const { data: sessionData } = await supabase.auth.getSession()
+    console.log('[Dashboard] Session check:', { hasSession: !!sessionData.session })
     if (sessionData.session) {
+      console.log('[Dashboard] Session found, retrying getUser...')
       const retryResult = await supabase.auth.getUser()
       user = retryResult.data.user
       authError = retryResult.error
+      console.log('[Dashboard] Retry result:', { hasUser: !!user, error: authError?.message })
     }
   }
 
   if (authError || !user) {
     if (process.env.NODE_ENV === 'development') {
       console.error('Dashboard auth error:', authError?.message || 'No user')
+      console.error('[Dashboard] Redirecting to login...')
     }
     redirect('/auth/login')
   }
+  
+  console.log('[Dashboard] User authenticated:', user.id)
 
   // Ensure user exists in public.users table (fallback if trigger didn't fire)
   let userProfile

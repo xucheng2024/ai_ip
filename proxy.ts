@@ -28,7 +28,19 @@ export async function proxy(request: NextRequest) {
   })
 
   // Refresh session if expired - this is important for maintaining auth state
-  await supabase.auth.getUser()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  console.log('[Proxy] Path:', request.nextUrl.pathname, 'User:', user?.id || 'none')
+
+  // If user is not signed in and trying to access protected routes, redirect to login
+  if (!user && request.nextUrl.pathname.startsWith('/dashboard')) {
+    const url = request.nextUrl.clone()
+    url.pathname = '/auth/login'
+    console.log('[Proxy] Redirecting to login - no user found for protected route')
+    return NextResponse.redirect(url)
+  }
 
   return supabaseResponse
 }

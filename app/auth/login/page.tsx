@@ -19,20 +19,103 @@ export default function LoginPage() {
     setError('')
     setLoading(true)
 
+    // Create a timeout to prevent infinite loading
+    const timeoutId = setTimeout(() => {
+      console.error('Login timeout after 30 seconds')
+      setError('Login timeout. Please check your network connection and try again.')
+      setLoading(false)
+    }, 30000)
+
     try {
+      // Validate inputs
+      if (!email || !password) {
+        clearTimeout(timeoutId)
+        setError('Email and password are required')
+        setLoading(false)
+        return
+      }
+
+      console.log('Attempting login for:', email)
+      
       const supabase = createClient()
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
+      console.log('Supabase client created')
+      
+      console.log('Calling signInWithPassword...')
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: email.trim(),
         password,
       })
+      console.log('signInWithPassword completed', { hasData: !!data, hasError: !!error })
 
-      if (error) throw error
+      if (error) {
+        console.error('Login error:', error)
+        clearTimeout(timeoutId)
+        throw error
+      }
 
-      router.push('/dashboard')
-      router.refresh()
+      console.log('Login successful, user:', data.user?.id)
+      
+      // Wait for session to be fully established and cookies to be written
+      console.log('Waiting for session to be established...')
+      await new Promise(resolve => setTimeout(resolve, 500))
+      
+      // Verify session exists
+      console.log('Verifying session...')
+      const { data: sessionData } = await supabase.auth.getSession()
+      console.log('Session check:', { hasSession: !!sessionData.session })
+      
+      if (!sessionData.session) {
+        console.warn('Session not found after login, retrying...')
+        await new Promise(resolve => setTimeout(resolve, 1000))
+        const { data: retrySessionData } = await supabase.auth.getSession()
+        if (!retrySessionData.session) {
+          throw new Error('Session not established after login')
+        }
+        console.log('Session found on retry')
+      }
+      
+      // Ensure user exists in public.users before redirecting
+      if (data.user) {
+        try {
+          console.log('Ensuring user exists in database...')
+          const { error: userError } = await supabase
+            .from('users')
+            .upsert({
+              id: data.user.id,
+              email: data.user.email || email.trim(),
+              display_name: data.user.user_metadata?.display_name || null,
+              account_type: 'creator',
+            }, {
+              onConflict: 'id'
+            })
+          
+          if (userError) {
+            console.warn('Failed to ensure user exists:', userError)
+            // Continue anyway - dashboard will handle it
+          } else {
+            console.log('User ensured in database')
+          }
+        } catch (userErr) {
+          console.warn('Error ensuring user exists:', userErr)
+          // Continue anyway
+        }
+      }
+
+      // Clear timeout before redirect
+      clearTimeout(timeoutId)
+      
+      // Wait for cookies to be fully written
+      console.log('Waiting for cookies to be written...')
+      await new Promise(resolve => setTimeout(resolve, 500))
+      
+      // Redirect to dashboard - use window.location for full page reload
+      // This ensures server-side rendering picks up the new session cookies
+      console.log('Redirecting to dashboard...')
+      window.location.href = '/dashboard'
     } catch (err: any) {
-      setError(err.message || t.errors.loginFailed)
-    } finally {
+      clearTimeout(timeoutId)
+      console.error('Login failed:', err)
+      setError(err.message || err.error_description || t.errors.loginFailed)
       setLoading(false)
     }
   }
@@ -93,6 +176,13 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
+              onClick={(e) => {
+                console.log('Login button clicked', { loading, email: !!email, password: !!password })
+                if (loading) {
+                  e.preventDefault()
+                  console.log('Button click prevented - already loading')
+                }
+              }}
               className="flex w-full items-center justify-center rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 px-4 py-2.5 text-sm font-semibold text-white shadow-lg transition-all duration-200 hover:from-blue-700 hover:to-blue-800 hover:shadow-xl hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
             >
               {loading ? (
