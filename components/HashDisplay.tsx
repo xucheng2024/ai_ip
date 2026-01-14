@@ -27,7 +27,7 @@ export default function HashDisplay({ hash, className = '', collapsible = false,
 
   // Generate heatmap colors based on character values
   const getHeatmapColor = (segment: string) => {
-    const avg = segment.split('').reduce((sum, char) => {
+    const avg = segment.split('').reduce((sum: number, char) => {
       const val = parseInt(char, 16) || 0
       return sum + val
     }, 0) / segment.length

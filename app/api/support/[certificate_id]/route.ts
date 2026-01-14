@@ -53,10 +53,10 @@ export async function GET(
     // Calculate stats
     const stats: SupportStats = {
       total_supports: events?.length || 0,
-      total_amount: events?.reduce((sum, e) => sum + Number(e.total_amount), 0) || 0,
-      creator_total: events?.reduce((sum, e) => sum + Number(e.creator_amount), 0) || 0,
-      promoter_total: events?.reduce((sum, e) => sum + Number(e.promoter_amount), 0) || 0,
-      platform_total: events?.reduce((sum, e) => sum + Number(e.platform_fee), 0) || 0,
+      total_amount: events?.reduce((sum: number, e: any) => sum + Number(e.total_amount), 0) || 0,
+      creator_total: events?.reduce((sum: number, e: any) => sum + Number(e.creator_amount), 0) || 0,
+      promoter_total: events?.reduce((sum: number, e: any) => sum + Number(e.promoter_amount), 0) || 0,
+      platform_total: events?.reduce((sum: number, e: any) => sum + Number(e.platform_fee), 0) || 0,
     }
 
     return NextResponse.json({
