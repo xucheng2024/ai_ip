@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import DashboardContent from '@/components/DashboardContent'
+import { ensureUserExists } from '@/lib/utils/user'
 
 export default async function DashboardPage() {
   const supabase = await createClient()
@@ -35,30 +36,39 @@ export default async function DashboardPage() {
     redirect('/auth/login')
   }
 
-  // Get user profile and certifications in parallel
-  const [userProfileResult, certificationsResult] = await Promise.all([
-    supabase
+  // Ensure user exists in public.users table (fallback if trigger didn't fire)
+  let userProfile
+  try {
+    userProfile = await ensureUserExists(supabase, {
+      id: user.id,
+      email: user.email,
+      user_metadata: user.user_metadata,
+    })
+  } catch (err) {
+    console.error('Failed to ensure user exists in dashboard:', err)
+    // Try to fetch user profile anyway
+    const { data } = await supabase
       .from('users')
       .select('*')
       .eq('id', user.id)
-      .single(),
-    supabase
-      .from('certifications')
-      .select(`
-        *,
-        videos (
-          id,
-          title,
-          original_filename,
-          created_at
-        )
-      `)
-      .order('created_at', { ascending: false })
-      .limit(10),
-  ])
+      .single()
+    userProfile = data
+  }
 
-  const { data: userProfile } = userProfileResult
-  const { data: certifications } = certificationsResult
+  // Get certifications
+  const { data: certifications } = await supabase
+    .from('certifications')
+    .select(`
+      *,
+      videos (
+        id,
+        title,
+        original_filename,
+        created_at
+      )
+    `)
+    .order('created_at', { ascending: false })
+    .limit(10)
 
   const used = userProfile?.monthly_certifications_used || 0
   const limit = userProfile?.monthly_certifications_limit || 1

@@ -100,13 +100,15 @@ export default function CertifyPage() {
         throw new Error(t.certify.loginFirst)
       }
 
-      // Check usage limits
+      // Check usage limits (user will be created by API if missing)
       const { data: userProfile } = await supabase
         .from('users')
         .select('*')
         .eq('id', user.id)
         .single()
 
+      // If userProfile doesn't exist, API route will create it
+      // Just check limit if profile exists
       if (
         userProfile &&
         userProfile.monthly_certifications_used >= userProfile.monthly_certifications_limit

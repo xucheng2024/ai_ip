@@ -73,7 +73,30 @@ export default function SignupPage() {
         return
       }
 
-      // User profile is automatically created by database trigger
+      // Ensure user exists in public.users (fallback if trigger didn't fire)
+      if (data.user) {
+        try {
+          const { error: userError } = await supabase
+            .from('users')
+            .upsert({
+              id: data.user.id,
+              email: data.user.email || email.trim(),
+              display_name: displayName || null,
+              account_type: 'creator',
+            }, {
+              onConflict: 'id'
+            })
+          
+          if (userError) {
+            console.error('Failed to ensure user exists after signup:', userError)
+            // Continue anyway - dashboard will handle it
+          }
+        } catch (err) {
+          console.error('Error ensuring user exists:', err)
+          // Continue anyway - dashboard will handle it
+        }
+      }
+
       // Redirect to dashboard
       setLoading(false)
       window.location.href = '/dashboard'

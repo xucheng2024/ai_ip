@@ -16,6 +16,7 @@ import {
   sanitizeFilename,
   sanitizeFileExtension,
 } from '@/lib/utils/validation'
+import { ensureUserExists } from '@/lib/utils/user'
 
 export async function POST(request: NextRequest) {
   try {
@@ -83,13 +84,23 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid audio hash format' }, { status: 400 })
     }
 
-    // Check usage limits
-    const { data: userProfile } = await supabase
-      .from('users')
-      .select('*')
-      .eq('id', user.id)
-      .single()
+    // Ensure user exists in public.users table (fallback if trigger didn't fire)
+    let userProfile
+    try {
+      userProfile = await ensureUserExists(supabase, {
+        id: user.id,
+        email: user.email,
+        user_metadata: user.user_metadata,
+      })
+    } catch (err) {
+      console.error('Failed to ensure user exists in certify route:', err)
+      return NextResponse.json(
+        { error: 'User profile not found. Please try logging out and back in.' },
+        { status: 500 }
+      )
+    }
 
+    // Check usage limits
     if (
       userProfile &&
       userProfile.monthly_certifications_used >= userProfile.monthly_certifications_limit
