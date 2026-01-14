@@ -14,6 +14,7 @@ interface VideoPlayerProps {
   controls?: boolean
   light?: boolean
   playing?: boolean
+  poster?: string | null
   onPlay?: () => void
   onPause?: () => void
 }
@@ -26,6 +27,7 @@ export default function VideoPlayer({
   controls = true,
   light = false,
   playing = false,
+  poster = null,
   onPlay,
   onPause,
 }: VideoPlayerProps) {
@@ -149,6 +151,7 @@ export default function VideoPlayer({
         ref={playerRef}
         {...videoProps}
         src={videoUrl || undefined}
+        poster={poster || undefined}
         onPlay={() => {
           setIsPlaying(true)
           onPlay?.()

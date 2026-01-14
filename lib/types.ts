@@ -27,6 +27,7 @@ export interface Video {
   duration: number | null
   file_size: number | null
   file_url: string | null
+  thumbnail_url: string | null
   created_at: string
 }
 

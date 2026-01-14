@@ -6,6 +6,7 @@ import { createClient } from '@/lib/supabase/client'
 import { generateFileHash } from '@/lib/utils/hash'
 import { extractVideoMetadata } from '@/lib/utils/video'
 import { isCompressionSupported, type CompressionOptions } from '@/lib/utils/video-compress'
+import { generateThumbnailFile } from '@/lib/utils/thumbnail'
 import Link from 'next/link'
 import { useI18n } from '@/lib/i18n/context'
 import VideoUploadSection from '@/components/certify/VideoUploadSection'
@@ -174,6 +175,22 @@ export default function CertifyPage() {
         throw new Error('No video file available for certification')
       }
 
+      // Generate thumbnail (use compressed file if available, otherwise original)
+      let thumbnailFile: File | null = null
+      try {
+        console.log('[Certify] Generating thumbnail...')
+        thumbnailFile = await generateThumbnailFile(videoFile, {
+          time: 1,
+          width: 640,
+          height: 360,
+          quality: 0.8,
+        })
+        console.log('[Certify] Thumbnail generated:', thumbnailFile.size, 'bytes')
+      } catch (thumbnailError) {
+        console.warn('Thumbnail generation failed:', thumbnailError)
+        // Continue without thumbnail if generation fails
+      }
+
       // Generate file hash (use compressed file if available)
       const fileHash = await generateFileHash(videoFile)
 
@@ -204,6 +221,7 @@ export default function CertifyPage() {
       if (prompt) formData.append('prompt', prompt)
       formData.append('promptPrivate', promptPrivate.toString())
       formData.append('hasThirdPartyMaterials', hasThirdPartyMaterials.toString())
+      if (thumbnailFile) formData.append('thumbnail', thumbnailFile)
 
       // Use XMLHttpRequest for upload progress tracking
       const result = await new Promise<any>((resolve, reject) => {

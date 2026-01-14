@@ -17,6 +17,7 @@ interface Video {
   aiTool: string
   category: string
   fileUrl?: string | null
+  thumbnailUrl?: string | null
 }
 
 export default function VideosPage() {
@@ -174,8 +175,20 @@ export default function VideosPage() {
                       <VideoPlayer 
                         url={null}
                         videoId={videoId}
+                        poster={video.thumbnailUrl || null}
                         className="h-full w-full"
                       />
+                    ) : video.thumbnailUrl ? (
+                      <div className="h-full w-full relative">
+                        <img 
+                          src={video.thumbnailUrl} 
+                          alt={video.title}
+                          className="h-full w-full object-cover"
+                        />
+                        <div className="absolute inset-0 flex items-center justify-center bg-black/20">
+                          <div className="text-4xl mb-2 opacity-60 text-white">▶</div>
+                        </div>
+                      </div>
                     ) : (
                       <div className="h-full w-full flex items-center justify-center bg-gray-800">
                         <div className="text-center">

@@ -25,6 +25,7 @@ export async function GET(request: NextRequest) {
           title,
           original_filename,
           file_url,
+          thumbnail_url,
           created_at,
           users (
             display_name,
@@ -66,6 +67,7 @@ export async function GET(request: NextRequest) {
           aiTool: metadata.ai_tool || 'Unknown',
           category: cert.merkle_batch_id ? 'merkle' : cert.tsa_timestamp_token ? 'timestamp' : 'blockchain',
           fileUrl: video.file_url,
+          thumbnailUrl: video.thumbnail_url,
           createdAt: cert.created_at
         }
       })

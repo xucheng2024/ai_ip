@@ -37,6 +37,7 @@ export async function POST(request: NextRequest) {
 
     const formData = await request.formData()
     const file = formData.get('file') as File
+    const thumbnail = formData.get('thumbnail') as File | null
     const title = formData.get('title') as string
     const aiTool = formData.get('aiTool') as string
     const prompt = formData.get('prompt') as string
@@ -149,6 +150,33 @@ export async function POST(request: NextRequest) {
       throw new Error('Failed to generate video URL')
     }
 
+    // Upload thumbnail if provided
+    let thumbnailUrl: string | null = null
+    if (thumbnail) {
+      try {
+        const thumbnailFileName = `${user.id}/thumbnails/${Date.now()}.jpg`
+        const { data: thumbnailUploadData, error: thumbnailUploadError } = await supabase.storage
+          .from('videos')
+          .upload(thumbnailFileName, thumbnail, {
+            cacheControl: '3600',
+            upsert: false,
+          })
+
+        if (!thumbnailUploadError) {
+          const {
+            data: { publicUrl: thumbnailPublicUrl },
+          } = supabase.storage.from('videos').getPublicUrl(thumbnailFileName)
+          thumbnailUrl = thumbnailPublicUrl
+          console.log('[Certify] Thumbnail uploaded:', thumbnailUrl)
+        } else {
+          console.warn('[Certify] Thumbnail upload failed:', thumbnailUploadError)
+        }
+      } catch (thumbnailError) {
+        console.warn('[Certify] Thumbnail upload error:', thumbnailError)
+        // Continue without thumbnail if upload fails
+      }
+    }
+
     // Create video record with multi-layer hashes
     const { data: videoData, error: videoError } = await supabase
       .from('videos')
@@ -162,6 +190,7 @@ export async function POST(request: NextRequest) {
         duration: duration,
         file_size: file.size,
         file_url: publicUrl,
+        thumbnail_url: thumbnailUrl,
       })
       .select()
       .single()

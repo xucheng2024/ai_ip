@@ -26,6 +26,7 @@ CREATE TABLE IF NOT EXISTS videos (
   duration INTEGER,
   file_size BIGINT,
   file_url TEXT,
+  thumbnail_url TEXT,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
