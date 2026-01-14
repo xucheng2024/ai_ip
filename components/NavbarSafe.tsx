@@ -11,6 +11,7 @@ import { useI18n } from '@/lib/i18n/context'
 function NavbarSafe({ user }: { user: any }) {
   const { t } = useI18n()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const mobileMenuId = 'mobile-nav'
   
   return (
     <nav className="sticky top-0 z-50 border-b border-gray-200 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80">
@@ -97,7 +98,9 @@ function NavbarSafe({ user }: { user: any }) {
             {/* Mobile menu button */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="sm:hidden p-2 text-gray-600 hover:text-gray-900"
+              aria-controls={mobileMenuId}
+              aria-expanded={mobileMenuOpen}
+              className="sm:hidden rounded-lg p-2 text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
             >
               <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 {mobileMenuOpen ? (
@@ -112,25 +115,25 @@ function NavbarSafe({ user }: { user: any }) {
 
         {/* Mobile menu */}
         {mobileMenuOpen && (
-          <div className="sm:hidden border-t border-gray-200 bg-white">
+          <div id={mobileMenuId} className="sm:hidden border-t border-gray-200 bg-white">
             <div className="px-4 py-3 space-y-3">
               <Link
                 href="/certify"
-                className="block text-sm font-semibold text-gray-900"
+                className="block rounded-lg px-2 py-2 text-sm font-semibold text-gray-900 transition-colors hover:bg-gray-50"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 {t.common.certifyNav || t.common.certify}
               </Link>
               <Link
                 href="/verify"
-                className="block text-sm font-semibold text-gray-900"
+                className="block rounded-lg px-2 py-2 text-sm font-semibold text-gray-900 transition-colors hover:bg-gray-50"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 {t.common.verifyNav || t.common.verify}
               </Link>
               <Link
                 href="/videos"
-                className="block text-sm font-medium text-gray-600"
+                className="block rounded-lg px-2 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-50 hover:text-gray-900"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 {t.common.videos}
@@ -138,14 +141,14 @@ function NavbarSafe({ user }: { user: any }) {
               <div className="border-t border-gray-200 pt-3">
                 <Link
                   href="/transparency"
-                  className="block text-sm font-medium text-gray-600"
+                  className="block rounded-lg px-2 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-50 hover:text-gray-900"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   {t.common.transparency}
                 </Link>
                 <Link
                   href="/manual"
-                  className="block text-sm font-medium text-gray-600"
+                  className="block rounded-lg px-2 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-50 hover:text-gray-900"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   {t.common.docs}
@@ -155,7 +158,7 @@ function NavbarSafe({ user }: { user: any }) {
                 <>
                   <Link
                     href="/dashboard"
-                    className="block text-sm font-medium text-gray-600"
+                    className="block rounded-lg px-2 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-50 hover:text-gray-900"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     {t.common.dashboard}
@@ -168,7 +171,7 @@ function NavbarSafe({ user }: { user: any }) {
                 <div className="pt-3 border-t border-gray-200 space-y-2">
                   <Link
                     href="/auth/login"
-                    className="block text-sm font-medium text-gray-600"
+                    className="block rounded-lg px-2 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-50 hover:text-gray-900"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     {t.common.login}

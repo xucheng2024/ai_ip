@@ -39,10 +39,15 @@ export default function HashDisplay({ hash, className = '' }: HashDisplayProps) 
 
   return (
     <div className={`relative ${className}`}>
-      <div
-        className="flex flex-wrap items-center gap-2"
+      <button
+        type="button"
+        className="flex flex-wrap items-center gap-2 bg-transparent p-0 text-left cursor-help"
         onMouseEnter={() => setShowTooltip(true)}
         onMouseLeave={() => setShowTooltip(false)}
+        onFocus={() => setShowTooltip(true)}
+        onBlur={() => setShowTooltip(false)}
+        onClick={() => setShowTooltip((v) => !v)}
+        aria-label="Content fingerprint details"
       >
         {segments.map((segment, index) => (
           <span
@@ -52,9 +57,12 @@ export default function HashDisplay({ hash, className = '' }: HashDisplayProps) 
             {segment.toUpperCase()}
           </span>
         ))}
-      </div>
+      </button>
       {showTooltip && (
-        <div className="absolute left-0 top-full z-10 mt-2 w-64 rounded-lg border border-gray-200 bg-white p-3 text-xs shadow-lg">
+        <div
+          role="tooltip"
+          className="pointer-events-none absolute left-1/2 top-full z-10 mt-2 w-72 max-w-[calc(100vw-2rem)] -translate-x-1/2 rounded-lg border border-gray-200 bg-white p-3 text-xs shadow-xl sm:left-0 sm:translate-x-0"
+        >
           <p className="font-semibold text-gray-900">Content Fingerprint</p>
           <p className="mt-1 text-gray-600">
             Any 1 bit change in the original file will completely alter this fingerprint, ensuring tamper detection.
