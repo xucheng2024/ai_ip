@@ -1,6 +1,5 @@
-import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
-import LogoutButton from './LogoutButton'
+import NavbarSafe from './NavbarSafe'
 
 export default async function Navbar() {
   let user = null
@@ -8,7 +7,9 @@ export default async function Navbar() {
   // Only try to get user if environment variables are set
   const hasEnvVars = 
     typeof process.env.NEXT_PUBLIC_SUPABASE_URL !== 'undefined' &&
-    typeof process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY !== 'undefined'
+    typeof process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY !== 'undefined' &&
+    process.env.NEXT_PUBLIC_SUPABASE_URL !== '' &&
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY !== ''
   
   if (hasEnvVars) {
     try {
@@ -24,56 +25,17 @@ export default async function Navbar() {
         user = authUser
       }
     } catch (error: any) {
-      // Log detailed error for debugging
-      console.error('Navbar Supabase client error:', {
-        message: error?.message,
-        hasUrl: !!process.env.NEXT_PUBLIC_SUPABASE_URL,
-        hasKey: !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-      })
+      // Silently fail - don't break the page
+      // Log in development only
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Navbar Supabase client error:', {
+          message: error?.message,
+          hasUrl: !!process.env.NEXT_PUBLIC_SUPABASE_URL,
+          hasKey: !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+        })
+      }
     }
   }
 
-  return (
-    <nav className="border-b border-gray-200 bg-white">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex h-16 items-center justify-between">
-          <Link href="/" className="flex items-center space-x-2">
-            <span className="text-xl font-bold text-gray-900">AIVerify</span>
-            <span className="text-sm text-gray-500">AI Video Certification</span>
-          </Link>
-          <div className="flex items-center space-x-4">
-            <Link href="/verify" className="text-sm text-gray-700 hover:text-gray-900">
-              Verify
-            </Link>
-            {user ? (
-              <>
-                <Link href="/dashboard" className="text-sm text-gray-700 hover:text-gray-900">
-                  Dashboard
-                </Link>
-                <Link
-                  href="/certify"
-                  className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
-                >
-                  Certify
-                </Link>
-                <LogoutButton />
-              </>
-            ) : (
-              <>
-                <Link href="/auth/login" className="text-sm text-gray-700 hover:text-gray-900">
-                  Login
-                </Link>
-                <Link
-                  href="/auth/signup"
-                  className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
-                >
-                  Sign Up
-                </Link>
-              </>
-            )}
-          </div>
-        </div>
-      </div>
-    </nav>
-  )
+  return <NavbarSafe user={user} />
 }
