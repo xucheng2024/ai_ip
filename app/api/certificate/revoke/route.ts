@@ -1,13 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { validateCertificationId } from '@/lib/utils/validation'
 
 export async function POST(request: NextRequest) {
   try {
     const { certificationId } = await request.json()
 
-    if (!certificationId) {
+    // Input validation and sanitization
+    if (!certificationId || typeof certificationId !== 'string') {
       return NextResponse.json({ error: 'Certification ID required' }, { status: 400 })
     }
+
+    // Validate certification ID format
+    if (!validateCertificationId(certificationId)) {
+      return NextResponse.json({ error: 'Invalid certification ID format' }, { status: 400 })
+    }
+
+    const sanitizedId = certificationId.trim()
 
     const supabase = await createClient()
     const {
@@ -29,7 +38,7 @@ export async function POST(request: NextRequest) {
         )
       `
       )
-      .eq('id', certificationId)
+      .eq('id', sanitizedId)
       .single()
 
     if (certError || !certification) {
@@ -45,7 +54,7 @@ export async function POST(request: NextRequest) {
     const { error: updateError } = await supabase
       .from('certifications')
       .update({ status: 'revoked' })
-      .eq('id', certificationId)
+      .eq('id', sanitizedId)
 
     if (updateError) {
       return NextResponse.json({ error: 'Failed to revoke certification' }, { status: 500 })

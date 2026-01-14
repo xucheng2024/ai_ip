@@ -15,27 +15,30 @@ export default async function DashboardPage() {
     redirect('/auth/login')
   }
 
-  // Get user profile
-  const { data: userProfile } = await supabase
-    .from('users')
-    .select('*')
-    .eq('id', user.id)
-    .single()
+  // Get user profile and certifications in parallel
+  const [userProfileResult, certificationsResult] = await Promise.all([
+    supabase
+      .from('users')
+      .select('*')
+      .eq('id', user.id)
+      .single(),
+    supabase
+      .from('certifications')
+      .select(`
+        *,
+        videos (
+          id,
+          title,
+          original_filename,
+          created_at
+        )
+      `)
+      .order('created_at', { ascending: false })
+      .limit(10),
+  ])
 
-  // Get certifications
-  const { data: certifications } = await supabase
-    .from('certifications')
-    .select(`
-      *,
-      videos (
-        id,
-        title,
-        original_filename,
-        created_at
-      )
-    `)
-    .order('created_at', { ascending: false })
-    .limit(10)
+  const { data: userProfile } = userProfileResult
+  const { data: certifications } = certificationsResult
 
   const used = userProfile?.monthly_certifications_used || 0
   const limit = userProfile?.monthly_certifications_limit || 1

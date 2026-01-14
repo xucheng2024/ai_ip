@@ -27,7 +27,15 @@ npm install
 ### 2. Set up Supabase
 
 1. Create a new project at [supabase.com](https://supabase.com)
-2. Go to SQL Editor and run the schema from `supabase/schema.sql`
+2. Go to SQL Editor and run the schema:
+   
+   **If this is a NEW database:**
+   - Run `supabase/schema.sql` (creates all tables from scratch)
+   
+   **If you have an EXISTING database:**
+   - Run `supabase/migration.sql` first (migrates existing data)
+   - Then run `supabase/schema.sql` to ensure everything is up to date
+   
 3. Create a storage bucket named `videos`:
    - Go to Storage → Create Bucket
    - Name: `videos`
@@ -89,15 +97,18 @@ Open [http://localhost:3000](http://localhost:3000)
 ## Database Schema
 
 - **users:** User profiles and subscription info
-- **videos:** Video metadata and file hashes
-- **certifications:** Certification records with timestamps
+- **videos:** Video metadata and file hashes (including frame/audio hashes)
+- **certifications:** Certification records with timestamps, TSA tokens, Merkle batch references
 - **creation_metadata:** AI tool and prompt information
+- **event_logs:** Chain of custody event logs (append-only)
+- **merkle_batches:** Merkle tree batches for blockchain anchoring
+- **evidence_packages:** Evidence package metadata
 
 See `supabase/schema.sql` for full schema.
 
 ## Features
 
-### MVP Features
+### Core Features
 
 - ✅ User authentication (Sign up, Login)
 - ✅ Video upload and hash generation
@@ -106,6 +117,15 @@ See `supabase/schema.sql` for full schema.
 - ✅ Public verification system (by ID or file hash)
 - ✅ Usage limits based on subscription tier
 - ✅ Legal disclaimers and user agreements
+
+### Trust & Verification Infrastructure
+
+- ✅ **Multi-Layer Fingerprinting**: File hash, frame sequence hash, audio track hash
+- ✅ **RFC 3161 TSA Timestamps**: Cryptographically signed timestamps from trusted authority
+- ✅ **Blockchain Anchoring**: Merkle tree batching with Polygon PoS anchoring
+- ✅ **Chain of Custody**: Append-only event logs with hash chains
+- ✅ **Verifiable Evidence Packages**: Downloadable JSON packages for independent verification
+- ✅ **Merkle Proofs**: Inclusion proofs for batch-verified certifications
 
 ### Pricing Tiers
 
@@ -146,19 +166,140 @@ See `supabase/schema.sql` for full schema.
    - Click "Add New Project"
    - Import your GitHub repository `xucheng2024/ai_ip`
 
-3. **Add environment variables in Vercel:**
+3. **Set up service wallet for blockchain anchoring:**
+   
+   **Step 1: Create service wallet**
+   ```bash
+   # Generate a new wallet (keep private key secure!)
+   npx ethers wallet create
+   # Or use MetaMask to create a new account
+   ```
+   
+   **Step 2: Fund wallet with MATIC**
+   - Send 0.1-1 MATIC to the wallet address (enough for thousands of transactions)
+   - Use Polygon faucet for testnet: https://faucet.polygon.technology
+   
+   **Step 3: Add environment variables in Vercel:**
    - `NEXT_PUBLIC_SUPABASE_URL`: `https://bakwnqsysewjlmsvtwma.supabase.co`
    - `NEXT_PUBLIC_SUPABASE_ANON_KEY`: (your anon key)
+   - `NEXT_PUBLIC_SITE_URL`: Your Vercel app URL (e.g., `https://your-app.vercel.app`)
+   - `POLYGON_NETWORK`: `polygon-mainnet` or `polygon-mumbai` (for blockchain anchoring)
+   - `ANCHOR_PRIVATE_KEY`: **Service wallet private key** (starts with 0x)
+   - `POLYGON_RPC_URL`: (optional) Custom RPC endpoint (defaults to public RPC)
+   - `CRON_SECRET`: (optional) Secret for manual batch triggering
+   
+   **Security Notes:**
+   - ⚠️ **Never commit private key to git**
+   - ⚠️ **Use separate wallet for production** (not your personal wallet)
+   - ⚠️ **Store private key only in Vercel environment variables**
+   - ⚠️ **Limit wallet permissions** (only used for anchoring, no other transactions)
 
-4. **Deploy** - Vercel will automatically deploy
+5. **Deploy** - Vercel will automatically deploy
 
-5. **Update Supabase Auth Redirects:**
+6. **Update Supabase Auth Redirects:**
    - After deployment, copy your Vercel URL (e.g., `https://ai-ip.vercel.app`)
    - Go to Supabase Dashboard → Authentication → URL Configuration
    - Add to Redirect URLs: `https://your-app.vercel.app/api/auth/callback`
    - Update Site URL to your Vercel URL (or keep localhost for development)
 
 The app will automatically use Supabase for backend services.
+
+### Blockchain Anchoring Architecture
+
+**Correct Model**: Evidence Package Hash → Merkle Tree → Merkle Root → Polygon
+
+**NOT**: Video/Hash directly on chain
+
+**Service Wallet Model**: Platform uses its own wallet to pay gas fees. Users don't need wallets.
+
+#### Process Flow:
+
+1. **Video Upload** → Generate canonical evidence package (JSON)
+2. **Evidence Hash** → SHA-256(canonical JSON) = Merkle tree leaf
+3. **Batch Processing** → Multiple evidence hashes → Merkle Tree → Merkle Root
+4. **Blockchain Anchor** → Only Merkle Root (32 bytes) written to Polygon PoS
+5. **Verification** → Third parties can independently verify using:
+   - Evidence package JSON
+   - Merkle proof
+   - Blockchain transaction hash
+
+#### Batch Processing:
+
+- **Frequency**: Daily (once per day at midnight UTC)
+- **Batch Size**: Up to 1000 certifications per batch
+- **Cost**: ~$0.0001 per batch (only 32-byte Merkle root per batch)
+- **Method**: Transaction calldata (self-send with root in data field)
+- **Rate Limiting**: Maximum 1 batch per hour (security measure)
+- **Service Wallet**: Platform wallet pays all gas fees (users don't need wallets)
+
+#### Security Measures:
+
+- ✅ **Rate Limiting**: Max 1 batch per hour
+- ✅ **Audit Logging**: All transactions logged with batch ID, root, tx hash
+- ✅ **Private Key Isolation**: Only stored in environment variables
+- ✅ **Balance Checks**: Verifies wallet has sufficient MATIC before anchoring
+- ✅ **Error Handling**: Failed batches marked and logged
+
+**Manual Operations:**
+
+To manually trigger batch anchoring:
+```bash
+curl -X POST https://your-app.vercel.app/api/batch/anchor \
+  -H "Authorization: Bearer YOUR_CRON_SECRET"
+```
+
+To check service wallet balance:
+```bash
+curl https://your-app.vercel.app/api/wallet/balance \
+  -H "Authorization: Bearer YOUR_CRON_SECRET"
+```
+
+#### Evidence Package Structure:
+
+```json
+{
+  "version": "1.0",
+  "video": {
+    "file_hash": "SHA256(...)",
+    "duration": 12.34,
+    "frame_hashes": [{"t": 0, "hash": "..."}],
+    "audio_hash": "..."
+  },
+  "creator": {
+    "user_id": "usr_123",
+    "identity_level": "L0"
+  },
+  "timestamps": {
+    "server_time_utc": "2026-01-14T10:21:33Z",
+    "tsa_token": "..."
+  }
+}
+```
+
+**Key Points**:
+- JSON is canonicalized (sorted keys) for consistent hashing
+- Only evidence hash (not full JSON) goes into Merkle tree
+- Only Merkle root (not individual hashes) goes on blockchain
+
+### Trust Infrastructure Details
+
+1. **Time Trust**: Dual timestamps (server + RFC 3161 TSA)
+2. **Content Trust**: Multi-layer fingerprints (file, frames, audio, metadata)
+3. **Process Trust**: Chain of custody with hash-linked event logs
+4. **Blockchain Trust**: Merkle root anchoring to Polygon PoS (cost-efficient batching)
+5. **Verification Trust**: Downloadable evidence packages for independent verification
+
+### Third-Party Verification
+
+Third parties can verify without trusting the server:
+
+1. Download evidence package JSON
+2. Calculate evidence hash locally
+3. Verify Merkle proof → root
+4. Check blockchain transaction (Polygon explorer)
+5. Verify block time ≥ claimed time
+
+No server trust required!
 
 ## Legal Disclaimer
 

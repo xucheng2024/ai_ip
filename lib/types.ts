@@ -31,9 +31,12 @@ export interface Certification {
   id: string
   video_id: string
   timestamp_utc: string
-  hash_on_chain: string | null
+  evidence_hash: string // Hash of canonical evidence package (Merkle tree leaf)
   verification_url: string
   status: CertificationStatus
+  tsa_timestamp_token: string | null
+  merkle_batch_id: string | null
+  merkle_proof: any | null
   created_at: string
 }
 

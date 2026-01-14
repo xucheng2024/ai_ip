@@ -3,7 +3,8 @@
 import { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import { generateFileHash, generateCertificationId, generateHashFromString } from '@/lib/utils/hash'
+import { generateFileHash } from '@/lib/utils/hash'
+import { extractVideoMetadata } from '@/lib/utils/video'
 import Link from 'next/link'
 
 export default function CertifyPage() {
@@ -106,73 +107,46 @@ export default function CertifyPage() {
       // Generate file hash
       const fileHash = await generateFileHash(file)
 
-      // Upload file to Supabase Storage
-      const fileExt = file.name.split('.').pop()
-      const fileName = `${user.id}/${Date.now()}.${fileExt}`
-      const { data: uploadData, error: uploadError } = await supabase.storage
-        .from('videos')
-        .upload(fileName, file, {
-          cacheControl: '3600',
-          upsert: false,
-        })
+      // Extract video metadata (frames, audio)
+      let frameHash: string | null = null
+      let audioHash: string | null = null
+      let duration: number | null = null
 
-      if (uploadError) throw uploadError
+      try {
+        const metadata = await extractVideoMetadata(file)
+        frameHash = metadata.frameHash
+        audioHash = metadata.audioHash
+        duration = metadata.duration
+      } catch (metadataError) {
+        console.warn('Video metadata extraction failed:', metadataError)
+        // Continue without frame/audio hashes
+      }
 
-      // Get public URL
-      const {
-        data: { publicUrl },
-      } = supabase.storage.from('videos').getPublicUrl(fileName)
+      // Use enhanced certification API
+      const formData = new FormData()
+      formData.append('file', file)
+      formData.append('title', title || file.name)
+      formData.append('fileHash', fileHash)
+      if (frameHash) formData.append('frameHash', frameHash)
+      if (audioHash) formData.append('audioHash', audioHash)
+      if (duration) formData.append('duration', duration.toString())
+      if (aiTool) formData.append('aiTool', aiTool)
+      if (prompt) formData.append('prompt', prompt)
+      formData.append('promptPrivate', promptPrivate.toString())
+      formData.append('hasThirdPartyMaterials', hasThirdPartyMaterials.toString())
 
-      // Create video record
-      const { data: videoData, error: videoError } = await supabase
-        .from('videos')
-        .insert({
-          user_id: user.id,
-          title: title || file.name,
-          original_filename: file.name,
-          file_hash: fileHash,
-          file_size: file.size,
-          file_url: publicUrl,
-        })
-        .select()
-        .single()
-
-      if (videoError) throw videoError
-
-      // Create creation metadata - Zero-knowledge: always hash prompt, only store plaintext if explicitly not private
-      const promptHash = prompt ? await generateHashFromString(prompt) : null
-      const { error: metadataError } = await supabase.from('creation_metadata').insert({
-        video_id: videoData.id,
-        ai_tool: aiTool || null,
-        prompt_hash: promptHash,
-        prompt_plaintext: promptPrivate ? null : (prompt || null), // Only store plaintext if not private
-        has_third_party_materials: hasThirdPartyMaterials,
+      const response = await fetch('/api/certify', {
+        method: 'POST',
+        body: formData,
       })
 
-      if (metadataError) throw metadataError
+      const result = await response.json()
 
-      // Generate certification
-      const certificationId = generateCertificationId()
-      const verificationUrl = `${window.location.origin}/verify?id=${certificationId}`
+      if (!response.ok) {
+        throw new Error(result.error || 'Certification failed')
+      }
 
-      const { error: certError } = await supabase.from('certifications').insert({
-        id: certificationId,
-        video_id: videoData.id,
-        timestamp_utc: new Date().toISOString(),
-        verification_url: verificationUrl,
-      })
-
-      if (certError) throw certError
-
-      // Update user usage
-      await supabase
-        .from('users')
-        .update({
-          monthly_certifications_used: (userProfile?.monthly_certifications_used || 0) + 1,
-        })
-        .eq('id', user.id)
-
-      router.push(`/certificate/${certificationId}`)
+      router.push(`/certificate/${result.certificationId}`)
     } catch (err: any) {
       setError(err.message || 'Failed to certify video')
       setLoading(false)
