@@ -11,6 +11,7 @@ import { useI18n } from '@/lib/i18n/context'
 import VideoUploadSection from '@/components/certify/VideoUploadSection'
 import VideoMetadataForm from '@/components/certify/VideoMetadataForm'
 import LegalAgreementSection from '@/components/certify/LegalAgreementSection'
+import AuthModal from '@/components/AuthModal'
 
 export default function CertifyPage() {
   const router = useRouter()
@@ -30,6 +31,8 @@ export default function CertifyPage() {
   const [compressionProgress, setCompressionProgress] = useState(0)
   const [enableCompression, setEnableCompression] = useState(true) // Default enabled
   const [compressionQuality, setCompressionQuality] = useState<CompressionOptions['quality']>('lossless') // Default lossless
+  const [showAuthModal, setShowAuthModal] = useState(false)
+  const [pendingSubmit, setPendingSubmit] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -88,7 +91,26 @@ export default function CertifyPage() {
       return
     }
 
+    // Check if user is logged in
+    const supabase = createClient()
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+
+    if (!user) {
+      // Show auth modal instead of throwing error
+      setPendingSubmit(true)
+      setShowAuthModal(true)
+      return
+    }
+
+    // User is logged in, proceed with certification
+    await proceedWithCertification()
+  }
+
+  const proceedWithCertification = async () => {
     setLoading(true)
+    setError('')
 
     try {
       const supabase = createClient()
@@ -195,6 +217,16 @@ export default function CertifyPage() {
     }
   }
 
+  const handleAuthSuccess = async () => {
+    // After successful login/signup, proceed with certification if pending
+    if (pendingSubmit) {
+      setPendingSubmit(false)
+      // Small delay to ensure session is fully established
+      await new Promise(resolve => setTimeout(resolve, 500))
+      await proceedWithCertification()
+    }
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50/50">
       <div className="mx-auto max-w-3xl px-4 py-6 sm:px-6 sm:py-10 lg:px-8">
@@ -278,6 +310,17 @@ export default function CertifyPage() {
           </div>
         </form>
       </div>
+
+      {/* Auth Modal */}
+      <AuthModal
+        isOpen={showAuthModal}
+        onClose={() => {
+          setShowAuthModal(false)
+          setPendingSubmit(false)
+        }}
+        onSuccess={handleAuthSuccess}
+        initialMode="login"
+      />
     </div>
   )
 }
