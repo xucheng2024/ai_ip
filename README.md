@@ -34,6 +34,7 @@ npm install
    
    **If you have an EXISTING database:**
    - Run `supabase/migration.sql` first (migrates existing data)
+   - Run `supabase/migration-promotion-support.sql` to add promotion support feature
    - Then run `supabase/schema.sql` to ensure everything is up to date
    
 3. Create a storage bucket named `videos`:
@@ -103,6 +104,7 @@ Open [http://localhost:3000](http://localhost:3000)
 - **event_logs:** Chain of custody event logs (append-only)
 - **merkle_batches:** Merkle tree batches for blockchain anchoring
 - **evidence_packages:** Evidence package metadata
+- **promotion_support_events:** Promotion support and reward records
 
 See `supabase/schema.sql` for full schema.
 
@@ -126,6 +128,14 @@ See `supabase/schema.sql` for full schema.
 - ✅ **Chain of Custody**: Append-only event logs with hash chains
 - ✅ **Verifiable Evidence Packages**: Downloadable JSON packages for independent verification
 - ✅ **Merkle Proofs**: Inclusion proofs for batch-verified certifications
+
+### Promotion Support
+
+- ✅ **Promotion-based Support**: Support creators and earn rewards through sharing
+- ✅ **Transparent Allocation**: 70% creator, 20% promoter, 10% platform (clearly displayed)
+- ✅ **Public Verification**: All support events are publicly verifiable
+- ✅ **Promotion Links**: Generate shareable links with promoter tracking
+- ✅ **Support Records**: View total supports, amounts, and recent events on certificate pages
 
 ### Pricing Tiers
 

@@ -119,6 +119,16 @@ Second moat feature.
 - **Certificate Transparency Style:** But for AI content evidence
 - **Investor-Friendly:** Demonstrates platform integrity and auditability
 
+### 13. Promotion Support (Promotion-based Support)
+- **Support Mechanism:** Support creators and earn rewards through sharing
+- **Transparent Allocation:** 70% creator, 20% promoter, 10% platform (all ratios clearly displayed before support)
+- **Public Verification:** All support events are publicly verifiable with verification hashes
+- **Promotion Links:** Generate shareable links with promoter tracking via URL parameters
+- **Support Records:** Display total supports, amounts, and recent events on certificate pages
+- **Creator Control:** Creators can enable/disable promotion support (default: enabled)
+- **Legal Boundaries:** Clearly defined as support behavior records, not revenue sharing or investment returns
+- **Single-Layer Only:** Strictly single-layer promotion (no multi-level structures)
+
 ---
 
 ## Technical Innovation
@@ -251,6 +261,7 @@ Public transparency log page showing all batches and transactions, similar to Ce
 - ✅ Hash Manifest indexing
 - ✅ Creator continuity proof
 - ✅ Public transparency log page
+- ✅ Promotion Support (Promotion-based Support)
 
 ### Phase 2 (Planned)
 - API & publishing integrations for platforms

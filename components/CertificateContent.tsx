@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import Link from 'next/link'
 import { format } from 'date-fns'
 import { useI18n } from '@/lib/i18n/context'
@@ -16,6 +17,8 @@ import CreatorContinuityChain from './CreatorContinuityChain'
 import CertificateHero from './CertificateHero'
 import SummaryCard from './SummaryCard'
 import VerificationAction from './VerificationAction'
+import SupportRecords from './SupportRecords'
+import SupportModal from './SupportModal'
 import type { EvidenceStatus } from '@/lib/types'
 
 interface CertificateContentProps {
@@ -38,6 +41,14 @@ export default function CertificateContent({
   timelineEvents,
 }: CertificateContentProps) {
   const { t } = useI18n()
+  const [supportModalOpen, setSupportModalOpen] = useState(false)
+
+  // Get promoter ID from URL if present
+  const getPromoterIdFromUrl = () => {
+    if (typeof window === 'undefined') return null
+    const params = new URLSearchParams(window.location.search)
+    return params.get('promoter')
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50/50">
@@ -267,6 +278,25 @@ export default function CertificateContent({
               />
             )}
 
+            {/* Support Records */}
+            {!isDemo && (
+              <SupportRecords certificateId={certification.id} />
+            )}
+
+            {/* Support Button */}
+            {!isDemo && (
+              <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
+                <h3 className="mb-2 text-sm font-semibold text-gray-900">{t.promotionSupport.supportThisWork}</h3>
+                <p className="mb-3 text-xs text-gray-600">{t.promotionSupport.supportDescription}</p>
+                <button
+                  onClick={() => setSupportModalOpen(true)}
+                  className="w-full rounded-lg bg-gradient-to-r from-blue-600 to-blue-700 px-4 py-2 text-sm font-semibold text-white transition-all hover:from-blue-700 hover:to-blue-800"
+                >
+                  {t.promotionSupport.continueSupport}
+                </button>
+              </div>
+            )}
+
             {/* Complaint Evidence Package */}
             {isOwner && !isDemo && (
               <ComplaintEvidencePackage
@@ -281,6 +311,16 @@ export default function CertificateContent({
               <div className="border-t border-gray-200 pt-6">
                 <RevokeCertificateButton certificationId={certification.id} />
               </div>
+            )}
+
+            {/* Support Modal */}
+            {!isDemo && (
+              <SupportModal
+                isOpen={supportModalOpen}
+                onClose={() => setSupportModalOpen(false)}
+                certificateId={certification.id}
+                promoterId={getPromoterIdFromUrl()}
+              />
             )}
 
             <div className="rounded-lg border border-yellow-200 bg-yellow-50 p-4">

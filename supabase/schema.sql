@@ -40,6 +40,7 @@ CREATE TABLE IF NOT EXISTS certifications (
   tsa_timestamp_token TEXT,
   merkle_batch_id UUID REFERENCES merkle_batches(id),
   merkle_proof JSONB,
+  promotion_enabled BOOLEAN DEFAULT true,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
@@ -99,6 +100,20 @@ CREATE TABLE IF NOT EXISTS evidence_packages (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- Promotion support events table
+CREATE TABLE IF NOT EXISTS promotion_support_events (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  certificate_id TEXT NOT NULL REFERENCES certifications(id) ON DELETE CASCADE,
+  total_amount DECIMAL(10, 2) NOT NULL,
+  creator_amount DECIMAL(10, 2) NOT NULL,
+  promoter_amount DECIMAL(10, 2) NOT NULL,
+  platform_fee DECIMAL(10, 2) NOT NULL,
+  promoter_id UUID REFERENCES users(id),
+  supporter_id UUID REFERENCES users(id),
+  verification_hash TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
 -- Indexes for performance
 CREATE INDEX IF NOT EXISTS idx_videos_user_id ON videos(user_id);
 CREATE INDEX IF NOT EXISTS idx_videos_file_hash ON videos(file_hash);
@@ -116,6 +131,11 @@ CREATE INDEX IF NOT EXISTS idx_merkle_batches_status ON merkle_batches(status);
 CREATE INDEX IF NOT EXISTS idx_merkle_batches_created_at ON merkle_batches(created_at);
 CREATE INDEX IF NOT EXISTS idx_evidence_packages_certification_id ON evidence_packages(certification_id);
 CREATE INDEX IF NOT EXISTS idx_evidence_packages_package_hash ON evidence_packages(package_hash);
+CREATE INDEX IF NOT EXISTS idx_promotion_support_events_certificate_id ON promotion_support_events(certificate_id);
+CREATE INDEX IF NOT EXISTS idx_promotion_support_events_promoter_id ON promotion_support_events(promoter_id);
+CREATE INDEX IF NOT EXISTS idx_promotion_support_events_supporter_id ON promotion_support_events(supporter_id);
+CREATE INDEX IF NOT EXISTS idx_promotion_support_events_created_at ON promotion_support_events(created_at);
+CREATE INDEX IF NOT EXISTS idx_promotion_support_events_verification_hash ON promotion_support_events(verification_hash);
 
 -- RLS Policies
 ALTER TABLE users ENABLE ROW LEVEL SECURITY;
@@ -125,6 +145,7 @@ ALTER TABLE creation_metadata ENABLE ROW LEVEL SECURITY;
 ALTER TABLE event_logs ENABLE ROW LEVEL SECURITY;
 ALTER TABLE merkle_batches ENABLE ROW LEVEL SECURITY;
 ALTER TABLE evidence_packages ENABLE ROW LEVEL SECURITY;
+ALTER TABLE promotion_support_events ENABLE ROW LEVEL SECURITY;
 
 -- Users can read their own data
 CREATE POLICY "Users can read own data" ON users
@@ -215,3 +236,31 @@ CREATE POLICY "Public can verify evidence packages" ON evidence_packages
       WHERE certifications.id = evidence_packages.certification_id AND certifications.status = 'valid'
     )
   );
+
+-- Promotion support events policies
+CREATE POLICY "Public can read support events for valid certifications" ON promotion_support_events
+  FOR SELECT USING (
+    EXISTS (
+      SELECT 1 FROM certifications 
+      WHERE certifications.id = promotion_support_events.certificate_id 
+      AND certifications.status = 'valid'
+    )
+  );
+
+CREATE POLICY "Users can read own support events" ON promotion_support_events
+  FOR SELECT USING (
+    promoter_id = auth.uid() OR supporter_id = auth.uid()
+  );
+
+CREATE POLICY "Creators can read own certification support events" ON promotion_support_events
+  FOR SELECT USING (
+    EXISTS (
+      SELECT 1 FROM certifications 
+      JOIN videos ON videos.id = certifications.video_id 
+      WHERE certifications.id = promotion_support_events.certificate_id 
+      AND videos.user_id = auth.uid()
+    )
+  );
+
+CREATE POLICY "Authenticated users can create support events" ON promotion_support_events
+  FOR INSERT WITH CHECK (auth.uid() IS NOT NULL);

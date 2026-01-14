@@ -3,10 +3,13 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useI18n } from "@/lib/i18n/context";
+import SupportModal from "@/components/SupportModal";
 
 export default function VideosPage() {
   const { t } = useI18n()
   const [selectedFilter, setSelectedFilter] = useState<string>('all')
+  const [supportModalOpen, setSupportModalOpen] = useState<string | null>(null)
+  const [promotionLink, setPromotionLink] = useState<{ [key: string]: string }>({})
   
   const demoVideos = [
     {
@@ -71,16 +74,35 @@ export default function VideosPage() {
   }
 
   const filteredVideos = filterVideos(selectedFilter)
+
+  const handleGeneratePromotionLink = (videoId: string) => {
+    // In a real implementation, this would generate a unique promoter ID
+    // For demo, we'll use a simple approach
+    const promoterId = `promoter_${Date.now()}`
+    const baseUrl = typeof window !== 'undefined' ? window.location.origin : ''
+    const link = `${baseUrl}/certificate/${videoId}?promoter=${promoterId}`
+    setPromotionLink({ ...promotionLink, [videoId]: link })
+    
+    // Copy to clipboard
+    navigator.clipboard.writeText(link)
+    alert(t.promotionSupport.linkCopied)
+  }
+
+  const getPromoterIdFromUrl = () => {
+    if (typeof window === 'undefined') return null
+    const params = new URLSearchParams(window.location.search)
+    return params.get('promoter')
+  }
   
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50/50">
       <main className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-20 lg:px-8">
         <div className="text-center animate-fade-in">
           <h1 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-            {t.home.videosPageTitle || t.common.videos}
+            {t.promotionSupport.videosPageTitle || t.home.videosPageTitle || t.common.videos}
           </h1>
           <p className="mt-6 text-base text-gray-600 leading-relaxed">
-            {t.home.videosPageDesc || "These examples showcase AI videos with generated authorship evidence and their corresponding verification pages."}
+            {t.promotionSupport.videosPageSubtitle || t.home.videosPageDesc || "These examples showcase AI videos with generated authorship evidence and their corresponding verification pages."}
           </p>
         </div>
 
@@ -173,6 +195,30 @@ export default function VideosPage() {
                   )}
                 </div>
 
+                {/* Support Section */}
+                <div className="mb-3 rounded-lg border border-gray-200 bg-gray-50 p-3">
+                  <p className="mb-2 text-xs font-medium text-gray-700">{t.promotionSupport.supportThisWork}</p>
+                  <ul className="mb-3 space-y-1 text-xs text-gray-600">
+                    <li>• {t.promotionSupport.creatorSupport}</li>
+                    <li>• {t.promotionSupport.promotionReward}</li>
+                    <li>• {t.promotionSupport.allocationNote}</li>
+                  </ul>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => setSupportModalOpen(video.id)}
+                      className="flex-1 rounded-lg border border-blue-300 bg-blue-50 px-3 py-1.5 text-xs font-medium text-blue-700 transition-colors hover:bg-blue-100"
+                    >
+                      {t.promotionSupport.supportThisWork}
+                    </button>
+                    <button
+                      onClick={() => handleGeneratePromotionLink(video.id)}
+                      className="flex-1 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 transition-colors hover:bg-gray-50"
+                    >
+                      {t.promotionSupport.sharePromote}
+                    </button>
+                  </div>
+                </div>
+
                 {/* Micro-guide text */}
                 <p className="text-xs text-gray-500 mb-3 text-center">
                   {t.home.viewEvidenceHint || 'View creation time, content fingerprint, and blockchain proof'}
@@ -192,6 +238,17 @@ export default function VideosPage() {
             ))}
           </div>
         </div>
+
+        {/* Support Modals */}
+        {filteredVideos.map((video) => (
+          <SupportModal
+            key={video.id}
+            isOpen={supportModalOpen === video.id}
+            onClose={() => setSupportModalOpen(null)}
+            certificateId={video.id}
+            promoterId={getPromoterIdFromUrl()}
+          />
+        ))}
 
         <div className="mt-20 text-center">
           <Link

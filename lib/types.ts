@@ -40,6 +40,7 @@ export interface Certification {
   tsa_timestamp_token: string | null
   merkle_batch_id: string | null
   merkle_proof: any | null
+  promotion_enabled: boolean | null
   created_at: string
 }
 
@@ -61,4 +62,33 @@ export interface CertificationFormData {
   prompt?: string
   promptPrivate?: boolean
   hasThirdPartyMaterials?: boolean
+}
+
+// Promotion Support Types
+export interface PromotionSupportEvent {
+  id: string
+  certificate_id: string
+  total_amount: number
+  creator_amount: number
+  promoter_amount: number
+  platform_fee: number
+  promoter_id: string | null
+  supporter_id: string | null
+  verification_hash: string | null
+  created_at: string
+}
+
+export interface SupportAllocation {
+  total_amount: number
+  creator_amount: number
+  promoter_amount: number
+  platform_fee: number
+}
+
+export interface SupportStats {
+  total_supports: number
+  total_amount: number
+  creator_total: number
+  promoter_total: number
+  platform_total: number
 }

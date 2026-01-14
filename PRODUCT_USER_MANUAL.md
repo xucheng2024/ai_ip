@@ -125,6 +125,30 @@ Anyone can verify certifications without logging in:
 - By uploading the original video file
 - By visiting the video's proof page
 
+### 8. Promotion Support (Promotion-based Support)
+
+Support creators and earn rewards through sharing:
+
+- **Support Creators:** Support certified videos with transparent allocation
+- **Promotion Links:** Generate shareable links to earn rewards when others support through your link
+- **Transparent Allocation:** 70% to creator, 20% to promoter, 10% to platform (all clearly displayed)
+- **Public Verification:** All support events are publicly verifiable
+- **Support Records:** View total supports, amounts, and recent events on certificate pages
+- **Creator Control:** Creators can enable/disable promotion support (default: enabled)
+
+**How It Works:**
+1. Visit a certified video's proof page
+2. Click "Support this work" to support directly, or
+3. Click "Share & Promote" to generate a promotion link
+4. Share your promotion link - when others support through your link, you earn a reward
+5. All allocations are transparent and verifiable
+
+**Important Notes:**
+- This is support behavior recording, not revenue sharing
+- All allocation ratios are displayed before support
+- No multi-level promotion structures (single-layer only)
+- Platform service fee is used for verification and transparency infrastructure
+
 ---
 
 ## How to Certify a Video
@@ -272,6 +296,33 @@ Each template includes:
 - Specific fields to use
 - Step-by-step instructions
 - Platform-specific guidance
+
+#### 8. Support & Promotion Records
+
+**Support & Promotion Records (Publicly Verifiable)** section displays:
+- **Total Supports:** Number of support events
+- **Total Amount:** Sum of all support amounts
+- **Recent Supports:** Latest support events with dates
+- **Promotion Indicators:** Shows if support included promotion rewards
+
+**Supporting a Work:**
+1. Click "Support this work" button on the certificate page
+2. Enter support amount
+3. Review allocation breakdown (70% creator, 20% promoter if applicable, 10% platform)
+4. Confirm support
+5. Support event is recorded and publicly verifiable
+
+**Generating Promotion Links:**
+1. On the videos page, click "Share & Promote" on any video card
+2. A promotion link is generated with your promoter ID
+3. Share the link - when others support through your link, you earn rewards
+4. All support events are tracked and verifiable
+
+**For Creators:**
+- View all support events for your certifications
+- See total support amounts and promoter rewards
+- Promotion support is enabled by default
+- You can disable promotion support if desired (feature coming soon)
 
 #### 5. Actions Available
 
@@ -497,6 +548,30 @@ Every certification includes an append-only event log:
 - File size limits (500MB maximum)
 - Filename sanitization
 - Extension whitelisting
+
+---
+
+## Promotion Support FAQ
+
+### Support & Promotion Questions
+
+**Q: Is this revenue sharing?**
+A: No. This is a record of factual contributions from all parties in a support action. It's not revenue sharing or income distribution.
+
+**Q: Will the platform take more secretly?**
+A: No. All allocation ratios are clearly displayed before support and are publicly verifiable. The platform fee is capped at 10% and is used for verification and transparency infrastructure.
+
+**Q: Is the promoter a "downline"?**
+A: No. Each promotion is only valid for a single support action, with no hierarchical relationship. There are no multi-level promotion structures.
+
+**Q: How do I generate a promotion link?**
+A: On the videos page, click "Share & Promote" on any video card. A unique promotion link will be generated that you can share. When others support through your link, you earn a reward.
+
+**Q: Can creators disable promotion support?**
+A: Yes. Creators can enable/disable promotion support for their certifications. By default, promotion support is enabled.
+
+**Q: Are support events publicly verifiable?**
+A: Yes. All support events include verification hashes and are publicly verifiable. The allocation breakdown is transparent and can be independently verified.
 
 ---
 
