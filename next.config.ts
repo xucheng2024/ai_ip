@@ -3,8 +3,8 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   /* config options here */
   serverExternalPackages: ['@react-pdf/renderer'],
-  // Use Turbopack for faster dev builds (optional, use --turbo flag)
-  // turbopack: {},
+  // Enable Turbopack for production (Next.js 16 default)
+  turbopack: {},
   webpack: (config, { isServer }) => {
     // Enable WebAssembly support for ffmpeg.wasm
     config.experiments = {
