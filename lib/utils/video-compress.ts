@@ -18,9 +18,13 @@ async function getFFmpeg(): Promise<FFmpeg> {
   const baseURL = 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/esm'
 
   try {
+    // Try loading with blob URLs first
+    const coreURL = await toBlobURL(`${baseURL}/ffmpeg-core.js`, 'text/javascript')
+    const wasmURL = await toBlobURL(`${baseURL}/ffmpeg-core.wasm`, 'application/wasm')
+    
     await ffmpeg.load({
-      coreURL: await toBlobURL(`${baseURL}/ffmpeg-core.js`, 'text/javascript'),
-      wasmURL: await toBlobURL(`${baseURL}/ffmpeg-core.wasm`, 'application/wasm'),
+      coreURL,
+      wasmURL,
     })
 
     ffmpegInstance = ffmpeg
@@ -28,7 +32,25 @@ async function getFFmpeg(): Promise<FFmpeg> {
     return ffmpeg
   } catch (error) {
     console.error('Failed to load FFmpeg:', error)
-    throw new Error('Failed to initialize video compression engine')
+    // Reset state on error so we can retry
+    ffmpegInstance = null
+    isLoaded = false
+    
+    // Try alternative loading method (direct URLs)
+    try {
+      console.log('Retrying FFmpeg load with direct URLs...')
+      const ffmpegRetry = new FFmpeg()
+      await ffmpegRetry.load({
+        coreURL: `${baseURL}/ffmpeg-core.js`,
+        wasmURL: `${baseURL}/ffmpeg-core.wasm`,
+      })
+      ffmpegInstance = ffmpegRetry
+      isLoaded = true
+      return ffmpegRetry
+    } catch (retryError) {
+      console.error('FFmpeg retry also failed:', retryError)
+      throw new Error('Failed to initialize video compression engine')
+    }
   }
 }
 

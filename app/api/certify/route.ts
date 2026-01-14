@@ -1,5 +1,9 @@
 // Enhanced certification API with trust infrastructure
 import { NextRequest, NextResponse } from 'next/server'
+
+// Configure runtime and body size limit
+export const runtime = 'nodejs'
+export const maxDuration = 300 // 5 minutes for large file uploads
 import { createClient } from '@/lib/supabase/server'
 import { generateHashFromString } from '@/lib/utils/hash'
 import { requestTSATimestamp } from '@/lib/utils/tsa'

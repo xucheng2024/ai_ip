@@ -138,7 +138,9 @@ export default function CertifyPage() {
         } catch (compressionError) {
           console.warn('Video compression failed, using original file:', compressionError)
           setCompressing(false)
+          setCompressionProgress(0)
           // Continue with original file if compression fails
+          videoFile = file
         }
       }
 
