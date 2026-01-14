@@ -22,53 +22,133 @@ export default async function CertificatePage({ params }: { params: Promise<{ id
     data: { user },
   } = await supabase.auth.getUser()
 
-  const { data: certification, error } = await supabase
-    .from('certifications')
-    .select(
-      `
-      *,
-      videos (
-        *,
-        users (
-          display_name,
-          email
-        ),
-        creation_metadata (*)
-      )
-    `
-    )
-    .eq('id', id)
-    .eq('status', 'valid')
-    .single()
-
-  if (error || !certification) {
-    notFound()
-  }
-
-  const video = certification.videos as any
-  const metadata = video?.creation_metadata?.[0] || null
-  const isOwner = user && video?.user_id === user.id
-
-  // Get batch status for evidence maturity
+  // Check if this is a demo certificate
+  const isDemo = id.startsWith('demo-')
+  
+  let certification: any = null
+  let video: any = null
+  let metadata: any = null
+  let isOwner = false
   let batchStatus: string | null = null
-  if (certification.merkle_batch_id) {
-    const { data: batch } = await supabase
-      .from('merkle_batches')
-      .select('status')
-      .eq('id', certification.merkle_batch_id)
+  let evidenceStatus = 'certified'
+
+  if (isDemo) {
+    // Create demo data
+    const demoData = {
+      'demo-1': {
+        title: 'AI Landscape Generation',
+        creator: 'Demo Creator',
+        date: '2024-01-15',
+        aiTool: 'Runway'
+      },
+      'demo-2': {
+        title: 'Character Animation Sequence',
+        creator: 'Demo Creator',
+        date: '2024-01-16',
+        aiTool: 'Pika'
+      },
+      'demo-3': {
+        title: 'Product Showcase Video',
+        creator: 'Demo Creator',
+        date: '2024-01-17',
+        aiTool: 'Sora'
+      },
+      'demo-4': {
+        title: 'Abstract Motion Graphics',
+        creator: 'Demo Creator',
+        date: '2024-01-18',
+        aiTool: 'Runway'
+      },
+      'demo-5': {
+        title: 'Narrative Short Film',
+        creator: 'Demo Creator',
+        date: '2024-01-19',
+        aiTool: 'Other'
+      }
+    }
+
+    const demo = demoData[id as keyof typeof demoData] || demoData['demo-1']
+    
+    certification = {
+      id: id,
+      timestamp_utc: new Date(demo.date).toISOString(),
+      verification_url: `/certificate/${id}`,
+      status: 'valid',
+      merkle_batch_id: null
+    }
+
+    video = {
+      id: `video-${id}`,
+      title: demo.title,
+      file_hash: '0x' + '0'.repeat(64),
+      created_at: new Date(demo.date).toISOString(),
+      user_id: 'demo-user',
+      users: {
+        display_name: demo.creator,
+        email: 'demo@example.com'
+      }
+    }
+
+    metadata = {
+      ai_tool: demo.aiTool
+    }
+  } else {
+    const { data: cert, error } = await supabase
+      .from('certifications')
+      .select(
+        `
+        *,
+        videos (
+          *,
+          users (
+            display_name,
+            email
+          ),
+          creation_metadata (*)
+        )
+      `
+      )
+      .eq('id', id)
+      .eq('status', 'valid')
       .single()
-    batchStatus = batch?.status || null
+
+    if (error || !cert) {
+      notFound()
+    }
+
+    certification = cert
+    video = certification.videos as any
+    metadata = video?.creation_metadata?.[0] || null
+    isOwner = user && video?.user_id === user.id
+
+    // Get batch status for evidence maturity
+    if (certification.merkle_batch_id) {
+      const { data: batch } = await supabase
+        .from('merkle_batches')
+        .select('status')
+        .eq('id', certification.merkle_batch_id)
+        .single()
+      batchStatus = batch?.status || null
+    }
+
+    // Determine evidence status
+    evidenceStatus = getEvidenceStatus(certification, batchStatus)
   }
 
-  // Determine evidence status
-  const evidenceStatus = getEvidenceStatus(certification, batchStatus)
 
   // Generate timeline events
   const videoCreatedAt = new Date(video?.created_at || certification.timestamp_utc)
   const certTimestamp = new Date(certification.timestamp_utc)
-  const timeDiff = certTimestamp.getTime() - videoCreatedAt.getTime()
+  const timeDiff = isDemo ? 0 : certTimestamp.getTime() - videoCreatedAt.getTime()
   
-  const timelineEvents = [
+  const timelineEvents = isDemo ? [
+    {
+      time: format(certTimestamp, 'HH:mm:ss'),
+      label: 'Video Certified',
+      description: 'Certificate generated (Demo)',
+      status: 'completed' as const,
+    }
+  ] : [
     {
       time: format(videoCreatedAt, 'HH:mm:ss'),
       label: 'Video Uploaded',
@@ -100,13 +180,13 @@ export default async function CertificatePage({ params }: { params: Promise<{ id
       <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
         <div className="mb-6">
           <Link
-            href="/dashboard"
+            href={isDemo ? "/videos" : "/dashboard"}
             className="inline-flex items-center text-sm font-medium text-blue-600 transition-colors hover:text-blue-700"
           >
             <svg className="mr-1 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
-            Back to Dashboard
+            {isDemo ? "Back to Videos" : "Back to Dashboard"}
           </Link>
         </div>
 
@@ -215,7 +295,7 @@ export default async function CertificatePage({ params }: { params: Promise<{ id
               >
                 Verify Certificate
               </Link>
-              {isOwner && (
+              {isOwner && !isDemo && (
                 <a
                   href={`/api/evidence/${certification.id}`}
                   download
@@ -223,6 +303,16 @@ export default async function CertificatePage({ params }: { params: Promise<{ id
                 >
                   Download Evidence Package
                 </a>
+              )}
+              {isDemo && (
+                <div className="rounded-lg border border-amber-200 bg-amber-50 p-4">
+                  <p className="text-sm text-amber-800">
+                    <strong>Demo Certificate:</strong> This is a sample certificate for demonstration purposes. 
+                    <Link href="/certify" className="ml-1 text-amber-900 underline hover:text-amber-700">
+                      Create your own certificate
+                    </Link>
+                  </p>
+                </div>
               )}
             </div>
 
@@ -280,22 +370,26 @@ export default async function CertificatePage({ params }: { params: Promise<{ id
             </div>
 
             {/* Verification Guide */}
-            <VerificationGuide certificationId={certification.id} />
+            {!isDemo && <VerificationGuide certificationId={certification.id} />}
 
             {/* Creator Continuity */}
-            <CreatorContinuityChain
-              currentEvidenceHash={certification.evidence_hash}
-              previousEvidenceHash={certification.previous_evidence_hash}
-            />
+            {!isDemo && certification.evidence_hash && (
+              <CreatorContinuityChain
+                currentEvidenceHash={certification.evidence_hash}
+                previousEvidenceHash={certification.previous_evidence_hash}
+              />
+            )}
 
             {/* Usage Scenarios */}
-            <EvidenceUsageScenarios
-              certification={certification}
-              video={video}
-            />
+            {!isDemo && (
+              <EvidenceUsageScenarios
+                certification={certification}
+                video={video}
+              />
+            )}
 
             {/* Complaint Evidence Package */}
-            {isOwner && (
+            {isOwner && !isDemo && (
               <ComplaintEvidencePackage
                 certification={certification}
                 video={video}
@@ -304,7 +398,7 @@ export default async function CertificatePage({ params }: { params: Promise<{ id
             )}
 
             {/* Revoke Certificate (only for owner) */}
-            {isOwner && (
+            {isOwner && !isDemo && (
               <div className="border-t border-gray-200 pt-6">
                 <RevokeCertificateButton certificationId={certification.id} />
               </div>
