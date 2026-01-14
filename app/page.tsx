@@ -33,7 +33,7 @@ export default function Home() {
               href="/verify"
               className="w-full rounded-xl border border-gray-300/80 bg-white px-8 py-3.5 text-base font-semibold text-gray-700 shadow-sm transition-all duration-200 hover:border-gray-400 hover:bg-gray-50 hover:shadow-md hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-gray-400/50 focus:ring-offset-2 sm:w-auto"
             >
-              {t.home.verifyButton} <span aria-hidden="true" className="ml-1.5">→</span>
+              {t.home.verifyButton}
             </Link>
           </div>
           </div>
