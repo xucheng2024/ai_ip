@@ -87,19 +87,7 @@ export default async function CertificatePage({ params }: { params: Promise<{ id
   } else {
     const { data: cert, error } = await supabase
       .from('certifications')
-      .select(
-        `
-        *,
-        videos (
-          *,
-          users (
-            display_name,
-            email
-          ),
-          creation_metadata (*)
-        )
-      `
-      )
+      .select('*')
       .eq('id', id)
       .eq('status', 'valid')
       .single()
@@ -109,9 +97,63 @@ export default async function CertificatePage({ params }: { params: Promise<{ id
     }
 
     certification = cert
-    video = certification.videos as any
+
+    // Fetch video separately
+    if (certification.video_id) {
+      console.log('[Certificate] Fetching video:', certification.video_id)
+      const { data: videoData, error: videoError } = await supabase
+        .from('videos')
+        .select('*')
+        .eq('id', certification.video_id)
+        .single()
+
+      if (videoData) {
+        video = videoData
+
+        // Fetch user info separately
+        if (video.user_id) {
+          const { data: userData } = await supabase
+            .from('users')
+            .select('display_name, email')
+            .eq('id', video.user_id)
+            .single()
+          
+          if (userData) {
+            video.users = userData
+          }
+        }
+
+        // Fetch metadata separately
+        const { data: metadataList } = await supabase
+          .from('creation_metadata')
+          .select('*')
+          .eq('video_id', video.id)
+          .limit(1)
+
+        if (metadataList && metadataList.length > 0) {
+          video.creation_metadata = metadataList
+        }
+      }
+
+      console.log('[Certificate] Video fetched:', {
+        hasData: !!videoData,
+        error: videoError?.message,
+        videoId: videoData?.id,
+        hasFileUrl: !!videoData?.file_url
+      })
+    }
+    
     metadata = video?.creation_metadata?.[0] || null
     isOwner = user && video?.user_id === user.id
+
+    console.log('[Certificate Page] Video data fetched:', {
+      certVideoId: certification.video_id,
+      hasVideo: !!video,
+      videoId: video?.id,
+      hasFileUrl: !!video?.file_url,
+      fileUrl: video?.file_url,
+      title: video?.title
+    })
 
     // Get batch status for evidence maturity
     if (certification.merkle_batch_id) {
