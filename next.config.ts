@@ -3,6 +3,7 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   /* config options here */
   serverExternalPackages: ['@react-pdf/renderer'],
+  turbopack: {},
   webpack: (config, { isServer }) => {
     // Enable WebAssembly support for ffmpeg.wasm
     config.experiments = {
