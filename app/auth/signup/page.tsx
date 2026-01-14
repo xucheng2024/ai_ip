@@ -49,7 +49,7 @@ export default function SignupPage() {
         router.refresh()
       }
     } catch (err: any) {
-      setError(err.message || 'Failed to sign up')
+      setError(err.message || t.errors.signupFailed)
     } finally {
       setLoading(false)
     }

@@ -1,6 +1,7 @@
 'use client'
 
 import { format } from 'date-fns'
+import { useI18n } from '@/lib/i18n/context'
 
 interface TimelineEvent {
   time: string
@@ -15,9 +16,12 @@ interface CreationTimelineProps {
 }
 
 export default function CreationTimeline({ events, className = '' }: CreationTimelineProps) {
+  const { t } = useI18n()
   return (
     <div className={`space-y-3 ${className}`}>
-      <h3 className="text-xs font-medium uppercase tracking-wide text-gray-500">Certification Timeline</h3>
+      <h3 className="text-xs font-medium uppercase tracking-wide text-gray-500">
+        {t.certificate.certificationTimeline}
+      </h3>
       <div className="relative">
         <div className="absolute left-3 top-0 bottom-0 w-0.5 bg-gray-200" />
         <div className="space-y-4">

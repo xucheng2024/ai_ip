@@ -112,7 +112,7 @@ export default function VideosPage() {
                     href={`/certificate/${video.id}`}
                     className="inline-flex items-center w-full justify-center rounded-lg bg-gradient-to-r from-blue-600 to-blue-700 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:from-blue-700 hover:to-blue-800 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:ring-offset-2"
                   >
-                    {t.home.viewProofPage || 'View Proof Page'}
+                    {t.home.viewProofPage}
                     <svg className="ml-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                     </svg>

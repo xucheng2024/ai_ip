@@ -21,7 +21,10 @@
     "userManual": "使用指南",
     "videos": "作品集",
     "docs": "文档",
-    "transparency": "透明日志"
+    "transparency": "透明日志",
+    "missingEnvVars": "⚠️ 缺少环境变量。请在 Vercel 中配置 NEXT_PUBLIC_SUPABASE_URL 和 NEXT_PUBLIC_SUPABASE_ANON_KEY。",
+    "languageEnglish": "English",
+    "languageChinese": "中文"
   },
   "home": {
     "title": "保护您的 AI 视频",
@@ -124,7 +127,9 @@
     "certifyFirstVideo": "认证第一个视频",
     "tierFree": "每月1次认证",
     "tierBasic": "每月10次认证",
-    "tierPro": "无限次认证"
+    "tierPro": "无限次认证",
+    "view": "查看",
+    "verify": "验证"
   },
   "certify": {
     "title": "认证您的视频",
@@ -190,12 +195,15 @@
     "selectedFile": "已选择：",
     "pleaseEnterCertId": "请输入认证ID",
     "pleaseSelectFile": "请选择视频文件",
-    "legalNote": "提示：本平台提供创作时间和内容一致性证明（作者证据），不构成政府版权登记或法律判断。本平台不判断侵权的合法性。"
+    "legalNote": "提示：本平台提供创作时间和内容一致性证明（作者证据），不构成政府版权登记或法律判断。本平台不判断侵权的合法性。",
+    "verificationResult": "验证结果",
+    "authorshipEvidenceVerified": "作者证据已验证"
   },
   "certificate": {
     "title": "作者证据证书",
     "subtitle": "创作证明与内容指纹",
     "backToDashboard": "返回工作台",
+    "backToVideos": "返回作品集",
     "heroTitle": "此AI视频已通过作者证据验证",
     "heroSubtitle": "创作时间与内容指纹可独立验证",
     "heroStatusTitle": "作者证据已验证",
@@ -239,13 +247,39 @@
     "promptFingerprintDesc": "提示词仅以哈希形式存储，原始内容不可访问，保护您的隐私。",
     "legalDisclaimer": "法律声明：本服务提供创作时间和内容一致性的技术性证据。不构成版权登记或法律判断。",
     "generatingPDF": "正在生成PDF...",
-    "verifiedByAIVerify": "已通过AIVerify验证"
+    "verifiedByAIVerify": "已通过AIVerify验证",
+    "demoCertificate": "演示证书：",
+    "demoCertificateDesc": "这是一个用于演示的示例证书。",
+    "createYourOwn": "创建您自己的证书",
+    "publiclyVerifiable": "公开可验证",
+    "timeStampedBlockchainAnchored": "已添加时间戳 · 已锚定到区块链",
+    "timeStamped": "已添加时间戳",
+    "videoUploaded": "视频已上传",
+    "videoUploadedDesc": "视频文件已接收并处理",
+    "fingerprintGenerated": "指纹已生成",
+    "fingerprintGeneratedDesc": "内容哈希已计算",
+    "timestampRecorded": "时间戳已记录",
+    "timestampRecordedDesc": "可信时间戳已分配",
+    "certificationComplete": "认证完成",
+    "certificationCompleteDesc": "证书已颁发并验证",
+    "certificationCompleted": "认证已完成",
+    "certificationCompletedDesc": "证书已生成（演示）",
+    "anonymous": "匿名",
+    "certificationTimeline": "认证时间线",
+    "revokeCertificate": "撤销证书",
+    "confirmRevoke": "确认撤销",
+    "revoking": "正在撤销...",
+    "revokeConfirmTitle": "您确定要撤销此证书吗？",
+    "revokeConfirmDesc": "此操作无法撤销。证书将被标记为已撤销，并且不再公开可验证。",
+    "revokeFailed": "撤销证书失败"
   },
   "errors": {
     "generic": "出错了",
     "network": "网络连接异常，请稍后重试。",
     "authRequired": "需要先登录",
-    "notFound": "未找到"
+    "notFound": "未找到",
+    "loginFailed": "登录失败",
+    "signupFailed": "注册失败"
   },
   "evidenceStatus": {
     "certified": "已认证",

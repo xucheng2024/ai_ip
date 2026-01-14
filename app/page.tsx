@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useI18n } from "@/lib/i18n/context";
 
 export default function Home() {
-  const { t } = useI18n()
+  const { t, language } = useI18n()
   
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50/50">
@@ -250,7 +250,7 @@ export default function Home() {
               </ul>
             </div>
             <div className="relative rounded-2xl border-2 border-blue-600 bg-white p-8 shadow-lg transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
-              {t.home.pricingPopular && !t.home.pricingPopular.includes('基础版') && (
+              {t.home.pricingPopular && language === 'en' && (
                 <div className="absolute -top-3 left-1/2 -translate-x-1/2">
                   <span className="rounded-full bg-gradient-to-r from-blue-600 to-blue-700 px-3 py-1 text-xs font-semibold text-white shadow-md">
                     {t.home.pricingPopular}
@@ -258,7 +258,7 @@ export default function Home() {
                 </div>
               )}
               <h3 className="text-lg font-semibold text-gray-900">
-                {t.home.pricingPopular && t.home.pricingPopular.includes('基础版') 
+                {t.home.pricingPopular && language === 'zh'
                   ? t.home.pricingPopular
                   : t.home.pricingBasic}
               </h3>

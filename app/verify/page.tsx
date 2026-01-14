@@ -34,8 +34,8 @@ function VerifyPageContent() {
   }, [certificationId])
 
   const handleVerifyById = async () => {
-    if (!certificationId.trim()) {
-      setError(t.verify.pleaseEnterCertId || 'Please enter a certification ID')
+      if (!certificationId.trim()) {
+      setError(t.verify.pleaseEnterCertId)
       return
     }
 
@@ -90,7 +90,7 @@ function VerifyPageContent() {
         batchStatus,
       })
     } catch (err: any) {
-      setError(err.message || 'Verification failed')
+      setError(err.message || t.errors.generic)
     } finally {
       setLoading(false)
     }
@@ -98,7 +98,7 @@ function VerifyPageContent() {
 
   const handleVerifyByFile = async () => {
     if (!file) {
-      setError(t.verify.pleaseSelectFile || 'Please select a video file')
+      setError(t.verify.pleaseSelectFile)
       return
     }
 
@@ -143,7 +143,7 @@ function VerifyPageContent() {
         metadata: video.creation_metadata?.[0] || null,
       })
     } catch (err: any) {
-      setError(err.message || 'Verification failed')
+      setError(err.message || t.errors.generic)
     } finally {
       setLoading(false)
     }
@@ -231,13 +231,13 @@ function VerifyPageContent() {
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
               </svg>
-              <p className="mt-4 text-sm font-medium text-gray-600">{t.verify.verifyingCertification || t.verify.verifying}</p>
+              <p className="mt-4 text-sm font-medium text-gray-600">{t.verify.verifyingCertification}</p>
             </div>
           )}
 
           {result && (
             <div className="rounded-xl border border-gray-200/80 bg-white p-7 shadow-sm animate-fade-in">
-              <h2 className="mb-7 text-sm font-semibold text-gray-900">Verification Result</h2>
+              <h2 className="mb-7 text-sm font-semibold text-gray-900">{t.verify.verificationResult}</h2>
               {result.exists ? (
                 <div className="space-y-7">
                   <div className="rounded-xl border border-green-200/80 bg-green-50/80 p-4 shadow-sm">
@@ -247,7 +247,7 @@ function VerifyPageContent() {
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                         <p className="ml-2 text-sm font-semibold text-green-800">
-                          Authorship Evidence Verified
+                          {t.verify.authorshipEvidenceVerified}
                         </p>
                       </div>
                       {result.certification && (
@@ -257,8 +257,8 @@ function VerifyPageContent() {
                       )}
                     </div>
                     <div className="mt-3 space-y-1 text-sm text-green-800">
-                      <p className="font-medium">✅ {t.verify.verificationSuccess || 'This video matches the certified fingerprint'}</p>
-                      <p>{t.verify.verificationSuccessCreated || 'Created on:'} {format(new Date(result.certification?.timestamp_utc), 'PPp')}</p>
+                      <p className="font-medium">✅ {t.verify.verificationSuccess}</p>
+                      <p>{t.verify.verificationSuccessCreated} {format(new Date(result.certification?.timestamp_utc), 'PPp')}</p>
                       {result.batchStatus === 'anchored' && t.verify.verificationSuccessAnchored && (
                         <p>{t.verify.verificationSuccessAnchored}</p>
                       )}
@@ -266,28 +266,28 @@ function VerifyPageContent() {
                   </div>
                   <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
-                      <p className="text-xs font-medium uppercase tracking-wide text-gray-500">Certification ID</p>
+                      <p className="text-xs font-medium uppercase tracking-wide text-gray-500">{t.verify.certId}</p>
                       <p className="mt-1 font-mono text-sm font-semibold text-gray-900">{result.certification?.id}</p>
                     </div>
                     <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
-                      <p className="text-xs font-medium uppercase tracking-wide text-gray-500">Video Title</p>
+                      <p className="text-xs font-medium uppercase tracking-wide text-gray-500">{t.verify.videoTitle}</p>
                       <p className="mt-1 text-sm font-semibold text-gray-900">{result.video?.title}</p>
                     </div>
                     <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
-                      <p className="text-xs font-medium uppercase tracking-wide text-gray-500">Certified At</p>
+                      <p className="text-xs font-medium uppercase tracking-wide text-gray-500">{t.verify.certifiedAt}</p>
                       <p className="mt-1 text-sm font-semibold text-gray-900">
                         {format(new Date(result.certification?.timestamp_utc), 'PPp')}
                       </p>
                     </div>
                     {result.metadata?.ai_tool && (
                       <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
-                        <p className="text-xs font-medium uppercase tracking-wide text-gray-500">AI Tool</p>
+                        <p className="text-xs font-medium uppercase tracking-wide text-gray-500">{t.verify.aiTool}</p>
                         <p className="mt-1 text-sm font-semibold text-gray-900 capitalize">{result.metadata.ai_tool}</p>
                       </div>
                     )}
                   </div>
                   <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
-                    <p className="text-xs font-medium uppercase tracking-wide text-gray-500 mb-3">Content Fingerprint</p>
+                    <p className="text-xs font-medium uppercase tracking-wide text-gray-500 mb-3">{t.verify.contentFingerprint}</p>
                     <HashDisplay hash={result.video?.file_hash || ''} />
                   </div>
                   <div className="pt-2">
@@ -295,7 +295,7 @@ function VerifyPageContent() {
                       href={`/certificate/${result.certification?.id}`}
                       className="inline-flex items-center rounded-lg bg-gradient-to-r from-blue-600 to-blue-700 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:from-blue-700 hover:to-blue-800 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:ring-offset-2"
                     >
-                      View Full Certificate
+                      {t.verify.viewFullCertificate}
                       <svg className="ml-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                       </svg>
@@ -310,10 +310,10 @@ function VerifyPageContent() {
                     </svg>
                     <div className="ml-3">
                       <p className="text-sm font-semibold text-yellow-800">
-                        No certification found
+                        {t.verify.notFound}
                       </p>
                       <p className="mt-1 text-sm text-yellow-700">
-                        This video may not be certified, or the certification ID/file is incorrect.
+                        {t.verify.notFoundDesc}
                       </p>
                     </div>
                   </div>
@@ -325,9 +325,7 @@ function VerifyPageContent() {
           {/* Legal Disclaimer */}
           <div className="mt-8 rounded-lg border border-gray-200 bg-gray-50 p-4 text-center">
             <p className="text-xs leading-relaxed text-gray-600">
-              <strong className="font-semibold text-gray-900">Note:</strong> This platform provides creation time and content consistency proof (Authorship Evidence). 
-              It does not constitute government copyright registration or legal judgment. 
-              <strong className="font-semibold"> This platform does not judge the legality of infringement.</strong>
+              {t.verify.legalNote}
             </p>
           </div>
         </div>
@@ -338,7 +336,13 @@ function VerifyPageContent() {
 
 export default function VerifyPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-gray-50 flex items-center justify-center">Loading...</div>}>
+    <Suspense fallback={
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="mx-auto h-8 w-8 animate-spin rounded-full border-4 border-gray-300 border-t-blue-600"></div>
+        </div>
+      </div>
+    }>
       <VerifyPageContent />
     </Suspense>
   )

@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from 'react'
 import { useI18n } from '@/lib/i18n/context'
 
 export default function LanguageSwitcher() {
-  const { language, setLanguage } = useI18n()
+  const { language, setLanguage, t } = useI18n()
   const [isOpen, setIsOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
 
@@ -20,8 +20,8 @@ export default function LanguageSwitcher() {
   }, [])
 
   const languages = [
-    { code: 'en', label: 'English' },
-    { code: 'zh', label: '中文' },
+    { code: 'en', label: t.common.languageEnglish },
+    { code: 'zh', label: t.common.languageChinese },
   ] as const
 
   const currentLanguage = languages.find(lang => lang.code === language) || languages[0]

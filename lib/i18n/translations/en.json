@@ -21,7 +21,10 @@
     "userManual": "User Manual",
     "videos": "Videos",
     "docs": "Docs",
-    "transparency": "Transparency"
+    "transparency": "Transparency",
+    "missingEnvVars": "⚠️ Missing environment variables. Please configure NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in Vercel.",
+    "languageEnglish": "English",
+    "languageChinese": "中文"
   },
   "home": {
     "title": "Protect Your AI Videos",
@@ -124,7 +127,9 @@
     "certifyFirstVideo": "Certify Your First Video",
     "tierFree": "1 certification/month",
     "tierBasic": "10 certifications/month",
-    "tierPro": "Unlimited certifications"
+    "tierPro": "Unlimited certifications",
+    "view": "View",
+    "verify": "Verify"
   },
   "certify": {
     "title": "Certify Your Video",
@@ -190,12 +195,15 @@
     "selectedFile": "Selected:",
     "pleaseEnterCertId": "Please enter a certification ID",
     "pleaseSelectFile": "Please select a video file",
-    "legalNote": "Note: This platform provides creation time and content consistency proof (Authorship Evidence). It does not constitute government copyright registration or legal judgment. This platform does not judge the legality of infringement."
+    "legalNote": "Note: This platform provides creation time and content consistency proof (Authorship Evidence). It does not constitute government copyright registration or legal judgment. This platform does not judge the legality of infringement.",
+    "verificationResult": "Verification Result",
+    "authorshipEvidenceVerified": "Authorship Evidence Verified"
   },
   "certificate": {
     "title": "Authorship Evidence Certificate",
     "subtitle": "Creation Proof & Content Fingerprint",
     "backToDashboard": "Back to Dashboard",
+    "backToVideos": "Back to Videos",
     "heroTitle": "This AI Video Has Verified Authorship Evidence",
     "heroSubtitle": "Creation time and content fingerprint independently verifiable",
     "heroStatusTitle": "Authorship Evidence Verified",
@@ -239,13 +247,39 @@
     "promptFingerprintDesc": "Prompt stored as hash only. Original content not accessible to maintain privacy.",
     "legalDisclaimer": "Legal Disclaimer: This service provides technical evidence of creation time and content consistency. It does not constitute copyright registration or legal judgment.",
     "generatingPDF": "Generating PDF...",
-    "verifiedByAIVerify": "Verified by AIVerify"
+    "verifiedByAIVerify": "Verified by AIVerify",
+    "demoCertificate": "Demo Certificate:",
+    "demoCertificateDesc": "This is a sample certificate for demonstration purposes.",
+    "createYourOwn": "Create your own certificate",
+    "publiclyVerifiable": "Publicly Verifiable",
+    "timeStampedBlockchainAnchored": "Time-Stamped · Blockchain Anchored",
+    "timeStamped": "Time-Stamped",
+    "videoUploaded": "Video Uploaded",
+    "videoUploadedDesc": "Video file received and processed",
+    "fingerprintGenerated": "Fingerprint Generated",
+    "fingerprintGeneratedDesc": "Content hash calculated",
+    "timestampRecorded": "Timestamp Recorded",
+    "timestampRecordedDesc": "Trusted timestamp assigned",
+    "certificationComplete": "Certification Complete",
+    "certificationCompleteDesc": "Certificate issued and verified",
+    "certificationCompleted": "Certification Completed",
+    "certificationCompletedDesc": "Certificate generated (Demo)",
+    "anonymous": "Anonymous",
+    "certificationTimeline": "Certification Timeline",
+    "revokeCertificate": "Revoke Certificate",
+    "confirmRevoke": "Confirm Revoke",
+    "revoking": "Revoking...",
+    "revokeConfirmTitle": "Are you sure you want to revoke this certificate?",
+    "revokeConfirmDesc": "This action cannot be undone. The certificate will be marked as revoked and will no longer be publicly verifiable.",
+    "revokeFailed": "Failed to revoke certificate"
   },
   "errors": {
     "generic": "An error occurred",
     "network": "Network error. Please try again.",
     "authRequired": "Authentication required",
-    "notFound": "Not found"
+    "notFound": "Not found",
+    "loginFailed": "Failed to login",
+    "signupFailed": "Failed to sign up"
   },
   "evidenceStatus": {
     "certified": "Certified",

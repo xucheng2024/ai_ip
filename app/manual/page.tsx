@@ -27,7 +27,7 @@ async function getManualContent(locale: string) {
         const content = await readFile(filePath, 'utf-8')
         return content
       } catch (fallbackError) {
-        return '# 用户手册\n\n内容暂不可用。'
+        return '# User Manual\n\nContent not available.'
       }
     }
     return '# User Manual\n\nContent not available.'

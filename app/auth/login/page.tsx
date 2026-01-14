@@ -31,7 +31,7 @@ export default function LoginPage() {
       router.push('/dashboard')
       router.refresh()
     } catch (err: any) {
-      setError(err.message || 'Failed to login')
+      setError(err.message || t.errors.loginFailed)
     } finally {
       setLoading(false)
     }

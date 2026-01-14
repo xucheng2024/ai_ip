@@ -151,7 +151,7 @@ export default function CertifyPage() {
 
       router.push(`/certificate/${result.certificationId}`)
     } catch (err: any) {
-      setError(err.message || 'Failed to certify video')
+      setError(err.message || t.errors.generic)
       setLoading(false)
     }
   }

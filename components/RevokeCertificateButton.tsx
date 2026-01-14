@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { useI18n } from '@/lib/i18n/context'
 
 interface RevokeCertificateButtonProps {
   certificationId: string
@@ -12,6 +13,7 @@ export default function RevokeCertificateButton({
   certificationId,
   onRevoked,
 }: RevokeCertificateButtonProps) {
+  const { t } = useI18n()
   const [loading, setLoading] = useState(false)
   const [showConfirm, setShowConfirm] = useState(false)
   const router = useRouter()
@@ -30,7 +32,7 @@ export default function RevokeCertificateButton({
       const data = await response.json()
 
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to revoke certificate')
+        throw new Error(data.error || t.certificate.revokeFailed)
       }
 
       if (onRevoked) {
@@ -39,7 +41,7 @@ export default function RevokeCertificateButton({
         router.refresh()
       }
     } catch (error: any) {
-      alert(error.message || 'Failed to revoke certificate')
+      alert(error.message || t.certificate.revokeFailed)
     } finally {
       setLoading(false)
       setShowConfirm(false)
@@ -50,10 +52,10 @@ export default function RevokeCertificateButton({
     return (
       <div className="rounded-lg border border-red-200 bg-red-50 p-4">
         <p className="mb-3 text-sm font-semibold text-red-900">
-          Are you sure you want to revoke this certificate?
+          {t.certificate.revokeConfirmTitle}
         </p>
         <p className="mb-4 text-xs text-red-700">
-          This action cannot be undone. The certificate will be marked as revoked and will no longer be publicly verifiable.
+          {t.certificate.revokeConfirmDesc}
         </p>
         <div className="flex gap-2">
           <button
@@ -61,14 +63,14 @@ export default function RevokeCertificateButton({
             disabled={loading}
             className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-red-700 disabled:opacity-50"
           >
-            {loading ? 'Revoking...' : 'Confirm Revoke'}
+            {loading ? t.certificate.revoking : t.certificate.confirmRevoke}
           </button>
           <button
             onClick={() => setShowConfirm(false)}
             disabled={loading}
             className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-50 disabled:opacity-50"
           >
-            Cancel
+            {t.common.cancel}
           </button>
         </div>
       </div>
@@ -80,7 +82,7 @@ export default function RevokeCertificateButton({
       onClick={() => setShowConfirm(true)}
       className="rounded-lg border border-red-300 bg-white px-4 py-2 text-sm font-semibold text-red-700 transition-colors hover:bg-red-50"
     >
-      Revoke Certificate
+      {t.certificate.revokeCertificate}
     </button>
   )
 }
