@@ -221,15 +221,12 @@ export default function VideosPage() {
 
                     {/* Actions */}
                     <div className="mt-auto">
-                      {/* View Evidence Button - Primary Action */}
+                      {/* View Evidence Button - Outline Pill Style */}
                       <Link
                         href={`/certificate/${video.id}`}
-                        className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 px-4 py-3 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:from-blue-700 hover:to-blue-800 hover:shadow-md"
+                        className="flex w-full items-center justify-center rounded-full border-2 border-blue-600 px-4 py-2.5 text-sm font-semibold text-blue-600 transition-all duration-200 hover:bg-blue-50 hover:border-blue-700 hover:text-blue-700"
                       >
                         <span>{t.certificate.viewFullCertificate || t.home.viewFullEvidence || t.home.viewProofPage || '查看完整作者证明'}</span>
-                        <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                        </svg>
                       </Link>
                     </div>
                   </div>
