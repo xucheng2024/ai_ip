@@ -11,12 +11,12 @@ export default function Home() {
       <main className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
         {/* Hero Section */}
         <div className="text-center animate-fade-in">
-          <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-6xl leading-[1.15]">
+          <h1 className="text-5xl font-bold tracking-tight sm:text-6xl leading-[1.15]">
             <span className="gradient-text block">
               {t.home.title}
             </span>
             {t.home.titleLine2 && (
-              <span className="gradient-text block font-semibold mt-3">
+              <span className="block mt-4 text-2xl font-medium text-gray-500 sm:text-3xl">
                 {t.home.titleLine2}
               </span>
             )}
