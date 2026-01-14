@@ -36,6 +36,12 @@ function NavbarSafe({ user }: { user: any }) {
             >
               {t.common.verify}
             </Link>
+            <Link 
+              href="/transparency" 
+              className="hidden text-sm font-medium text-gray-700 transition-colors hover:text-gray-900 sm:block"
+            >
+              Transparency
+            </Link>
             {user ? (
               <>
                 <Link 

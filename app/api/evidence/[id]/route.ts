@@ -101,14 +101,35 @@ export async function GET(
       'L0' // Can be enhanced based on user verification level
     )
 
+    // Calculate evidence hash
+    const { calculateEvidenceHash } = await import('@/lib/utils/evidence-package')
+    const evidenceHash = await calculateEvidenceHash(canonicalEvidence)
+
+    // Get creator continuity chain position
+    let continuityChainPosition: number | undefined = undefined
+    if (certification.previous_evidence_hash) {
+      // Count how many certifications are in the chain before this one
+      const { count } = await supabase
+        .from('certifications')
+        .select('*', { count: 'exact', head: true })
+        .eq('status', 'valid')
+        .eq('video_id', video.id) // Same user's videos
+        .lt('created_at', certification.created_at)
+      
+      continuityChainPosition = (count || 0) + 1
+    }
+
     // Generate full evidence package with verification data
     const evidencePackage = await generateFullEvidencePackage(
       canonicalEvidence,
       id,
       certification.verification_url,
+      evidenceHash,
       merkleProof,
       blockchainAnchor,
-      eventLogs
+      eventLogs,
+      certification.previous_evidence_hash,
+      continuityChainPosition
     )
 
     // Return as JSON download

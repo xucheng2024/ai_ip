@@ -7,6 +7,10 @@ import CreationTimeline from '@/components/CreationTimeline'
 import CertificationBadge from '@/components/CertificationBadge'
 import RevokeCertificateButton from '@/components/RevokeCertificateButton'
 import ComplaintEvidencePackage from '@/components/ComplaintEvidencePackage'
+import EvidenceStatusBadge, { getEvidenceStatus } from '@/components/EvidenceStatusBadge'
+import VerificationGuide from '@/components/VerificationGuide'
+import EvidenceUsageScenarios from '@/components/EvidenceUsageScenarios'
+import CreatorContinuityChain from '@/components/CreatorContinuityChain'
 import Link from 'next/link'
 
 export default async function CertificatePage({ params }: { params: Promise<{ id: string }> }) {
@@ -44,6 +48,20 @@ export default async function CertificatePage({ params }: { params: Promise<{ id
   const video = certification.videos as any
   const metadata = video?.creation_metadata?.[0] || null
   const isOwner = user && video?.user_id === user.id
+
+  // Get batch status for evidence maturity
+  let batchStatus: string | null = null
+  if (certification.merkle_batch_id) {
+    const { data: batch } = await supabase
+      .from('merkle_batches')
+      .select('status')
+      .eq('id', certification.merkle_batch_id)
+      .single()
+    batchStatus = batch?.status || null
+  }
+
+  // Determine evidence status
+  const evidenceStatus = getEvidenceStatus(certification, batchStatus)
 
   // Generate timeline events
   const videoCreatedAt = new Date(video?.created_at || certification.timestamp_utc)
@@ -103,6 +121,9 @@ export default async function CertificatePage({ params }: { params: Promise<{ id
             <p className="mt-2 text-base text-gray-600">
               Creation Proof & Content Fingerprint
             </p>
+            <div className="mt-4 flex justify-center">
+              <EvidenceStatusBadge status={evidenceStatus} />
+            </div>
           </div>
 
           <div className="space-y-6 border-t border-gray-200 pt-6">
@@ -257,6 +278,21 @@ export default async function CertificatePage({ params }: { params: Promise<{ id
                 </div>
               )}
             </div>
+
+            {/* Verification Guide */}
+            <VerificationGuide certificationId={certification.id} />
+
+            {/* Creator Continuity */}
+            <CreatorContinuityChain
+              currentEvidenceHash={certification.evidence_hash}
+              previousEvidenceHash={certification.previous_evidence_hash}
+            />
+
+            {/* Usage Scenarios */}
+            <EvidenceUsageScenarios
+              certification={certification}
+              video={video}
+            />
 
             {/* Complaint Evidence Package */}
             {isOwner && (

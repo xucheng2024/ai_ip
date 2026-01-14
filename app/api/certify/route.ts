@@ -208,7 +208,29 @@ export async function POST(request: NextRequest) {
     // Final evidence hash (with TSA if available)
     const finalEvidenceHash = await calculateEvidenceHash(canonicalEvidence)
 
-    // Create certification
+    // Get previous certification for creator continuity
+    // First get all video IDs for this user
+    const { data: userVideos } = await supabase
+      .from('videos')
+      .select('id')
+      .eq('user_id', user.id)
+
+    let previousEvidenceHash: string | null = null
+    if (userVideos && userVideos.length > 0) {
+      const videoIds = userVideos.map((v: any) => v.id)
+      const { data: previousCert } = await supabase
+        .from('certifications')
+        .select('evidence_hash')
+        .eq('status', 'valid')
+        .in('video_id', videoIds)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .single()
+      
+      previousEvidenceHash = previousCert?.evidence_hash || null
+    }
+
+    // Create certification with creator continuity link
     const { error: certError } = await supabase.from('certifications').insert({
       id: certificationId,
       video_id: videoData.id,
@@ -216,6 +238,7 @@ export async function POST(request: NextRequest) {
       evidence_hash: finalEvidenceHash, // This is the Merkle tree leaf
       verification_url: verificationUrl,
       tsa_timestamp_token: tsaToken,
+      previous_evidence_hash: previousEvidenceHash,
     })
 
     if (certError) throw certError

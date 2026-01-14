@@ -2,6 +2,9 @@ export type AccountType = 'creator' | 'studio' | 'enterprise'
 export type SubscriptionTier = 'free' | 'basic' | 'pro'
 export type CertificationStatus = 'valid' | 'revoked'
 
+// Evidence Status Model - Evidence Maturity Levels
+export type EvidenceStatus = 'certified' | 'timestamped' | 'anchored' | 'revoked'
+
 export interface User {
   id: string
   email: string

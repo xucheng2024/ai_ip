@@ -6,6 +6,7 @@ import { createClient } from '@/lib/supabase/client'
 import { format } from 'date-fns'
 import { generateFileHash } from '@/lib/utils/hash'
 import HashDisplay from '@/components/HashDisplay'
+import EvidenceStatusBadge, { getEvidenceStatus } from '@/components/EvidenceStatusBadge'
 
 interface VerificationResult {
   exists: boolean
@@ -13,6 +14,7 @@ interface VerificationResult {
   certification: any
   video: any
   metadata: any
+  batchStatus?: string | null
 }
 
 function VerifyPageContent() {
@@ -53,7 +55,6 @@ function VerifyPageContent() {
         `
         )
         .eq('id', certificationId)
-        .eq('status', 'valid')
         .single()
 
       if (certError || !certification) {
@@ -67,12 +68,24 @@ function VerifyPageContent() {
         return
       }
 
+      // Get batch status if available
+      let batchStatus: string | null = null
+      if (certification.merkle_batch_id) {
+        const { data: batch } = await supabase
+          .from('merkle_batches')
+          .select('status')
+          .eq('id', certification.merkle_batch_id)
+          .single()
+        batchStatus = batch?.status || null
+      }
+
       setResult({
         exists: true,
-        matches: true,
+        matches: certification.status === 'valid',
         certification,
         video: certification.videos,
         metadata: certification.videos?.creation_metadata?.[0] || null,
+        batchStatus,
       })
     } catch (err: any) {
       setError(err.message || 'Verification failed')
@@ -221,13 +234,20 @@ function VerifyPageContent() {
               {result.exists ? (
                 <div className="space-y-6">
                   <div className="rounded-lg border border-green-200 bg-green-50 p-4">
-                    <div className="flex items-center">
-                      <svg className="h-5 w-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                      <p className="ml-2 text-sm font-semibold text-green-800">
-                        Authorship Evidence Verified
-                      </p>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center">
+                        <svg className="h-5 w-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <p className="ml-2 text-sm font-semibold text-green-800">
+                          Authorship Evidence Verified
+                        </p>
+                      </div>
+                      {result.certification && (
+                        <EvidenceStatusBadge 
+                          status={getEvidenceStatus(result.certification, result.batchStatus)} 
+                        />
+                      )}
                     </div>
                   </div>
                   <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">

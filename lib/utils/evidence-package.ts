@@ -29,10 +29,32 @@ export interface CanonicalEvidencePackage {
   }
 }
 
+// Hash Manifest - Index of all hashes in the package
+export interface HashManifest {
+  evidence_hash: string
+  merkle_root?: string
+  tx_hash?: string
+  block_time?: string
+  included_files: Array<{
+    name: string
+    hash: string
+    type: 'video' | 'frame' | 'audio' | 'metadata'
+  }>
+}
+
+// Creator Continuity Chain
+export interface CreatorContinuity {
+  previous_evidence_hash?: string
+  chain_position?: number
+  creator_root?: string
+}
+
 // Full Evidence Package (includes verification data)
 export interface EvidencePackage extends CanonicalEvidencePackage {
   certification_id: string
   verification_url: string
+  manifest?: HashManifest
+  creator_continuity?: CreatorContinuity
   blockchain?: {
     merkle_root?: string
     merkle_proof?: {
@@ -143,23 +165,104 @@ export async function calculateEvidenceHash(
 }
 
 /**
+ * Generate hash manifest for evidence package
+ */
+export async function generateHashManifest(
+  canonicalEvidence: CanonicalEvidencePackage,
+  evidenceHash: string,
+  merkleRoot?: string,
+  blockchainAnchor?: any
+): Promise<HashManifest> {
+  const includedFiles: HashManifest['included_files'] = []
+
+  // Add video hash
+  if (canonicalEvidence.video.file_hash) {
+    includedFiles.push({
+      name: 'video_file',
+      hash: canonicalEvidence.video.file_hash,
+      type: 'video',
+    })
+  }
+
+  // Add frame hashes
+  if (canonicalEvidence.video.frame_hashes) {
+    canonicalEvidence.video.frame_hashes.forEach((fh, idx) => {
+      includedFiles.push({
+        name: `frame_${fh.t}s`,
+        hash: fh.hash,
+        type: 'frame',
+      })
+    })
+  }
+
+  // Add audio hash
+  if (canonicalEvidence.video.audio_hash) {
+    includedFiles.push({
+      name: 'audio_track',
+      hash: canonicalEvidence.video.audio_hash,
+      type: 'audio',
+    })
+  }
+
+  // Add metadata hash if prompt hash exists
+  if (canonicalEvidence.metadata?.prompt_hash) {
+    includedFiles.push({
+      name: 'prompt_hash',
+      hash: canonicalEvidence.metadata.prompt_hash,
+      type: 'metadata',
+    })
+  }
+
+  return {
+    evidence_hash: evidenceHash,
+    merkle_root: merkleRoot || blockchainAnchor?.merkleRoot,
+    tx_hash: blockchainAnchor?.txHash,
+    block_time: blockchainAnchor?.timestamp,
+    included_files: includedFiles,
+  }
+}
+
+/**
  * Generate full evidence package (for download/verification)
  */
 export async function generateFullEvidencePackage(
   canonicalEvidence: CanonicalEvidencePackage,
   certificationId: string,
   verificationUrl: string,
+  evidenceHash: string,
   merkleProof?: any,
   blockchainAnchor?: any,
-  eventLogs?: any[]
+  eventLogs?: any[],
+  previousEvidenceHash?: string | null,
+  creatorContinuityChain?: number
 ): Promise<EvidencePackage> {
+  const merkleRoot = merkleProof?.root || blockchainAnchor?.merkleRoot
+
+  // Generate manifest
+  const manifest = await generateHashManifest(
+    canonicalEvidence,
+    evidenceHash,
+    merkleRoot,
+    blockchainAnchor
+  )
+
+  // Generate creator continuity info
+  const creatorContinuity: CreatorContinuity | undefined = previousEvidenceHash
+    ? {
+        previous_evidence_hash: previousEvidenceHash,
+        chain_position: creatorContinuityChain,
+      }
+    : undefined
+
   const fullPackage: EvidencePackage = {
     ...canonicalEvidence,
     certification_id: certificationId,
     verification_url: verificationUrl,
+    manifest,
+    creator_continuity: creatorContinuity,
     blockchain: merkleProof || blockchainAnchor
       ? {
-          merkle_root: merkleProof?.root || blockchainAnchor?.merkleRoot,
+          merkle_root: merkleRoot,
           merkle_proof: merkleProof
             ? {
                 leaf: merkleProof.leaf,
