@@ -114,7 +114,9 @@ export async function extractVideoMetadata(file: File, useCache = true): Promise
             // Limit cache size to prevent memory issues
             if (metadataCache.size > 10) {
               const firstKey = metadataCache.keys().next().value
-              metadataCache.delete(firstKey)
+              if (firstKey) {
+                metadataCache.delete(firstKey)
+              }
             }
           })
         }
