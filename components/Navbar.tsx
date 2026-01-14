@@ -8,11 +8,21 @@ export default async function Navbar() {
     const supabase = await createClient()
     const {
       data: { user: authUser },
+      error: authError,
     } = await supabase.auth.getUser()
-    user = authUser
-  } catch (error) {
-    // Silently fail - show unauthenticated navbar
-    console.error('Navbar auth error:', error)
+    
+    if (authError) {
+      console.error('Navbar auth error:', authError.message)
+    } else {
+      user = authUser
+    }
+  } catch (error: any) {
+    // Log detailed error for debugging
+    console.error('Navbar Supabase client error:', {
+      message: error?.message,
+      hasUrl: !!process.env.NEXT_PUBLIC_SUPABASE_URL,
+      hasKey: !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+    })
   }
 
   return (
