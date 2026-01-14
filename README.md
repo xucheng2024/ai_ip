@@ -122,7 +122,7 @@ See `supabase/schema.sql` for full schema.
 
 ### Trust & Verification Infrastructure
 
-- ✅ **Multi-Layer Fingerprinting**: File hash, frame sequence hash, audio track hash
+- ✅ **Multi-Layer Fingerprinting**: File hash, frame sequence hash, audio track hash (using Web Audio API)
 - ✅ **RFC 3161 TSA Timestamps**: Cryptographically signed timestamps from trusted authority
 - ✅ **Blockchain Anchoring**: Merkle tree batching with Polygon PoS anchoring
 - ✅ **Chain of Custody**: Append-only event logs with hash chains

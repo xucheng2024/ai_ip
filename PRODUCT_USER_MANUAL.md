@@ -76,8 +76,8 @@ The certification provides cryptographic proof of:
 AIVerify generates multiple layers of fingerprints:
 
 - **File Hash:** SHA-256 hash of the entire video file
-- **Frame Sequence Hash:** Temporal fingerprint of video frames
-- **Audio Track Hash:** Separate hash of audio content
+- **Frame Sequence Hash:** Temporal fingerprint of video frames (extracted at key intervals)
+- **Audio Track Hash:** Separate hash of audio content (extracted using Web Audio API, returns null for videos without audio)
 
 Any modification to the video (even 1 bit) will result in a completely different fingerprint, ensuring tamper detection.
 
@@ -243,8 +243,8 @@ Each certificate includes its own verifiable proof page with:
 #### 2. Content Fingerprint
 
 - **File Hash:** Complete SHA-256 hash displayed in readable format
-- **Frame Hash:** If extracted during processing
-- **Audio Hash:** If extracted during processing
+- **Frame Hash:** Extracted from key frames throughout the video (if available)
+- **Audio Hash:** Extracted using Web Audio API frequency analysis (returns null for videos without audio tracks)
 
 **Privacy Feature:** If you chose to keep prompts private, only the hash is shown (zero-knowledge storage).
 

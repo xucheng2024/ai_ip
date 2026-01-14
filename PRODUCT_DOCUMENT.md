@@ -34,8 +34,8 @@
 
 ### 1. Multi-Layer Content Fingerprinting
 - **File Hash:** SHA-256 hash of entire video file
-- **Frame Sequence Hash:** Temporal fingerprinting of video frames
-- **Audio Track Hash:** Separate audio content verification
+- **Frame Sequence Hash:** Temporal fingerprinting of video frames (extracted at key intervals)
+- **Audio Track Hash:** Separate audio content verification using Web Audio API frequency analysis (null for videos without audio)
 - **Tamper Detection:** Any 1-bit change completely alters fingerprints
 
 ### 2. Trusted Timestamp Infrastructure
