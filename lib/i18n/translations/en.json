@@ -423,7 +423,10 @@
     "aboutItem1": "All batches are anchored to Polygon blockchain for public verification",
     "aboutItem2": "Merkle roots enable efficient batch verification of individual certificates",
     "aboutItem3": "Each transaction is publicly auditable on PolygonScan",
-    "aboutItem4": "This public records demonstrates platform integrity and accountability"
+    "aboutItem4": "This public records demonstrates platform integrity and accountability",
+    "demoData": "Demo Data",
+    "demoNotice": "Demo Notice:",
+    "demoNoticeDesc": "This is sample data for demonstration purposes. Real records will appear here once certifications are anchored to the blockchain."
   },
   "promotionSupport": {
     "title": "Promotion Support",

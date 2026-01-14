@@ -9,6 +9,7 @@ interface TransparencyContentProps {
   totalBatches: number
   totalCertifications: number
   dateRange: { earliest: string; latest: string } | null
+  isDemo?: boolean
 }
 
 export default function TransparencyContent({
@@ -16,6 +17,7 @@ export default function TransparencyContent({
   totalBatches,
   totalCertifications,
   dateRange,
+  isDemo = false,
 }: TransparencyContentProps) {
   const { t } = useI18n()
 
@@ -84,10 +86,29 @@ export default function TransparencyContent({
         {/* Batches Table */}
         <div className="rounded-xl bg-white shadow-sm">
           <div className="border-b border-gray-200 px-4 py-3 sm:px-6 sm:py-4">
-            <h2 className="text-lg font-semibold text-gray-900">{t.transparency.recentBatches}</h2>
-            <p className="mt-1 text-sm text-gray-500">
-              {t.transparency.ctDescription}
-            </p>
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-lg font-semibold text-gray-900">{t.transparency.recentBatches}</h2>
+                <p className="mt-1 text-sm text-gray-500">
+                  {t.transparency.ctDescription}
+                </p>
+              </div>
+              {isDemo && (
+                <div className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-1.5">
+                  <span className="text-xs font-medium text-amber-800">
+                    {t.transparency.demoData || 'Demo Data'}
+                  </span>
+                </div>
+              )}
+            </div>
+            {isDemo && (
+              <div className="mt-3 rounded-lg border border-amber-200 bg-amber-50 p-3">
+                <p className="text-sm text-amber-800">
+                  <strong>{t.transparency.demoNotice || 'Demo Notice:'}</strong>{' '}
+                  {t.transparency.demoNoticeDesc || 'This is sample data for demonstration purposes. Real records will appear here once certifications are anchored to the blockchain.'}
+                </p>
+              </div>
+            )}
           </div>
           {batches && batches.length > 0 ? (
             <div className="overflow-x-auto -mx-4 sm:mx-0">
@@ -143,41 +164,53 @@ export default function TransparencyContent({
                       </td>
                       <td className="px-4 py-3 sm:px-6 sm:py-4">
                         {batch.chain_tx_hash ? (
-                          <a
-                            href={`https://polygonscan.com/tx/${batch.chain_tx_hash}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center text-sm font-medium text-blue-600 hover:text-blue-700"
-                          >
-                            {t.transparency.view}
-                            <svg
-                              className="ml-1 h-4 w-4"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              stroke="currentColor"
+                          isDemo ? (
+                            <span className="text-sm text-gray-500 font-mono">
+                              {batch.chain_tx_hash.substring(0, 10)}...
+                            </span>
+                          ) : (
+                            <a
+                              href={`https://polygonscan.com/tx/${batch.chain_tx_hash}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center text-sm font-medium text-blue-600 hover:text-blue-700"
                             >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-                              />
-                            </svg>
-                          </a>
+                              {t.transparency.view}
+                              <svg
+                                className="ml-1 h-4 w-4"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                                />
+                              </svg>
+                            </a>
+                          )
                         ) : (
                           <span className="text-sm text-gray-400">{t.transparency.pending}</span>
                         )}
                       </td>
                       <td className="whitespace-nowrap px-4 py-3 sm:px-6 sm:py-4 text-sm text-gray-600">
                         {batch.chain_block_number ? (
-                          <a
-                            href={`https://polygonscan.com/block/${batch.chain_block_number}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="font-medium text-blue-600 hover:text-blue-700"
-                          >
-                            {batch.chain_block_number.toLocaleString()}
-                          </a>
+                          isDemo ? (
+                            <span className="text-gray-600">
+                              {batch.chain_block_number.toLocaleString()}
+                            </span>
+                          ) : (
+                            <a
+                              href={`https://polygonscan.com/block/${batch.chain_block_number}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="font-medium text-blue-600 hover:text-blue-700"
+                            >
+                              {batch.chain_block_number.toLocaleString()}
+                            </a>
+                          )
                         ) : (
                           <span className="text-gray-400">-</span>
                         )}

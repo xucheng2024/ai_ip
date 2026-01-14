@@ -423,7 +423,10 @@
     "aboutItem1": "所有批次均锚定至Polygon区块链",
     "aboutItem2": "使用Merkle根进行高效批量验证",
     "aboutItem3": "所有记录可在PolygonScan上公开查询",
-    "aboutItem4": "公开记录用于增强平台透明度与可信度"
+    "aboutItem4": "公开记录用于增强平台透明度与可信度",
+    "demoData": "演示数据",
+    "demoNotice": "演示说明：",
+    "demoNoticeDesc": "这是用于演示的示例数据。真实记录将在认证锚定到区块链后显示在这里。"
   },
   "promotionSupport": {
     "title": "分享助推",
