@@ -1,9 +1,8 @@
 // Client-side video compression using ffmpeg.wasm
 // Lossless compression for Vercel + Supabase architecture
 // Note: This module should only be imported dynamically on the client side
-import type { FFmpeg } from '@ffmpeg/ffmpeg'
-import type { fetchFile as FetchFileType, toBlobURL as ToBlobURLType } from '@ffmpeg/util'
 
+type FFmpeg = any
 let ffmpegInstance: FFmpeg | null = null
 let isLoaded = false
 
@@ -21,16 +20,21 @@ async function getFFmpeg(): Promise<FFmpeg> {
   }
 
   try {
-    // Dynamically import FFmpeg modules
-    const [{ FFmpeg: FFmpegClass }, { toBlobURL, fetchFile: _ }] = await Promise.all([
-      import('@ffmpeg/ffmpeg'),
-      import('@ffmpeg/util')
-    ])
+    console.log('[FFmpeg] Importing modules...')
+    
+    // Import from CDN to avoid bundling issues
+    const FFmpegModule = await import('https://esm.sh/@ffmpeg/ffmpeg@0.12.6')
+    const UtilModule = await import('https://esm.sh/@ffmpeg/util@0.12.1')
+    
+    const FFmpegClass = FFmpegModule.FFmpeg
+    const toBlobURL = UtilModule.toBlobURL
 
+    console.log('[FFmpeg] Creating instance...')
     const ffmpeg = new FFmpegClass()
     const baseURL = 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/esm'
 
     try {
+      console.log('[FFmpeg] Loading with blob URLs...')
       // Try loading with blob URLs first
       const coreURL = await toBlobURL(`${baseURL}/ffmpeg-core.js`, 'text/javascript')
       const wasmURL = await toBlobURL(`${baseURL}/ffmpeg-core.wasm`, 'application/wasm')
@@ -42,16 +46,17 @@ async function getFFmpeg(): Promise<FFmpeg> {
 
       ffmpegInstance = ffmpeg
       isLoaded = true
+      console.log('[FFmpeg] Loaded successfully')
       return ffmpeg
     } catch (error) {
-      console.error('Failed to load FFmpeg:', error)
+      console.error('[FFmpeg] Failed to load with blob URLs:', error)
       // Reset state on error so we can retry
       ffmpegInstance = null
       isLoaded = false
       
       // Try alternative loading method (direct URLs)
       try {
-        console.log('Retrying FFmpeg load with direct URLs...')
+        console.log('[FFmpeg] Retrying with direct URLs...')
         const ffmpegRetry = new FFmpegClass()
         await ffmpegRetry.load({
           coreURL: `${baseURL}/ffmpeg-core.js`,
@@ -59,14 +64,15 @@ async function getFFmpeg(): Promise<FFmpeg> {
         })
         ffmpegInstance = ffmpegRetry
         isLoaded = true
+        console.log('[FFmpeg] Loaded successfully with direct URLs')
         return ffmpegRetry
       } catch (retryError) {
-        console.error('FFmpeg retry also failed:', retryError)
+        console.error('[FFmpeg] Retry also failed:', retryError)
         throw new Error('Failed to initialize video compression engine')
       }
     }
   } catch (importError) {
-    console.error('Failed to import FFmpeg modules:', importError)
+    console.error('[FFmpeg] Failed to import modules:', importError)
     throw new Error('Failed to load video compression modules')
   }
 }
@@ -102,9 +108,12 @@ export async function compressVideo(
     const inputFileName = 'input.' + (file.name.split('.').pop() || 'mp4')
     const outputFileName = `output.${format}`
 
-    // Import fetchFile dynamically
-    const { fetchFile } = await import('@ffmpeg/util')
+    // Import fetchFile from CDN
+    console.log('[FFmpeg] Importing util module...')
+    const UtilModule = await import('https://esm.sh/@ffmpeg/util@0.12.1')
+    const fetchFile = UtilModule.fetchFile
 
+    console.log('[FFmpeg] Writing input file...')
     // Write input file to FFmpeg virtual file system
     await ffmpeg.writeFile(inputFileName, await fetchFile(file))
 
@@ -177,6 +186,7 @@ export async function compressVideo(
       ffmpeg.on('log', progressHandler)
     }
 
+    console.log('[FFmpeg] Executing compression...')
     // Execute FFmpeg
     await ffmpeg.exec(args)
     
@@ -186,6 +196,7 @@ export async function compressVideo(
       onProgress(90) // Near completion
     }
 
+    console.log('[FFmpeg] Reading output file...')
     // Read output file
     const data = await ffmpeg.readFile(outputFileName)
     // Convert FileData to Blob-compatible format
@@ -205,6 +216,7 @@ export async function compressVideo(
       onProgress(100) // Complete
     }
     
+    console.log('[FFmpeg] Cleaning up...')
     // Clean up
     await ffmpeg.deleteFile(inputFileName)
     await ffmpeg.deleteFile(outputFileName)
@@ -216,9 +228,15 @@ export async function compressVideo(
       lastModified: Date.now(),
     })
 
+    console.log('[FFmpeg] Compression complete!', {
+      originalSize: file.size,
+      compressedSize: compressedFile.size,
+      reduction: Math.round((1 - compressedFile.size / file.size) * 100) + '%'
+    })
+
     return compressedFile
   } catch (error) {
-    console.error('Video compression failed:', error)
+    console.error('[FFmpeg] Video compression failed:', error)
     throw new Error(`Video compression failed: ${error instanceof Error ? error.message : 'Unknown error'}`)
   }
 }
