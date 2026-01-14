@@ -4,25 +4,33 @@ import LogoutButton from './LogoutButton'
 
 export default async function Navbar() {
   let user = null
-  try {
-    const supabase = await createClient()
-    const {
-      data: { user: authUser },
-      error: authError,
-    } = await supabase.auth.getUser()
-    
-    if (authError) {
-      console.error('Navbar auth error:', authError.message)
-    } else {
-      user = authUser
+  
+  // Only try to get user if environment variables are set
+  const hasEnvVars = 
+    typeof process.env.NEXT_PUBLIC_SUPABASE_URL !== 'undefined' &&
+    typeof process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY !== 'undefined'
+  
+  if (hasEnvVars) {
+    try {
+      const supabase = await createClient()
+      const {
+        data: { user: authUser },
+        error: authError,
+      } = await supabase.auth.getUser()
+      
+      if (authError) {
+        console.error('Navbar auth error:', authError.message)
+      } else {
+        user = authUser
+      }
+    } catch (error: any) {
+      // Log detailed error for debugging
+      console.error('Navbar Supabase client error:', {
+        message: error?.message,
+        hasUrl: !!process.env.NEXT_PUBLIC_SUPABASE_URL,
+        hasKey: !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+      })
     }
-  } catch (error: any) {
-    // Log detailed error for debugging
-    console.error('Navbar Supabase client error:', {
-      message: error?.message,
-      hasUrl: !!process.env.NEXT_PUBLIC_SUPABASE_URL,
-      hasKey: !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-    })
   }
 
   return (
