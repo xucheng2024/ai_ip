@@ -4,32 +4,14 @@ import Link from 'next/link'
 import { format } from 'date-fns'
 
 export default async function DashboardPage() {
-  let user = null
-  let supabase = null
-  
-  try {
-    supabase = await createClient()
-    const {
-      data: { user: authUser },
-      error: authError,
-    } = await supabase.auth.getUser()
-    
-    if (authError) {
-      console.error('Dashboard auth error:', authError.message)
-      redirect('/auth/login')
-    }
-    
-    user = authUser
-  } catch (error: any) {
-    console.error('Dashboard Supabase client error:', {
-      message: error?.message,
-      hasUrl: !!process.env.NEXT_PUBLIC_SUPABASE_URL,
-      hasKey: !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-    })
-    redirect('/auth/login')
-  }
+  const supabase = await createClient()
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser()
 
-  if (!user || !supabase) {
+  if (authError || !user) {
+    console.error('Dashboard auth error:', authError?.message || 'No user')
     redirect('/auth/login')
   }
 
