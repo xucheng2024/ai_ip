@@ -174,7 +174,15 @@
     "uploadOrDragDrop": "Click to upload or drag and drop",
     "changeVideoFile": "Change video file",
     "remove": "Remove",
-    "fileFormats": "MP4, MOV, AVI, or other video formats"
+    "fileFormats": "MP4, MOV, AVI, or other video formats",
+    "losslessCompressionEnabled": "Lossless compression enabled",
+    "losslessCompressionDesc": "Videos will be compressed without quality loss",
+    "disableCompression": "Disable",
+    "enableCompression": "Enable video compression",
+    "enableCompressionDesc": "Reduce file size while maintaining quality",
+    "compressingVideo": "Compressing video...",
+    "compressing": "Compressing...",
+    "estimatedAfterCompression": "Estimated after compression"
   },
   "verify": {
     "title": "Verify Authorship Evidence",

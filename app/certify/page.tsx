@@ -256,7 +256,7 @@ export default function CertifyPage() {
                           <p className="text-xs text-gray-500">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
                           {enableCompression && isCompressionSupported() && (
                             <p className="text-xs text-green-600 mt-1">
-                              Estimated after compression: {(getEstimatedSize(file.size, compressionQuality) / 1024 / 1024).toFixed(2)} MB
+                              {t.certify.estimatedAfterCompression}: {(getEstimatedSize(file.size, compressionQuality) / 1024 / 1024).toFixed(2)} MB
                             </p>
                           )}
                         </div>
@@ -282,15 +282,15 @@ export default function CertifyPage() {
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                         <div className="flex-1">
-                          <span className="text-sm font-medium text-gray-900">Lossless compression enabled</span>
-                          <p className="text-xs text-gray-600 mt-0.5">Videos will be compressed without quality loss</p>
+                          <span className="text-sm font-medium text-gray-900">{t.certify.losslessCompressionEnabled}</span>
+                          <p className="text-xs text-gray-600 mt-0.5">{t.certify.losslessCompressionDesc}</p>
                         </div>
                         <button
                           type="button"
                           onClick={() => setEnableCompression(false)}
                           className="text-xs text-gray-500 hover:text-gray-700"
                         >
-                          Disable
+                          {t.certify.disableCompression}
                         </button>
                       </div>
                     </div>
@@ -308,8 +308,8 @@ export default function CertifyPage() {
                           className="mt-0.5 h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                         />
                         <label htmlFor="enableCompression" className="ml-3 flex-1">
-                          <span className="text-sm font-medium text-gray-900">Enable video compression</span>
-                          <p className="text-xs text-gray-600 mt-1">Reduce file size while maintaining quality</p>
+                          <span className="text-sm font-medium text-gray-900">{t.certify.enableCompression}</span>
+                          <p className="text-xs text-gray-600 mt-1">{t.certify.enableCompressionDesc}</p>
                         </label>
                       </div>
                     </div>
@@ -323,7 +323,7 @@ export default function CertifyPage() {
                           <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                         </svg>
                         <div className="flex-1">
-                          <p className="text-sm font-medium text-gray-900">Compressing video...</p>
+                          <p className="text-sm font-medium text-gray-900">{t.certify.compressingVideo}</p>
                           <div className="mt-1 h-2 w-full rounded-full bg-gray-200">
                             <div
                               className="h-2 rounded-full bg-blue-600 transition-all duration-300"
@@ -494,7 +494,7 @@ export default function CertifyPage() {
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                   </svg>
-                  {compressing ? 'Compressing...' : t.certify.processing}
+                  {compressing ? t.certify.compressing : t.certify.processing}
                 </>
               ) : (
                 t.certify.certifyVideo

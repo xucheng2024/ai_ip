@@ -174,7 +174,15 @@
     "uploadOrDragDrop": "点击上传或直接拖拽文件",
     "changeVideoFile": "更换视频文件",
     "remove": "移除",
-    "fileFormats": "支持MP4、MOV、AVI等常见视频格式"
+    "fileFormats": "支持MP4、MOV、AVI等常见视频格式",
+    "losslessCompressionEnabled": "无损压缩已启用",
+    "losslessCompressionDesc": "视频将以无损方式压缩，保持原始画质",
+    "disableCompression": "禁用",
+    "enableCompression": "启用视频压缩",
+    "enableCompressionDesc": "减小文件大小，同时保持画质",
+    "compressingVideo": "正在压缩视频...",
+    "compressing": "压缩中...",
+    "estimatedAfterCompression": "压缩后预估大小"
   },
   "verify": {
     "title": "验证作者证据",

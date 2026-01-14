@@ -15,6 +15,7 @@ AIVerify provides trusted timestamp and content fingerprinting services for AI v
 - **Deployment:** Vercel
 - **PDF Generation:** @react-pdf/renderer
 - **Hashing:** crypto-js (SHA-256)
+- **Video Compression:** @ffmpeg/ffmpeg (client-side, WebAssembly)
 
 ## Setup Instructions
 
@@ -114,6 +115,7 @@ See `supabase/schema.sql` for full schema.
 
 - ✅ User authentication (Sign up, Login)
 - ✅ Video upload and hash generation
+- ✅ **Client-side video compression** (lossless/high-quality using ffmpeg.wasm)
 - ✅ Certification generation with unique IDs
 - ✅ PDF certificate download
 - ✅ Public verification system (by ID or file hash)
