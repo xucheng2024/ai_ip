@@ -2,6 +2,7 @@
 
 import dynamic from "next/dynamic";
 import Link from "next/link";
+import { useState, useEffect } from "react";
 import { useI18n } from "@/lib/i18n/context";
 import VideoPlayer from "@/components/VideoPlayer";
 
@@ -14,8 +15,42 @@ const PricingSection = dynamic(() => import('@/components/home/PricingSection'),
   loading: () => <div className="mt-16 sm:mt-24 lg:mt-28 h-96" />
 })
 
+interface Video {
+  id: string
+  videoId?: string
+  title: string
+  creator: string
+  certifiedDate: string
+  fileUrl?: string | null
+}
+
 export default function Home() {
   const { t } = useI18n()
+  const [randomVideo, setRandomVideo] = useState<Video | null>(null)
+  const [loadingVideo, setLoadingVideo] = useState(true)
+
+  useEffect(() => {
+    const fetchRandomVideo = async () => {
+      try {
+        setLoadingVideo(true)
+        const response = await fetch('/api/videos')
+        if (response.ok) {
+          const data = await response.json()
+          if (data.videos && data.videos.length > 0) {
+            // Select a random video
+            const randomIndex = Math.floor(Math.random() * data.videos.length)
+            setRandomVideo(data.videos[randomIndex])
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching random video:', error)
+      } finally {
+        setLoadingVideo(false)
+      }
+    }
+
+    fetchRandomVideo()
+  }, [])
   
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50/50">
@@ -125,41 +160,102 @@ export default function Home() {
                 </div>
               </div>
               <div className="relative rounded-2xl border border-gray-200/80 bg-white p-6 shadow-lg">
-                <div className="mb-4">
-                  <VideoPlayer 
-                    url={null} 
-                    className="shadow-sm"
-                    light={true}
-                  />
-                </div>
-                <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center gap-2">
-                    <span className="inline-flex items-center rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-800">
-                      ✓ Verified on AIVerify
-                    </span>
-                  </div>
-                </div>
-                <div className="space-y-2 text-sm text-gray-600">
-                  <div className="flex justify-between">
-                    <span className="font-medium">{t.home.creatorLabel || 'Creator:'}</span>
-                    <span>AI Creator</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="font-medium">{t.home.certifiedOnLabel || 'Certified on:'}</span>
-                    <span>2024-01-15</span>
-                  </div>
-                  <div className="mt-3 pt-3 border-t border-gray-200">
-                    <div className="mb-1 text-xs font-medium text-gray-500">{t.home.statusLabel || 'Status:'}</div>
-                    <div className="flex flex-wrap gap-2">
-                      <span className="inline-flex items-center rounded bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700">
-                        {t.home.timeStamped || 'Time-Stamped'}
-                      </span>
-                      <span className="inline-flex items-center rounded bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700">
-                        {t.home.blockchainAnchored || 'Blockchain Anchored'}
-                      </span>
+                {loadingVideo ? (
+                  <div className="mb-4 aspect-video bg-gradient-to-br from-slate-100 via-slate-50 to-slate-100 rounded-xl flex items-center justify-center border border-gray-200/50">
+                    <div className="text-center">
+                      <svg className="mx-auto h-8 w-8 animate-spin text-gray-400 mb-2" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                      </svg>
+                      <p className="text-sm text-gray-500 font-medium">Loading video...</p>
                     </div>
                   </div>
-                </div>
+                ) : randomVideo ? (
+                  <>
+                    <div className="mb-4">
+                      <VideoPlayer 
+                        url={randomVideo.fileUrl || null}
+                        videoId={randomVideo.videoId || randomVideo.id}
+                        className="shadow-sm"
+                        light={!randomVideo.fileUrl && !randomVideo.videoId}
+                      />
+                    </div>
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-2">
+                        <span className="inline-flex items-center rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-800">
+                          ✓ Verified on AIVerify
+                        </span>
+                      </div>
+                      {randomVideo.id && (
+                        <Link
+                          href={`/certificate/${randomVideo.id}`}
+                          className="text-xs text-blue-600 hover:text-blue-700 font-medium"
+                        >
+                          {t.home.viewProofPage || 'View Proof Page'} →
+                        </Link>
+                      )}
+                    </div>
+                    <div className="space-y-2 text-sm text-gray-600">
+                      <div className="flex justify-between">
+                        <span className="font-medium">{t.home.creatorLabel || 'Creator:'}</span>
+                        <span>{randomVideo.creator}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="font-medium">{t.home.certifiedOnLabel || 'Certified on:'}</span>
+                        <span>{randomVideo.certifiedDate}</span>
+                      </div>
+                      <div className="mt-3 pt-3 border-t border-gray-200">
+                        <div className="mb-1 text-xs font-medium text-gray-500">{t.home.statusLabel || 'Status:'}</div>
+                        <div className="flex flex-wrap gap-2">
+                          <span className="inline-flex items-center rounded bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700">
+                            {t.home.timeStamped || 'Time-Stamped'}
+                          </span>
+                          <span className="inline-flex items-center rounded bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700">
+                            {t.home.blockchainAnchored || 'Blockchain Anchored'}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="mb-4">
+                      <VideoPlayer 
+                        url={null} 
+                        className="shadow-sm"
+                        light={true}
+                      />
+                    </div>
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-2">
+                        <span className="inline-flex items-center rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-800">
+                          ✓ Verified on AIVerify
+                        </span>
+                      </div>
+                    </div>
+                    <div className="space-y-2 text-sm text-gray-600">
+                      <div className="flex justify-between">
+                        <span className="font-medium">{t.home.creatorLabel || 'Creator:'}</span>
+                        <span>AI Creator</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="font-medium">{t.home.certifiedOnLabel || 'Certified on:'}</span>
+                        <span>2024-01-15</span>
+                      </div>
+                      <div className="mt-3 pt-3 border-t border-gray-200">
+                        <div className="mb-1 text-xs font-medium text-gray-500">{t.home.statusLabel || 'Status:'}</div>
+                        <div className="flex flex-wrap gap-2">
+                          <span className="inline-flex items-center rounded bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700">
+                            {t.home.timeStamped || 'Time-Stamped'}
+                          </span>
+                          <span className="inline-flex items-center rounded bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700">
+                            {t.home.blockchainAnchored || 'Blockchain Anchored'}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
           </div>
