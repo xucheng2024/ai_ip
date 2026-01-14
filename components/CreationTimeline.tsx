@@ -1,0 +1,62 @@
+'use client'
+
+import { format } from 'date-fns'
+
+interface TimelineEvent {
+  time: string
+  label: string
+  description: string
+  status: 'completed' | 'pending'
+}
+
+interface CreationTimelineProps {
+  events: TimelineEvent[]
+  className?: string
+}
+
+export default function CreationTimeline({ events, className = '' }: CreationTimelineProps) {
+  return (
+    <div className={`space-y-4 ${className}`}>
+      <h3 className="text-sm font-semibold text-gray-900">Certification Timeline</h3>
+      <div className="relative">
+        <div className="absolute left-4 top-0 bottom-0 w-0.5 bg-gray-200" />
+        <div className="space-y-6">
+          {events.map((event, index) => (
+            <div key={index} className="relative flex items-start gap-4">
+              <div
+                className={`relative z-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 ${
+                  event.status === 'completed'
+                    ? 'border-green-500 bg-green-50'
+                    : 'border-gray-300 bg-white'
+                }`}
+              >
+                {event.status === 'completed' && (
+                  <svg
+                    className="h-4 w-4 text-green-600"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                )}
+              </div>
+              <div className="flex-1 pb-6">
+                <div className="flex items-baseline justify-between gap-2">
+                  <p className="text-sm font-semibold text-gray-900">{event.label}</p>
+                  <p className="text-xs font-mono text-gray-500">{event.time}</p>
+                </div>
+                <p className="mt-1 text-xs text-gray-600">{event.description}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}

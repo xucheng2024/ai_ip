@@ -139,13 +139,13 @@ export default function CertifyPage() {
 
       if (videoError) throw videoError
 
-      // Create creation metadata
+      // Create creation metadata - Zero-knowledge: always hash prompt, only store plaintext if explicitly not private
       const promptHash = prompt ? await generateHashFromString(prompt) : null
       const { error: metadataError } = await supabase.from('creation_metadata').insert({
         video_id: videoData.id,
         ai_tool: aiTool || null,
         prompt_hash: promptHash,
-        prompt_plaintext: promptPrivate ? null : prompt || null,
+        prompt_plaintext: promptPrivate ? null : (prompt || null), // Only store plaintext if not private
         has_third_party_materials: hasThirdPartyMaterials,
       })
 
@@ -369,9 +369,9 @@ export default function CertifyPage() {
               />
               <label htmlFor="legalAgreement" className="ml-3 text-sm leading-relaxed text-gray-700">
                 I declare that this content is my legal creation. I understand that this platform
-                provides creation time and content consistency proof, and does not constitute
-                government copyright registration or legal judgment. The platform does not judge
-                the legality of infringement. <span className="text-red-500">*</span>
+                provides creation time and content consistency proof (Authorship Evidence), and does not constitute
+                government copyright registration or legal judgment. <strong>This platform does not judge
+                the legality of infringement.</strong> <span className="text-red-500">*</span>
               </label>
             </div>
           </div>

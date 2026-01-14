@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { format } from 'date-fns'
 import { generateFileHash } from '@/lib/utils/hash'
+import HashDisplay from '@/components/HashDisplay'
 
 interface VerificationResult {
   exists: boolean
@@ -134,19 +135,24 @@ function VerifyPageContent() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
-      <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
-        <div className="mb-8 text-center">
-          <h1 className="text-3xl font-bold text-gray-900 sm:text-4xl">Verify Certification</h1>
-          <p className="mt-2 text-base text-gray-600">
-            Verify a video certification by ID or upload a video file
+    <div className="min-h-screen bg-white">
+      <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
+        <div className="mb-12 text-center">
+          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full border-2 border-gray-200">
+            <svg className="h-6 w-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+            </svg>
+          </div>
+          <h1 className="text-2xl font-semibold text-gray-900 sm:text-3xl">Verify Authorship Evidence</h1>
+          <p className="mt-2 text-sm text-gray-500">
+            Public verification - No login required
           </p>
         </div>
 
         <div className="space-y-6">
           {/* Verify by ID */}
-          <div className="rounded-xl bg-white p-6 shadow-sm sm:p-8">
-            <h2 className="mb-4 text-lg font-semibold text-gray-900">Verify by Certification ID</h2>
+          <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+            <h2 className="mb-4 text-sm font-semibold text-gray-900">Verify by Certification ID</h2>
             <div className="flex flex-col gap-3 sm:flex-row">
               <input
                 type="text"
@@ -167,8 +173,8 @@ function VerifyPageContent() {
           </div>
 
           {/* Verify by File */}
-          <div className="rounded-xl bg-white p-6 shadow-sm sm:p-8">
-            <h2 className="mb-4 text-lg font-semibold text-gray-900">Verify by Video File</h2>
+          <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+            <h2 className="mb-4 text-sm font-semibold text-gray-900">Verify by Video File</h2>
             <div className="flex flex-col gap-3 sm:flex-row">
               <div className="flex-1">
                 <input
@@ -210,8 +216,8 @@ function VerifyPageContent() {
           )}
 
           {result && (
-            <div className="rounded-xl bg-white p-6 shadow-sm sm:p-8">
-              <h2 className="mb-6 text-lg font-semibold text-gray-900">Verification Result</h2>
+            <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+              <h2 className="mb-6 text-sm font-semibold text-gray-900">Verification Result</h2>
               {result.exists ? (
                 <div className="space-y-6">
                   <div className="rounded-lg border border-green-200 bg-green-50 p-4">
@@ -220,7 +226,7 @@ function VerifyPageContent() {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
                       <p className="ml-2 text-sm font-semibold text-green-800">
-                        Certification Found and Verified
+                        Authorship Evidence Verified
                       </p>
                     </div>
                   </div>
@@ -247,10 +253,8 @@ function VerifyPageContent() {
                     )}
                   </div>
                   <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
-                    <p className="text-xs font-medium uppercase tracking-wide text-gray-500">File Hash</p>
-                    <p className="mt-1 break-all font-mono text-xs text-gray-600">
-                      {result.video?.file_hash}
-                    </p>
+                    <p className="text-xs font-medium uppercase tracking-wide text-gray-500 mb-3">Content Fingerprint</p>
+                    <HashDisplay hash={result.video?.file_hash || ''} />
                   </div>
                   <div className="pt-2">
                     <a
@@ -283,6 +287,15 @@ function VerifyPageContent() {
               )}
             </div>
           )}
+
+          {/* Legal Disclaimer */}
+          <div className="mt-8 rounded-lg border border-gray-200 bg-gray-50 p-4 text-center">
+            <p className="text-xs leading-relaxed text-gray-600">
+              <strong className="font-semibold text-gray-900">Note:</strong> This platform provides creation time and content consistency proof (Authorship Evidence). 
+              It does not constitute government copyright registration or legal judgment. 
+              <strong className="font-semibold"> This platform does not judge the legality of infringement.</strong>
+            </p>
+          </div>
         </div>
       </div>
     </div>

@@ -56,8 +56,7 @@ export default function Home() {
               <div className="mb-3 text-2xl">🔐</div>
               <h3 className="text-lg font-semibold text-gray-900">Content Fingerprint</h3>
               <p className="mt-2 text-sm leading-relaxed text-gray-600">
-                Unique hash-based fingerprint ensures content integrity and enables verification
-                of any modifications.
+                Unique hash-based fingerprint ensures content integrity. Any 1 bit change will completely alter the fingerprint, enabling tamper detection.
               </p>
             </div>
             <div className="group rounded-xl bg-white p-6 shadow-sm transition-all hover:shadow-md">
@@ -86,10 +85,10 @@ export default function Home() {
             </div>
             <div className="group rounded-xl bg-white p-6 shadow-sm transition-all hover:shadow-md">
               <div className="mb-3 text-2xl">⚖️</div>
-              <h3 className="text-lg font-semibold text-gray-900">Legal Foundation</h3>
+              <h3 className="text-lg font-semibold text-gray-900">Authorship Evidence</h3>
               <p className="mt-2 text-sm leading-relaxed text-gray-600">
-                Not a government copyright, but strong evidence infrastructure for copyright
-                disputes and IP protection.
+                Provides creation time and content consistency proof (Authorship Evidence). Not a government copyright registration. 
+                <strong> This platform does not judge the legality of infringement.</strong>
               </p>
             </div>
           </div>
@@ -193,9 +192,8 @@ export default function Home() {
         <div className="mt-24 rounded-xl border border-gray-200 bg-gray-50 p-6">
           <p className="text-sm leading-relaxed text-gray-600">
             <strong className="font-semibold text-gray-900">Legal Disclaimer:</strong> This service provides creation time and content
-            consistency proof. It does not constitute government copyright registration or legal
-            judgment. Users must declare that the content is their legal creation and understand
-            that the platform does not judge the legality of infringement.
+            consistency proof (Authorship Evidence). It does not constitute government copyright registration or legal
+            judgment. <strong>This platform does not judge the legality of infringement.</strong> Users must declare that the content is their legal creation.
           </p>
         </div>
       </main>

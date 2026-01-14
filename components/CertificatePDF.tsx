@@ -62,7 +62,8 @@ function CertificateDocument({ certification, video, metadata }: CertificatePDFP
     <Document>
       <Page size="A4" style={styles.page}>
         <Text style={styles.title}>AIVerify</Text>
-        <Text style={styles.subtitle}>AI Video Originality Certification</Text>
+        <Text style={styles.subtitle}>Authorship Evidence Certificate</Text>
+        <Text style={[styles.subtitle, { fontSize: 10, marginTop: -10 }]}>Creation Proof & Content Fingerprint</Text>
 
         <View style={styles.section}>
           <Text style={styles.label}>Certification ID</Text>
@@ -98,8 +99,10 @@ function CertificateDocument({ certification, video, metadata }: CertificatePDFP
         <View style={styles.divider} />
 
         <View style={styles.section}>
-          <Text style={styles.label}>File Hash (SHA-256)</Text>
-          <Text style={styles.hash}>{video?.file_hash}</Text>
+          <Text style={styles.label}>Content Fingerprint (SHA-256)</Text>
+          <Text style={styles.hash}>
+            {video?.file_hash?.match(/.{1,4}/g)?.join(' · ') || video?.file_hash}
+          </Text>
         </View>
 
         <View style={styles.section}>
@@ -110,9 +113,9 @@ function CertificateDocument({ certification, video, metadata }: CertificatePDFP
         <View style={styles.divider} />
 
         <Text style={styles.disclaimer}>
-          Legal Disclaimer: This service provides creation time and content consistency proof. It
-          does not constitute government copyright registration or legal judgment. This platform
-          does not judge the legality of infringement.
+          Legal Disclaimer: This service provides creation time and content consistency proof (Authorship Evidence). It
+          does not constitute government copyright registration or legal judgment. This platform does not judge the legality of infringement.
+          Users must declare that content is their legal creation.
         </Text>
       </Page>
     </Document>
