@@ -1,16 +1,30 @@
 'use client'
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useI18n } from "@/lib/i18n/context";
 import VideoPlayer from "@/components/VideoPlayer";
 
+interface Video {
+  id: string
+  videoId?: string
+  title: string
+  description: string
+  creator: string
+  certifiedDate: string
+  aiTool: string
+  category: string
+  fileUrl?: string | null
+}
+
 export default function VideosPage() {
   const { t } = useI18n()
-  const [selectedFilter, setSelectedFilter] = useState<string>('all')
   const [promotionLink, setPromotionLink] = useState<{ [key: string]: string }>({})
+  const [videos, setVideos] = useState<Video[]>([])
+  const [loading, setLoading] = useState(true)
   
-  const demoVideos = [
+  // Demo videos as fallback
+  const demoVideos: Video[] = [
     {
       id: 'demo-1',
       title: 'AI Landscape Generation',
@@ -58,21 +72,34 @@ export default function VideosPage() {
     }
   ]
 
-  const filterVideos = (filter: string) => {
-    if (filter === 'all') {
-      return demoVideos
-    } else if (filter === 'blockchain') {
-      return demoVideos.filter(v => v.category === 'blockchain')
-    } else if (filter === 'merkle') {
-      return demoVideos.filter(v => v.category === 'merkle')
-    } else if (filter === 'tools') {
-      // Show all since they already have different AI tools
-      return demoVideos
+  useEffect(() => {
+    const fetchVideos = async () => {
+      try {
+        setLoading(true)
+        const response = await fetch('/api/videos')
+        if (response.ok) {
+          const data = await response.json()
+          if (data.videos && data.videos.length > 0) {
+            setVideos(data.videos)
+          } else {
+            // Fallback to demo videos if no real videos
+            setVideos(demoVideos)
+          }
+        } else {
+          // Fallback to demo videos on error
+          setVideos(demoVideos)
+        }
+      } catch (error) {
+        console.error('Error fetching videos:', error)
+        // Fallback to demo videos on error
+        setVideos(demoVideos)
+      } finally {
+        setLoading(false)
+      }
     }
-    return demoVideos
-  }
 
-  const filteredVideos = filterVideos(selectedFilter)
+    fetchVideos()
+  }, [])
 
   const handleGeneratePromotionLink = (videoId: string) => {
     // Generate promotion link pointing to support page
@@ -100,63 +127,29 @@ export default function VideosPage() {
 
         {/* Videos Section */}
         <div className="mt-12 sm:mt-20">
-          <div className="text-center mb-8">
-            <div className="flex flex-wrap justify-center gap-2 mb-6">
-              <button
-                onClick={() => setSelectedFilter('all')}
-                className={`inline-flex items-center rounded-full px-3 py-1.5 text-xs font-medium border transition-all duration-200 cursor-pointer ${
-                  selectedFilter === 'all'
-                    ? 'bg-blue-50 text-blue-700 border-blue-200 shadow-sm'
-                    : 'bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100'
-                }`}
-              >
-                {t.home.all || "All"}
-              </button>
-              <button
-                onClick={() => setSelectedFilter('blockchain')}
-                className={`inline-flex items-center rounded-full px-3 py-1.5 text-xs font-medium border transition-all duration-200 cursor-pointer ${
-                  selectedFilter === 'blockchain'
-                    ? 'bg-blue-50 text-blue-700 border-blue-200 shadow-sm'
-                    : 'bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100'
-                }`}
-              >
-                {t.home.blockchainAnchored || "Blockchain Anchored"}
-              </button>
-              <button
-                onClick={() => setSelectedFilter('merkle')}
-                className={`inline-flex items-center rounded-full px-3 py-1.5 text-xs font-medium border transition-all duration-200 cursor-pointer ${
-                  selectedFilter === 'merkle'
-                    ? 'bg-blue-50 text-blue-700 border-blue-200 shadow-sm'
-                    : 'bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100'
-                }`}
-              >
-                {t.home.merkleProof || "Merkle Proof"}
-              </button>
-              <button
-                onClick={() => setSelectedFilter('tools')}
-                className={`inline-flex items-center rounded-full px-3 py-1.5 text-xs font-medium border transition-all duration-200 cursor-pointer ${
-                  selectedFilter === 'tools'
-                    ? 'bg-blue-50 text-blue-700 border-blue-200 shadow-sm'
-                    : 'bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100'
-                }`}
-              >
-                {t.home.differentAITools || "Different AI Tools"}
-              </button>
+          {loading ? (
+            <div className="text-center py-12">
+              <p className="text-gray-600">{t.common.loading || 'Loading videos...'}</p>
             </div>
-          </div>
-          <div className="grid grid-cols-1 gap-7 sm:grid-cols-2 lg:grid-cols-3">
-            {filteredVideos.map((video) => (
-              <div
-                key={video.id}
-                className="rounded-xl border border-gray-200/80 bg-white p-7 shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
-              >
-                <div className="mb-4">
-                  <VideoPlayer 
-                    url={null} 
-                    className="shadow-sm"
-                    light={true}
-                  />
-                </div>
+          ) : (
+            <div className="grid grid-cols-1 gap-7 sm:grid-cols-2 lg:grid-cols-3">
+              {videos.map((video) => {
+                // Pass videoId to VideoPlayer so it can fetch the signed URL
+                const videoId = video.fileUrl ? (video.videoId || video.id) : null
+                
+                return (
+                  <div
+                    key={video.id}
+                    className="rounded-xl border border-gray-200/80 bg-white p-7 shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
+                  >
+                    <div className="mb-4">
+                      <VideoPlayer 
+                        url={null}
+                        videoId={videoId}
+                        className="shadow-sm"
+                        light={!videoId}
+                      />
+                    </div>
                 
                 {/* Evidence Status - Most Prominent */}
                 <div className="mb-4">
@@ -223,9 +216,11 @@ export default function VideosPage() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
                 </Link>
-              </div>
-            ))}
-          </div>
+                  </div>
+                )
+              })}
+            </div>
+          )}
         </div>
 
         <div className="mt-20 text-center">
