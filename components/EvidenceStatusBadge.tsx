@@ -1,6 +1,7 @@
 'use client'
 
 import { EvidenceStatus } from '@/lib/types'
+import { useI18n } from '@/lib/i18n/context'
 
 interface EvidenceStatusBadgeProps {
   status: EvidenceStatus
@@ -8,10 +9,12 @@ interface EvidenceStatusBadgeProps {
 }
 
 export default function EvidenceStatusBadge({ status, className = '' }: EvidenceStatusBadgeProps) {
+  const { t } = useI18n()
+  
   const statusConfig = {
     certified: {
-      label: 'Certified',
-      description: 'Server + Hash Complete',
+      label: t.evidenceStatus.certified,
+      description: t.evidenceStatus.certifiedDesc,
       color: 'yellow',
       icon: (
         <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -20,8 +23,8 @@ export default function EvidenceStatusBadge({ status, className = '' }: Evidence
       ),
     },
     timestamped: {
-      label: 'Timestamped',
-      description: 'TSA Timestamp Received',
+      label: t.evidenceStatus.timestamped,
+      description: t.evidenceStatus.timestampedDesc,
       color: 'green',
       icon: (
         <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -30,8 +33,8 @@ export default function EvidenceStatusBadge({ status, className = '' }: Evidence
       ),
     },
     anchored: {
-      label: 'Anchored',
-      description: 'Blockchain Batch Complete',
+      label: t.evidenceStatus.anchored,
+      description: t.evidenceStatus.anchoredDesc,
       color: 'blue',
       icon: (
         <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -40,8 +43,8 @@ export default function EvidenceStatusBadge({ status, className = '' }: Evidence
       ),
     },
     revoked: {
-      label: 'Revoked',
-      description: 'Certificate Revoked',
+      label: t.evidenceStatus.revoked,
+      description: t.evidenceStatus.revokedDesc,
       color: 'black',
       icon: (
         <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">

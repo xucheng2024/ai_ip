@@ -67,8 +67,12 @@ export default async function ManualPage() {
                   <li className="text-gray-700">{children}</li>
                 ),
                 a: ({ href, children }) => {
-                  const isExternal = href?.startsWith('http')
-                  const isInternal = href?.startsWith('/')
+                  if (!href) {
+                    return <span className="text-blue-600 font-medium">{children}</span>
+                  }
+                  
+                  const isExternal = href.startsWith('http')
+                  const isInternal = href.startsWith('/')
                   
                   if (isInternal) {
                     return (

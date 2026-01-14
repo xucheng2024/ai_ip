@@ -87,9 +87,13 @@ Each certification includes:
 
 Download complete evidence packages containing:
 - Canonical JSON format for independent verification
+- **Hash Manifest:** Complete index of all hashes (evidence_hash, merkle_root, tx_hash, included_files)
 - Merkle proofs for blockchain verification
 - Chain of custody event logs
 - All timestamps and metadata
+- Creator continuity chain information (if applicable)
+
+The manifest provides a comprehensive index for third-party auditing and long-term verification.
 
 ### 5. PDF Certificates
 
@@ -208,13 +212,46 @@ Visual timeline showing:
 - Timestamp Recorded
 - Certification Complete
 
-#### 4. Trust Indicators
+#### 4. Evidence Status & Maturity
+
+**Evidence Status Badge** displays the current maturity level of your evidence:
+
+- 🟡 **Certified:** Server + Hash complete (initial state)
+- 🟢 **Timestamped:** TSA timestamp received (RFC 3161 signed)
+- 🔵 **Anchored:** Blockchain batch complete (fully mature)
+- ⚫ **Revoked:** Certificate has been revoked
+
+The status automatically updates as your certification progresses through the trust infrastructure layers.
+
+#### 5. Trust Indicators
 
 Badges showing active trust features:
 - ✅ RFC 3161 TSA Timestamp (if available)
 - ✅ Blockchain Anchored (after batch processing)
 - ✅ Multi-Layer Fingerprinting (if frame/audio hashes available)
 - ✅ Verifiable Evidence Package
+
+#### 6. Creator Continuity Chain
+
+If this is not your first certification, you'll see a **Creator Continuity** section showing:
+- Link to your previous certification's evidence hash
+- Position in your creative work chain
+- Demonstrates continuous creative activity over time
+
+This feature is valuable for MCNs, studios, and proving long-term creative trajectory.
+
+#### 7. Usage Scenarios
+
+**Use Evidence For...** section provides templates for:
+- YouTube DMCA Takedown requests
+- TikTok IP Reports
+- Commercial partnership proof
+- Internal IP archive
+
+Each template includes:
+- Specific fields to use
+- Step-by-step instructions
+- Platform-specific guidance
 
 #### 5. Actions Available
 
@@ -236,6 +273,15 @@ Badges showing active trust features:
 - Copy the certification badge code
 - Embed on websites, portfolios, or documentation
 - Shows certification status and verification link
+
+**Third-Party Verification Guide:**
+- Detailed instructions for independent verification
+- How to recalculate hashes
+- How to verify Merkle proofs
+- How to verify on blockchain
+- How to verify TSA timestamps
+
+This guide enables legal professionals and technical experts to verify evidence without relying on the platform.
 
 #### 6. Certificate Revocation
 
@@ -469,6 +515,12 @@ A: Your certification is still valid with server timestamps and TSA tokens. Bloc
 **Q: How do Merkle proofs work?**
 A: Merkle proofs allow verification that your certification is included in a batch without revealing other certifications. They prove inclusion in the Merkle root stored on-chain.
 
+**Q: What is the Transparency Log?**
+A: The Transparency Log (`/transparency`) is a public page showing all blockchain-anchored batches. It's similar to Certificate Transparency but for AI content evidence, allowing anyone to audit platform integrity and view all anchored Merkle roots.
+
+**Q: What is Creator Continuity?**
+A: Creator Continuity is a hash chain linking your certifications together. Each new certification references the previous one's evidence hash, creating a continuous chain that proves long-term creative activity. This is valuable for studios and MCNs.
+
 ### Legal Questions
 
 **Q: Does this give me copyright?**
@@ -522,6 +574,7 @@ A: Account information (email, display name), video metadata (title, hashes), ce
 - **Certify:** `/certify` - Certify a new video
 - **Verify:** `/verify` - Public verification
 - **Certificate:** `/certificate/{id}` - View specific certificate
+- **Transparency Log:** `/transparency` - Public log of all blockchain-anchored batches
 
 ### Contact
 

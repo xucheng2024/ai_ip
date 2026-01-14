@@ -1,16 +1,20 @@
 'use client'
 
+import { useI18n } from '@/lib/i18n/context'
+
 interface VerificationGuideProps {
   certificationId: string
   className?: string
 }
 
 export default function VerificationGuide({ certificationId, className = '' }: VerificationGuideProps) {
+  const { t } = useI18n()
+  
   return (
     <div className={`rounded-lg border border-gray-200 bg-white p-6 ${className}`}>
-      <h3 className="mb-4 text-lg font-semibold text-gray-900">How to Verify This Evidence</h3>
+      <h3 className="mb-4 text-lg font-semibold text-gray-900">{t.verificationGuide.title}</h3>
       <p className="mb-6 text-sm text-gray-600">
-        This guide explains how to independently verify the evidence package without relying on our platform.
+        {t.verificationGuide.subtitle}
       </p>
 
       <div className="space-y-6">
@@ -20,14 +24,14 @@ export default function VerificationGuide({ certificationId, className = '' }: V
             <span className="mr-2 flex h-6 w-6 items-center justify-center rounded-full bg-blue-100 text-xs font-bold text-blue-600">
               1
             </span>
-            What's in the Evidence Package
+            {t.verificationGuide.section1Title}
           </h4>
           <div className="ml-8 space-y-2 text-sm text-gray-700">
-            <p>• <strong>Canonical Evidence:</strong> Video hash, frame hashes, creator ID, timestamps</p>
-            <p>• <strong>Merkle Proof:</strong> Cryptographic proof linking this evidence to a batch root</p>
-            <p>• <strong>Blockchain Anchor:</strong> Transaction hash, block number, network info</p>
-            <p>• <strong>Chain of Custody:</strong> Event log showing the certification timeline</p>
-            <p>• <strong>TSA Timestamp Token:</strong> RFC 3161 timestamp from trusted authority (if available)</p>
+            <p>• <strong>{t.verificationGuide.section1Item1.split(':')[0]}:</strong> {t.verificationGuide.section1Item1.split(':').slice(1).join(':')}</p>
+            <p>• <strong>{t.verificationGuide.section1Item2.split(':')[0]}:</strong> {t.verificationGuide.section1Item2.split(':').slice(1).join(':')}</p>
+            <p>• <strong>{t.verificationGuide.section1Item3.split(':')[0]}:</strong> {t.verificationGuide.section1Item3.split(':').slice(1).join(':')}</p>
+            <p>• <strong>{t.verificationGuide.section1Item4.split(':')[0]}:</strong> {t.verificationGuide.section1Item4.split(':').slice(1).join(':')}</p>
+            <p>• <strong>{t.verificationGuide.section1Item5.split(':')[0]}:</strong> {t.verificationGuide.section1Item5.split(':').slice(1).join(':')}</p>
           </div>
         </section>
 
@@ -37,10 +41,10 @@ export default function VerificationGuide({ certificationId, className = '' }: V
             <span className="mr-2 flex h-6 w-6 items-center justify-center rounded-full bg-blue-100 text-xs font-bold text-blue-600">
               2
             </span>
-            How to Recalculate the Hash
+            {t.verificationGuide.section2Title}
           </h4>
           <div className="ml-8 space-y-3 text-sm text-gray-700">
-            <p className="font-medium">Step 1: Extract the canonical evidence</p>
+            <p className="font-medium">{t.verificationGuide.section2Step1}</p>
             <div className="rounded-lg bg-gray-50 p-3 font-mono text-xs">
               <pre>{`{
   "version": "1.0",
@@ -50,17 +54,17 @@ export default function VerificationGuide({ certificationId, className = '' }: V
   "metadata": { ... }
 }`}</pre>
             </div>
-            <p className="font-medium">Step 2: Canonicalize JSON</p>
+            <p className="font-medium">{t.verificationGuide.section2Step2}</p>
             <ul className="list-inside list-disc space-y-1">
-              <li>Sort all object keys alphabetically (recursively)</li>
-              <li>Remove any undefined/null fields that aren't in the canonical structure</li>
+              <li>{t.verificationGuide.section2Step2Desc1}</li>
+              <li>{t.verificationGuide.section2Step2Desc2}</li>
             </ul>
-            <p className="font-medium">Step 3: Calculate SHA-256</p>
+            <p className="font-medium">{t.verificationGuide.section2Step3}</p>
             <div className="rounded-lg bg-gray-50 p-3 font-mono text-xs">
               <code>hash = SHA256(JSON.stringify(canonical_evidence))</code>
             </div>
             <p className="text-xs text-gray-600">
-              Verify this hash matches the <code>evidence_hash</code> in the package.
+              {t.verificationGuide.section2Note}
             </p>
           </div>
         </section>
@@ -71,19 +75,19 @@ export default function VerificationGuide({ certificationId, className = '' }: V
             <span className="mr-2 flex h-6 w-6 items-center justify-center rounded-full bg-blue-100 text-xs font-bold text-blue-600">
               3
             </span>
-            How to Verify Merkle Proof
+            {t.verificationGuide.section3Title}
           </h4>
           <div className="ml-8 space-y-3 text-sm text-gray-700">
-            <p className="font-medium">Algorithm:</p>
+            <p className="font-medium">{t.verificationGuide.section3Desc}</p>
             <ol className="list-inside list-decimal space-y-2">
-              <li>Start with your evidence hash as the current hash</li>
-              <li>For each sibling in the proof path:
+              <li>{t.verificationGuide.section3Step1}</li>
+              <li>{t.verificationGuide.section3Step2}
                 <ul className="ml-6 mt-1 list-inside list-disc">
-                  <li>If index is even: hash = SHA256(current_hash + sibling)</li>
-                  <li>If index is odd: hash = SHA256(sibling + current_hash)</li>
+                  <li>{t.verificationGuide.section3Step2a}</li>
+                  <li>{t.verificationGuide.section3Step2b}</li>
                 </ul>
               </li>
-              <li>The final hash should match the Merkle root</li>
+              <li>{t.verificationGuide.section3Step3}</li>
             </ol>
             <div className="rounded-lg bg-gray-50 p-3 font-mono text-xs">
               <pre>{`function verifyMerkleProof(leaf, path, indices, root) {
@@ -105,24 +109,24 @@ export default function VerificationGuide({ certificationId, className = '' }: V
             <span className="mr-2 flex h-6 w-6 items-center justify-center rounded-full bg-blue-100 text-xs font-bold text-blue-600">
               4
             </span>
-            How to Verify on Blockchain
+            {t.verificationGuide.section4Title}
           </h4>
           <div className="ml-8 space-y-3 text-sm text-gray-700">
-            <p className="font-medium">Step 1: Find the transaction</p>
+            <p className="font-medium">{t.verificationGuide.section4Step1}</p>
             <ul className="list-inside list-disc space-y-1">
-              <li>Use a blockchain explorer (e.g., PolygonScan)</li>
-              <li>Navigate to: <code>https://polygonscan.com/tx/{'{tx_hash}'}</code></li>
-              <li>Verify the transaction exists and is confirmed</li>
+              <li>{t.verificationGuide.section4Step1Desc1}</li>
+              <li>{t.verificationGuide.section4Step1Desc2}</li>
+              <li>{t.verificationGuide.section4Step1Desc3}</li>
             </ul>
-            <p className="font-medium">Step 2: Extract Merkle root from transaction</p>
+            <p className="font-medium">{t.verificationGuide.section4Step2}</p>
             <ul className="list-inside list-disc space-y-1">
-              <li>The Merkle root is stored in the transaction's <code>input data</code> field</li>
-              <li>It's a 32-byte (64 hex character) value starting with <code>0x</code></li>
+              <li>{t.verificationGuide.section4Step2Desc1}</li>
+              <li>{t.verificationGuide.section4Step2Desc2}</li>
             </ul>
-            <p className="font-medium">Step 3: Verify root matches</p>
+            <p className="font-medium">{t.verificationGuide.section4Step3}</p>
             <ul className="list-inside list-disc space-y-1">
-              <li>The root from the blockchain should match the root in your Merkle proof</li>
-              <li>Block timestamp should be after the certification timestamp</li>
+              <li>{t.verificationGuide.section4Step3Desc1}</li>
+              <li>{t.verificationGuide.section4Step3Desc2}</li>
             </ul>
           </div>
         </section>
@@ -133,17 +137,17 @@ export default function VerificationGuide({ certificationId, className = '' }: V
             <span className="mr-2 flex h-6 w-6 items-center justify-center rounded-full bg-blue-100 text-xs font-bold text-blue-600">
               5
             </span>
-            How to Verify TSA Timestamp (RFC 3161)
+            {t.verificationGuide.section5Title}
           </h4>
           <div className="ml-8 space-y-3 text-sm text-gray-700">
-            <p>If the package includes a <code>tsa_token</code>, you can verify it using:</p>
+            <p>{t.verificationGuide.section5Desc}</p>
             <ul className="list-inside list-disc space-y-1">
-              <li>OpenSSL: <code>openssl ts -verify -data evidence_hash -in tsa_token.der</code></li>
-              <li>Verify the timestamp authority's certificate chain</li>
-              <li>Verify the token was issued before the block timestamp</li>
+              <li>{t.verificationGuide.section5Item1}</li>
+              <li>{t.verificationGuide.section5Item2}</li>
+              <li>{t.verificationGuide.section5Item3}</li>
             </ul>
             <p className="text-xs text-gray-600">
-              Note: TSA verification requires the TSA's certificate. Contact us for certificate details.
+              {t.verificationGuide.section5Note}
             </p>
           </div>
         </section>
@@ -154,25 +158,25 @@ export default function VerificationGuide({ certificationId, className = '' }: V
             <span className="mr-2 flex h-6 w-6 items-center justify-center rounded-full bg-blue-100 text-xs font-bold text-blue-600">
               6
             </span>
-            Verify Chain of Custody
+            {t.verificationGuide.section6Title}
           </h4>
           <div className="ml-8 space-y-3 text-sm text-gray-700">
-            <p>Each event log has a <code>log_hash</code>. Verify the chain:</p>
+            <p>{t.verificationGuide.section6Desc}</p>
             <ul className="list-inside list-disc space-y-1">
-              <li>Event 1's hash should match Event 2's <code>previous_log_hash</code></li>
-              <li>Each log_hash should be SHA256(event_data + previous_log_hash)</li>
-              <li>All events should be in chronological order</li>
+              <li>{t.verificationGuide.section6Item1}</li>
+              <li>{t.verificationGuide.section6Item2}</li>
+              <li>{t.verificationGuide.section6Item3}</li>
             </ul>
           </div>
         </section>
 
         {/* Additional Resources */}
         <div className="mt-6 rounded-lg border border-blue-200 bg-blue-50 p-4">
-          <p className="text-sm font-semibold text-blue-900">Additional Resources</p>
+          <p className="text-sm font-semibold text-blue-900">{t.verificationGuide.resourcesTitle}</p>
           <ul className="mt-2 space-y-1 text-xs text-blue-800">
-            <li>• Download the full evidence package to get all verification data</li>
-            <li>• Our verification endpoint: <code>/verify?id={certificationId}</code></li>
-            <li>• For technical support, contact our engineering team</li>
+            <li>• {t.verificationGuide.resourcesItem1}</li>
+            <li>• {t.verificationGuide.resourcesItem2.replace('{certificationId}', certificationId)}</li>
+            <li>• {t.verificationGuide.resourcesItem3}</li>
           </ul>
         </div>
       </div>

@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import HashDisplay from './HashDisplay'
+import { useI18n } from '@/lib/i18n/context'
 
 interface CreatorContinuityChainProps {
   currentEvidenceHash: string
@@ -16,12 +17,14 @@ export default function CreatorContinuityChain({
   chainPosition,
   className = '',
 }: CreatorContinuityChainProps) {
+  const { t } = useI18n()
+  
   if (!previousEvidenceHash) {
     return (
       <div className={`rounded-lg border border-gray-200 bg-gray-50 p-4 ${className}`}>
-        <p className="text-sm font-semibold text-gray-900">Creator Continuity</p>
+        <p className="text-sm font-semibold text-gray-900">{t.creatorContinuity.title}</p>
         <p className="mt-1 text-xs text-gray-600">
-          This is the first certification in your creator continuity chain.
+          {t.creatorContinuity.firstCert}
         </p>
       </div>
     )
@@ -38,15 +41,15 @@ export default function CreatorContinuityChain({
             d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
           />
         </svg>
-        <p className="text-sm font-semibold text-purple-900">Creator Continuity Chain</p>
+        <p className="text-sm font-semibold text-purple-900">{t.creatorContinuity.titleWithChain}</p>
       </div>
       <p className="mb-3 text-xs text-purple-700">
-        This evidence is linked to your previous certification, forming a continuous chain of your creative work.
-        {chainPosition && ` Position: #${chainPosition} in chain.`}
+        {t.creatorContinuity.desc}
+        {chainPosition && ` ${t.creatorContinuity.position.replace('{position}', chainPosition.toString())}`}
       </p>
       <div className="space-y-2">
         <div className="rounded-lg bg-white p-3">
-          <p className="text-xs font-medium text-purple-700 mb-1">Previous Evidence Hash</p>
+          <p className="text-xs font-medium text-purple-700 mb-1">{t.creatorContinuity.previousHash}</p>
           <HashDisplay hash={previousEvidenceHash} />
         </div>
         <div className="flex items-center justify-center text-purple-400">
@@ -55,12 +58,12 @@ export default function CreatorContinuityChain({
           </svg>
         </div>
         <div className="rounded-lg bg-white p-3">
-          <p className="text-xs font-medium text-purple-700 mb-1">Current Evidence Hash</p>
+          <p className="text-xs font-medium text-purple-700 mb-1">{t.creatorContinuity.currentHash}</p>
           <HashDisplay hash={currentEvidenceHash} />
         </div>
       </div>
       <p className="mt-3 text-xs text-purple-600">
-        This chain proves continuous creative activity over time and is valuable for MCNs and studios.
+        {t.creatorContinuity.value}
       </p>
     </div>
   )

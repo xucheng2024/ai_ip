@@ -52,11 +52,60 @@
 - **PDF Certificates:** Professional certificates for records and legal use
 - **Public Verification:** Anyone can verify certifications via ID or file hash
 - **Dashboard:** Usage tracking, certification history, subscription management
+- **Evidence Status Display:** Clear evidence maturity indicators (Certified/Timestamped/Anchored/Revoked)
+- **Usage Scenario Templates:** Pre-configured templates for YouTube DMCA, TikTok IP reports, etc.
 
 ### 5. AI Tool Integration
 - **Metadata Capture:** Records AI tool used (Runway, Pika, Sora, etc.)
 - **Prompt Preservation:** Optional prompt storage (hash-only or plaintext)
 - **Creation Metadata:** Model versions, third-party material declarations
+
+### 6. Evidence Status Model
+Clear evidence maturity levels displayed to users and investors:
+- 🟡 **Certified:** Server + Hash complete
+- 🟢 **Timestamped:** TSA timestamp received
+- 🔵 **Anchored:** Blockchain batch complete
+- ⚫ **Revoked:** Certificate revoked
+
+Critical UI feature that answers investor and legal team questions about evidence quality.
+
+### 7. Third-Party Verification Guide
+- **Independent Verification:** Detailed guide for verifying evidence packages without platform dependency
+- **Hash Recalculation:** Instructions for recalculating evidence hashes
+- **Merkle Proof Verification:** How to verify Merkle proofs
+- **Blockchain Verification:** On-chain verification methods
+- **TSA Timestamp Verification:** RFC 3161 verification procedures
+
+Extremely valuable for legal teams and platforms, demonstrating serious infrastructure approach.
+
+### 8. Evidence Usage Scenario Templates
+Pre-configured templates for different use cases:
+- **YouTube DMCA Takedown:** Required fields and step-by-step instructions
+- **TikTok IP Report:** Platform-specific submission guidance
+- **Commercial Partnership Proof:** Partner verification workflows
+- **Internal IP Archive:** Enterprise asset management integration
+
+Key differentiator: Moving from "tool" to "infrastructure."
+
+### 9. Hash Manifest in Evidence Packages
+- **Complete Index:** manifest.json in evidence package root
+- **Hash Inventory:** evidence_hash, merkle_root, tx_hash, block_time
+- **File Index:** included_files with all related hashes
+- **Audit-Ready:** Facilitates third-party auditing and long-term archival
+
+### 10. Creator Continuity Proof
+- **Hash Chain Linking:** New evidence links to previous evidence hash
+- **Continuity Proof:** Demonstrates long-term creative trajectory from same creator
+- **Off-Chain Storage:** Stored in evidence packages only (zero cost)
+- **MCN/Studio Appeal:** Highly attractive to multi-channel networks and studios
+
+Second moat feature.
+
+### 11. Public Transparency Log Page
+- **Public Auditability:** Daily batch counts, Merkle roots, chain transactions
+- **Time Range:** Complete historical records
+- **Certificate Transparency Style:** But for AI content evidence
+- **Investor-Friendly:** Demonstrates platform integrity and auditability
 
 ---
 
@@ -91,21 +140,31 @@ Third parties can verify without trusting the server:
 ## Competitive Advantages
 
 ### 1. **Cryptographic Proof**
-Unlike timestamp services that require trust in a central authority, AIVerify provides independently verifiable cryptographic proofs anchored to public blockchain.
+Unlike timestamp services that require trust in a central authority, AIVerify provides independently verifiable cryptographic proofs anchored to public blockchain. Includes detailed third-party verification guides for verification without platform dependency.
 
-### 2. **Cost-Effective Blockchain Usage**
+### 2. **Complete Evidence Maturity System**
+Clear Evidence Status Model (Certified → Timestamped → Anchored) provides transparency that investors and legal teams demand. Not just a concept - actual maturity indicators.
+
+### 3. **Cost-Effective Blockchain Usage**
+
 Daily batching reduces blockchain costs to ~$0.0001 per certification (vs. $0.XX for individual on-chain transactions).
 
-### 3. **Complete Evidence Infrastructure**
-Not just timestamps - includes content fingerprints, chain of custody, and verifiable evidence packages.
+### 4. **Complete Evidence Infrastructure**
+Not just timestamps - includes content fingerprints, chain of custody, verifiable evidence packages, Hash Manifest indexing, and creator continuity proof.
 
-### 4. **User-Friendly**
+### 5. **Practical Use Case Templates**
+Pre-configured templates for YouTube DMCA, TikTok IP reports, and more. Moving from "tool" to "infrastructure" - significantly increases practical value.
+
+### 6. **User-Friendly**
 No crypto knowledge required. Users don't need wallets, tokens, or blockchain experience.
 
-### 5. **Legal Compliance Ready**
-Structured evidence packages designed for legal use cases, with clear disclaimers and compliance considerations.
+### 7. **Legal Compliance Ready**
+Structured evidence packages designed for legal use cases, with clear disclaimers and compliance considerations. Third-party verification guides enable legal teams to verify independently.
 
-### 6. **Scalable Architecture**
+### 8. **Transparency & Auditability**
+Public transparency log page showing all batches and transactions, similar to Certificate Transparency. Demonstrates platform integrity and auditability.
+
+### 9. **Scalable Architecture**
 - Built on Next.js 16 (serverless-ready)
 - Supabase backend (auto-scaling)
 - Vercel deployment (global CDN)
@@ -173,6 +232,12 @@ Structured evidence packages designed for legal use cases, with clear disclaimer
 - ✅ PDF certificate generation
 - ✅ Public verification
 - ✅ Subscription tiers
+- ✅ Evidence Status Model
+- ✅ Third-party verification guide
+- ✅ Evidence usage scenario templates
+- ✅ Hash Manifest indexing
+- ✅ Creator continuity proof
+- ✅ Public transparency log page
 
 ### Phase 2 (Planned)
 - API access for integrations
@@ -221,6 +286,12 @@ Structured evidence packages designed for legal use cases, with clear disclaimer
 4. **Scalable Business Model:** High gross margins, serverless architecture
 5. **Clear Market Need:** AI content explosion requires verification infrastructure
 6. **Multiple Revenue Streams:** Subscriptions, API access, enterprise features
+7. **Moat Features:**
+   - Evidence Status Model provides clarity for legal teams and investors (not just a concept)
+   - Creator Continuity Proof forms second moat (appeals to MCNs/studios)
+   - Third-party verification guides enhance platform trust
+   - Public transparency log demonstrates integrity and auditability
+8. **Infrastructure Positioning:** Moving from tool to infrastructure with usage scenario templates - extremely practical
 
 ### Market Timing
 - AI video generation is accelerating (Runway, Pika, Sora gaining traction)

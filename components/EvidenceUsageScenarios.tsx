@@ -1,5 +1,7 @@
 'use client'
 
+import { useI18n } from '@/lib/i18n/context'
+
 interface EvidenceUsageScenariosProps {
   certification: {
     id: string
@@ -19,13 +21,14 @@ export default function EvidenceUsageScenarios({
   video,
   className = '',
 }: EvidenceUsageScenariosProps) {
+  const { t } = useI18n()
+  
   const scenarios = [
     {
       id: 'youtube-dmca',
-      title: 'YouTube DMCA Takedown',
+      title: t.usageScenarios.youtubeTitle,
       platform: 'YouTube',
-      description:
-        'Use this evidence to file a DMCA takedown request for copyright infringement on YouTube.',
+      description: t.usageScenarios.youtubeDesc,
       fields: [
         { label: 'Certification ID', value: certification.id },
         { label: 'Evidence Hash', value: certification.evidence_hash },
@@ -42,9 +45,9 @@ export default function EvidenceUsageScenarios({
     },
     {
       id: 'tiktok-ip',
-      title: 'TikTok IP Report',
+      title: t.usageScenarios.tiktokTitle,
       platform: 'TikTok',
-      description: 'Submit an IP infringement report to TikTok with your creation proof.',
+      description: t.usageScenarios.tiktokDesc,
       fields: [
         { label: 'Verification URL', value: certification.verification_url },
         { label: 'Certification ID', value: certification.id },
@@ -60,9 +63,9 @@ export default function EvidenceUsageScenarios({
     },
     {
       id: 'commercial-proof',
-      title: 'Commercial Partnership Proof',
+      title: t.usageScenarios.commercialTitle,
       platform: 'Business',
-      description: 'Demonstrate content ownership to potential commercial partners or clients.',
+      description: t.usageScenarios.commercialDesc,
       fields: [
         { label: 'Certificate Page', value: `/certificate/${certification.id}` },
         { label: 'Verification URL', value: certification.verification_url },
@@ -78,9 +81,9 @@ export default function EvidenceUsageScenarios({
     },
     {
       id: 'internal-archive',
-      title: 'Internal IP Archive',
+      title: t.usageScenarios.archiveTitle,
       platform: 'Internal',
-      description: 'Maintain a verifiable archive of your creative works for internal records.',
+      description: t.usageScenarios.archiveDesc,
       fields: [
         { label: 'Evidence Hash', value: certification.evidence_hash },
         { label: 'File Hash', value: video.file_hash },
@@ -98,9 +101,9 @@ export default function EvidenceUsageScenarios({
 
   return (
     <div className={`rounded-lg border border-gray-200 bg-white p-6 ${className}`}>
-      <h3 className="mb-4 text-lg font-semibold text-gray-900">Use Evidence For...</h3>
+      <h3 className="mb-4 text-lg font-semibold text-gray-900">{t.usageScenarios.title}</h3>
       <p className="mb-6 text-sm text-gray-600">
-        Select a scenario to see how to use this evidence package:
+        {t.usageScenarios.subtitle}
       </p>
 
       <div className="space-y-4">
@@ -128,7 +131,7 @@ export default function EvidenceUsageScenarios({
                 {/* Fields to Use */}
                 <div>
                   <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-500">
-                    Fields to Include
+                    {t.usageScenarios.fieldsToInclude}
                   </p>
                   <div className="space-y-2">
                     {scenario.fields.map((field, idx) => (
@@ -143,7 +146,7 @@ export default function EvidenceUsageScenarios({
                 {/* Instructions */}
                 <div>
                   <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-500">
-                    Instructions
+                    {t.usageScenarios.instructions}
                   </p>
                   <ol className="list-inside list-decimal space-y-1 text-sm text-gray-700">
                     {scenario.instructions.map((instruction, idx) => (
@@ -161,7 +164,7 @@ export default function EvidenceUsageScenarios({
                       rel="noopener noreferrer"
                       className="inline-flex items-center rounded-lg border border-blue-300 bg-blue-50 px-4 py-2 text-sm font-semibold text-blue-700 transition-colors hover:bg-blue-100"
                     >
-                      Visit {scenario.platform} Guidelines
+                      {t.usageScenarios.visitGuidelines.replace('{platform}', scenario.platform)}
                       <svg className="ml-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path
                           strokeLinecap="round"
