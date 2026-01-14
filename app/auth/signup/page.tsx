@@ -66,7 +66,7 @@ export default function SignupPage() {
             {t.auth.signupSubtitle}
           </p>
         </div>
-        <form className="mt-8 space-y-7 rounded-2xl border border-gray-200/80 bg-white p-8 shadow-lg" onSubmit={handleSignup}>
+        <form className="mt-8 space-y-6 sm:space-y-7 rounded-2xl border border-gray-200/80 bg-white p-5 sm:p-8 shadow-lg" onSubmit={handleSignup}>
           {error && (
             <div className="rounded-lg border border-red-200 bg-red-50 p-4">
               <p className="text-sm font-medium text-red-800">{error}</p>

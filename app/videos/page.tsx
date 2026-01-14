@@ -74,7 +74,7 @@ export default function VideosPage() {
   
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50/50">
-      <main className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+      <main className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-20 lg:px-8">
         <div className="text-center animate-fade-in">
           <h1 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
             {t.home.videosPageTitle || t.common.videos}
@@ -85,7 +85,7 @@ export default function VideosPage() {
         </div>
 
         {/* Videos Section */}
-        <div className="mt-20">
+        <div className="mt-12 sm:mt-20">
           <div className="text-center mb-8">
             <div className="flex flex-wrap justify-center gap-2 mb-6">
               <button

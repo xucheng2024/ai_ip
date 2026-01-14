@@ -158,7 +158,7 @@ export default function CertifyPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50/50">
-      <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-3xl px-4 py-6 sm:px-6 sm:py-10 lg:px-8">
         <div className="mb-10">
           <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">{t.certify.title}</h1>
           <p className="mt-3 text-sm text-gray-600 leading-relaxed">
@@ -166,7 +166,7 @@ export default function CertifyPage() {
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-7 rounded-2xl border border-gray-200/80 bg-white p-7 shadow-lg sm:p-9">
+        <form onSubmit={handleSubmit} className="space-y-6 sm:space-y-7 rounded-2xl border border-gray-200/80 bg-white p-5 sm:p-7 lg:p-9 shadow-lg">
           {error && (
             <div className="rounded-lg border border-red-200 bg-red-50 p-4">
               <p className="text-sm font-medium text-red-800">{error}</p>

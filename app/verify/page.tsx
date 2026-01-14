@@ -151,7 +151,7 @@ function VerifyPageContent() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50/50">
-      <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
         <div className="mb-12 text-center animate-fade-in">
           <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-full border-2 border-gray-200/80 bg-white shadow-sm">
             <svg className="h-7 w-7 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -169,9 +169,9 @@ function VerifyPageContent() {
           )}
         </div>
 
-        <div className="space-y-7">
+        <div className="space-y-6 sm:space-y-7">
           {/* Verify by ID */}
-          <div className="rounded-xl border border-gray-200/80 bg-white p-7 shadow-sm">
+          <div className="rounded-xl border border-gray-200/80 bg-white p-5 sm:p-7 shadow-sm">
             <h2 className="mb-5 text-sm font-semibold text-gray-900">{t.verify.verifyByIdTitle || t.verify.verifyById}</h2>
             <div className="flex flex-col gap-3 sm:flex-row">
               <input
@@ -193,7 +193,7 @@ function VerifyPageContent() {
           </div>
 
           {/* Verify by File */}
-          <div className="rounded-xl border border-gray-200/80 bg-white p-7 shadow-sm">
+          <div className="rounded-xl border border-gray-200/80 bg-white p-5 sm:p-7 shadow-sm">
             <h2 className="mb-5 text-sm font-semibold text-gray-900">{t.verify.verifyByFileTitle || t.verify.verifyByFile}</h2>
             <div className="flex flex-col gap-3 sm:flex-row">
               <div className="flex-1">
@@ -236,7 +236,7 @@ function VerifyPageContent() {
           )}
 
           {result && (
-            <div className="rounded-xl border border-gray-200/80 bg-white p-7 shadow-sm animate-fade-in">
+            <div className="rounded-xl border border-gray-200/80 bg-white p-5 sm:p-7 shadow-sm animate-fade-in">
               <h2 className="mb-7 text-sm font-semibold text-gray-900">{t.verify.verificationResult}</h2>
               {result.exists ? (
                 <div className="space-y-7">

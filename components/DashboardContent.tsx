@@ -25,7 +25,7 @@ export default function DashboardContent({
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50/50">
-      <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-10 lg:px-8">
         <div className="mb-10">
           <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">{t.dashboard.title}</h1>
           <p className="mt-3 text-sm text-gray-600">
@@ -34,8 +34,8 @@ export default function DashboardContent({
         </div>
 
         {/* Usage Stats */}
-        <div className="mb-10 grid grid-cols-1 gap-5 sm:grid-cols-3">
-          <div className="rounded-xl border border-gray-200/80 bg-white p-7 shadow-sm transition-all duration-200 hover:shadow-md">
+        <div className="mb-8 sm:mb-10 grid grid-cols-1 gap-4 sm:gap-5 sm:grid-cols-3">
+          <div className="rounded-xl border border-gray-200/80 bg-white p-5 sm:p-7 shadow-sm transition-all duration-200 hover:shadow-md">
             <p className="text-sm font-medium text-gray-600">{t.dashboard.subscriptionTier}</p>
             <p className="mt-2 text-2xl font-bold text-gray-900 capitalize">
               {userProfile?.subscription_tier || 'free'}
@@ -46,7 +46,7 @@ export default function DashboardContent({
               {userProfile?.subscription_tier === 'pro' && t.dashboard.tierPro}
             </p>
           </div>
-          <div className="rounded-xl border border-gray-200/80 bg-white p-7 shadow-sm transition-all duration-200 hover:shadow-md">
+          <div className="rounded-xl border border-gray-200/80 bg-white p-5 sm:p-7 shadow-sm transition-all duration-200 hover:shadow-md">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">{t.dashboard.thisMonth}</p>
@@ -91,7 +91,7 @@ export default function DashboardContent({
               </div>
             )}
           </div>
-          <div className="rounded-xl bg-gradient-to-br from-blue-600 to-blue-700 p-7 shadow-lg transition-all duration-200 hover:shadow-xl hover:-translate-y-0.5">
+          <div className="rounded-xl bg-gradient-to-br from-blue-600 to-blue-700 p-5 sm:p-7 shadow-lg transition-all duration-200 hover:shadow-xl hover:-translate-y-0.5">
             <Link
               href="/certify"
               className="flex h-full items-center justify-center rounded-lg bg-white px-4 py-3.5 text-center text-sm font-semibold text-blue-600 transition-all duration-200 hover:bg-blue-50 hover:scale-[1.02]"
@@ -110,7 +110,7 @@ export default function DashboardContent({
             {certifications && certifications.length > 0 ? (
               certifications.map((cert: any) => (
                 <div key={cert.id} className="px-7 py-5 transition-all duration-200 hover:bg-gray-50/50">
-                  <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
+                  <div className="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center sm:gap-4">
                     <div className="flex-1">
                       <p className="text-base font-semibold text-gray-900">
                         {cert.videos?.title || cert.videos?.original_filename}

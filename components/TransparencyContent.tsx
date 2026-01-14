@@ -21,10 +21,10 @@ export default function TransparencyContent({
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
         {/* Header */}
         <div className="mb-8">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <h1 className="text-3xl font-bold text-gray-900 sm:text-4xl">
                 {t.transparency.title}
@@ -77,33 +77,33 @@ export default function TransparencyContent({
 
         {/* Batches Table */}
         <div className="rounded-xl bg-white shadow-sm">
-          <div className="border-b border-gray-200 px-6 py-4">
+          <div className="border-b border-gray-200 px-4 py-3 sm:px-6 sm:py-4">
             <h2 className="text-lg font-semibold text-gray-900">{t.transparency.recentBatches}</h2>
             <p className="mt-1 text-sm text-gray-500">
               {t.transparency.ctDescription}
             </p>
           </div>
           {batches && batches.length > 0 ? (
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto -mx-4 sm:mx-0">
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                    <th className="px-4 py-2 sm:px-6 sm:py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                       {t.transparency.batchId}
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                    <th className="px-4 py-2 sm:px-6 sm:py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                       {t.transparency.dateTime}
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                    <th className="px-4 py-2 sm:px-6 sm:py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                       {t.transparency.certifications}
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                    <th className="px-4 py-2 sm:px-6 sm:py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                       {t.transparency.merkleRoot}
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                    <th className="px-4 py-2 sm:px-6 sm:py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                       {t.transparency.transaction}
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                    <th className="px-4 py-2 sm:px-6 sm:py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                       {t.transparency.block}
                     </th>
                   </tr>
@@ -111,12 +111,12 @@ export default function TransparencyContent({
                 <tbody className="divide-y divide-gray-200 bg-white">
                   {batches.map((batch) => (
                     <tr key={batch.id} className="hover:bg-gray-50">
-                      <td className="whitespace-nowrap px-6 py-4">
+                      <td className="whitespace-nowrap px-4 py-3 sm:px-6 sm:py-4">
                         <span className="font-mono text-sm font-medium text-gray-900">
                           {batch.batch_id}
                         </span>
                       </td>
-                      <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-600">
+                      <td className="whitespace-nowrap px-4 py-3 sm:px-6 sm:py-4 text-sm text-gray-600">
                         <div>{format(new Date(batch.created_at), 'MMM d, yyyy')}</div>
                         <div className="text-xs text-gray-500">
                           {format(new Date(batch.created_at), 'HH:mm:ss')} UTC
@@ -127,15 +127,15 @@ export default function TransparencyContent({
                           </div>
                         )}
                       </td>
-                      <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900">
+                      <td className="whitespace-nowrap px-4 py-3 sm:px-6 sm:py-4 text-sm text-gray-900">
                         {batch.certification_count}
                       </td>
-                      <td className="px-6 py-4">
+                      <td className="px-4 py-3 sm:px-6 sm:py-4">
                         <div className="max-w-xs truncate font-mono text-xs text-gray-600">
                           {batch.merkle_root}
                         </div>
                       </td>
-                      <td className="px-6 py-4">
+                      <td className="px-4 py-3 sm:px-6 sm:py-4">
                         {batch.chain_tx_hash ? (
                           <a
                             href={`https://polygonscan.com/tx/${batch.chain_tx_hash}`}
@@ -162,7 +162,7 @@ export default function TransparencyContent({
                           <span className="text-sm text-gray-400">{t.transparency.pending}</span>
                         )}
                       </td>
-                      <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-600">
+                      <td className="whitespace-nowrap px-4 py-3 sm:px-6 sm:py-4 text-sm text-gray-600">
                         {batch.chain_block_number ? (
                           <a
                             href={`https://polygonscan.com/block/${batch.chain_block_number}`}

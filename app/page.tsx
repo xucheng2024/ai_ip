@@ -8,20 +8,20 @@ export default function Home() {
   
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50/50">
-      <main className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+      <main className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-20 lg:px-8">
         {/* Hero Section */}
         <div className="text-center animate-fade-in">
-          <h1 className="text-5xl font-bold tracking-tight sm:text-6xl leading-[1.15]">
+          <h1 className="text-3xl font-bold tracking-tight sm:text-5xl lg:text-6xl leading-[1.15]">
             <span className="gradient-text block">
               {t.home.title}
             </span>
             {t.home.titleLine2 && (
-              <span className="block mt-4 text-2xl font-medium text-gray-500 sm:text-3xl">
+              <span className="block mt-3 text-lg font-medium text-gray-500 sm:text-2xl lg:text-3xl">
                 {t.home.titleLine2}
               </span>
             )}
           </h1>
-          <div className="mt-12 sm:mt-14">
+          <div className="mt-8 sm:mt-12 lg:mt-14">
             <div className="flex flex-col items-center justify-center gap-4 sm:flex-row sm:gap-x-4">
             <Link
               href="/certify"
@@ -37,13 +37,13 @@ export default function Home() {
             </Link>
           </div>
           </div>
-          <p className="mt-12 text-base text-gray-600 sm:text-lg max-w-2xl mx-auto leading-relaxed">
+          <p className="mt-8 text-sm text-gray-600 sm:text-base lg:text-lg max-w-2xl mx-auto leading-relaxed">
             {t.home.subtitle}
           </p>
         </div>
 
         {/* Features Section - Restructured to 3 Core Values */}
-        <div className="mt-28">
+        <div className="mt-16 sm:mt-24 lg:mt-28">
           <div className="mx-auto max-w-2xl text-center">
             <h2 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
               {t.home.featuresTitle}
@@ -52,10 +52,10 @@ export default function Home() {
               {t.home.featuresSubtitle}
             </p>
           </div>
-          <div className="mt-14 grid grid-cols-1 gap-7 lg:grid-cols-3 lg:gap-8">
-            <div className="group rounded-2xl border border-gray-200/80 bg-white p-8 shadow-sm transition-all duration-300 hover:border-gray-300 hover:shadow-lg hover:-translate-y-1">
-              <div className="mb-5 text-2xl">{t.home.coreValue1Title.includes('🔐') ? '🔐' : ''}</div>
-              <h3 className="text-lg font-semibold text-gray-900 leading-snug">
+          <div className="mt-8 sm:mt-12 lg:mt-14 grid grid-cols-1 gap-5 sm:gap-6 lg:grid-cols-3 lg:gap-8">
+            <div className="group rounded-2xl border border-gray-200/80 bg-white p-6 sm:p-8 shadow-sm transition-all duration-300 hover:border-gray-300 hover:shadow-lg hover:-translate-y-1">
+              <div className="mb-4 text-xl sm:text-2xl">{t.home.coreValue1Title.includes('🔐') ? '🔐' : ''}</div>
+              <h3 className="text-base sm:text-lg font-semibold text-gray-900 leading-snug">
                 {t.home.coreValue1Title.replace('🔐 ', '')}
               </h3>
               <p className="mt-3 text-sm leading-relaxed text-gray-600">
@@ -83,9 +83,9 @@ export default function Home() {
                 )}
               </div>
             </div>
-            <div className="group rounded-2xl border border-gray-200/80 bg-white p-8 shadow-sm transition-all duration-300 hover:border-gray-300 hover:shadow-lg hover:-translate-y-1">
-              <div className="mb-5 text-2xl">{t.home.coreValue2Title.includes('✓') ? '✓' : ''}</div>
-              <h3 className="text-lg font-semibold text-gray-900 leading-snug">
+            <div className="group rounded-2xl border border-gray-200/80 bg-white p-6 sm:p-8 shadow-sm transition-all duration-300 hover:border-gray-300 hover:shadow-lg hover:-translate-y-1">
+              <div className="mb-4 text-xl sm:text-2xl">{t.home.coreValue2Title.includes('✓') ? '✓' : ''}</div>
+              <h3 className="text-base sm:text-lg font-semibold text-gray-900 leading-snug">
                 {t.home.coreValue2Title.replace('✓ ', '')}
               </h3>
               <p className="mt-3 text-sm leading-relaxed text-gray-600">
@@ -113,9 +113,9 @@ export default function Home() {
                 )}
               </div>
             </div>
-            <div className="group rounded-2xl border border-gray-200/80 bg-white p-8 shadow-sm transition-all duration-300 hover:border-gray-300 hover:shadow-lg hover:-translate-y-1">
-              <div className="mb-5 text-2xl">{t.home.coreValue3Title.includes('🤖') ? '🤖' : ''}</div>
-              <h3 className="text-lg font-semibold text-gray-900 leading-snug">
+            <div className="group rounded-2xl border border-gray-200/80 bg-white p-6 sm:p-8 shadow-sm transition-all duration-300 hover:border-gray-300 hover:shadow-lg hover:-translate-y-1">
+              <div className="mb-4 text-xl sm:text-2xl">{t.home.coreValue3Title.includes('🤖') ? '🤖' : ''}</div>
+              <h3 className="text-base sm:text-lg font-semibold text-gray-900 leading-snug">
                 {t.home.coreValue3Title.replace('🤖 ', '')}
               </h3>
               <p className="mt-3 text-sm leading-relaxed text-gray-600">
@@ -141,14 +141,14 @@ export default function Home() {
         </div>
 
         {/* Video Page Section */}
-        <div className="mt-28">
+        <div className="mt-16 sm:mt-24 lg:mt-28">
           <div className="mx-auto max-w-7xl">
             <div className="mx-auto max-w-2xl text-center mb-12">
               <h2 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
                 {t.home.videoPageTitle}
               </h2>
             </div>
-            <div className="grid grid-cols-1 gap-12 lg:grid-cols-2 items-center">
+            <div className="grid grid-cols-1 gap-8 sm:gap-10 lg:grid-cols-2 lg:gap-12 items-center">
               <div className="space-y-6">
                 <p className="text-base text-gray-600 leading-relaxed">
                   {t.home.videoPageDesc}
@@ -213,7 +213,7 @@ export default function Home() {
         </div>
 
         {/* Pricing Section */}
-        <div className="mt-28">
+        <div className="mt-16 sm:mt-24 lg:mt-28">
           <div className="mx-auto max-w-2xl text-center">
             <h2 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
               {t.home.pricingTitle}
@@ -227,11 +227,11 @@ export default function Home() {
               </p>
             )}
           </div>
-          <div className="mt-14 grid grid-cols-1 gap-7 sm:grid-cols-3">
-            <div className="rounded-2xl border border-gray-200/80 bg-white p-8 shadow-sm transition-all duration-300 hover:border-gray-300 hover:shadow-md">
-              <h3 className="text-lg font-semibold text-gray-900">{t.home.pricingFree}</h3>
-              <div className="mt-5 flex items-baseline">
-                <p className="text-4xl font-semibold text-gray-900">$0</p>
+          <div className="mt-8 sm:mt-12 lg:mt-14 grid grid-cols-1 gap-5 sm:gap-6 sm:grid-cols-3">
+            <div className="rounded-2xl border border-gray-200/80 bg-white p-6 sm:p-8 shadow-sm transition-all duration-300 hover:border-gray-300 hover:shadow-md">
+              <h3 className="text-base sm:text-lg font-semibold text-gray-900">{t.home.pricingFree}</h3>
+              <div className="mt-4 sm:mt-5 flex items-baseline">
+                <p className="text-3xl sm:text-4xl font-semibold text-gray-900">$0</p>
                 <p className="ml-2 text-sm text-gray-500">{t.home.pricingPerMonth}</p>
               </div>
               <ul className="mt-6 space-y-3 text-sm text-gray-600">
@@ -249,7 +249,7 @@ export default function Home() {
                 </li>
               </ul>
             </div>
-            <div className="relative rounded-2xl border-2 border-blue-600 bg-white p-8 shadow-lg transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+            <div className="relative rounded-2xl border-2 border-blue-600 bg-white p-6 sm:p-8 shadow-lg transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
               {t.home.pricingPopular && language === 'en' && (
                 <div className="absolute -top-3 left-1/2 -translate-x-1/2">
                   <span className="rounded-full bg-gradient-to-r from-blue-600 to-blue-700 px-3 py-1 text-xs font-semibold text-white shadow-md">
@@ -257,13 +257,13 @@ export default function Home() {
                   </span>
                 </div>
               )}
-              <h3 className="text-lg font-semibold text-gray-900">
+              <h3 className="text-base sm:text-lg font-semibold text-gray-900">
                 {t.home.pricingPopular && language === 'zh'
                   ? t.home.pricingPopular
                   : t.home.pricingBasic}
               </h3>
-              <div className="mt-6 flex items-baseline">
-                <p className="text-4xl font-semibold text-gray-900">$9.9</p>
+              <div className="mt-5 sm:mt-6 flex items-baseline">
+                <p className="text-3xl sm:text-4xl font-semibold text-gray-900">$9.9</p>
                 <p className="ml-2 text-sm text-gray-500">{t.home.pricingPerMonth}</p>
               </div>
               <ul className="mt-6 space-y-3 text-sm text-gray-600">
@@ -285,10 +285,10 @@ export default function Home() {
                 </li>
               </ul>
             </div>
-            <div className="rounded-2xl border border-gray-200/80 bg-white p-8 shadow-sm transition-all duration-300 hover:border-gray-300 hover:shadow-md">
-              <h3 className="text-lg font-semibold text-gray-900">{t.home.pricingPro}</h3>
-              <div className="mt-6 flex items-baseline">
-                <p className="text-4xl font-semibold text-gray-900">$19.9</p>
+            <div className="rounded-2xl border border-gray-200/80 bg-white p-6 sm:p-8 shadow-sm transition-all duration-300 hover:border-gray-300 hover:shadow-md">
+              <h3 className="text-base sm:text-lg font-semibold text-gray-900">{t.home.pricingPro}</h3>
+              <div className="mt-5 sm:mt-6 flex items-baseline">
+                <p className="text-3xl sm:text-4xl font-semibold text-gray-900">$19.9</p>
                 <p className="ml-2 text-sm text-gray-500">{t.home.pricingPerMonth}</p>
               </div>
               <ul className="mt-6 space-y-3 text-sm text-gray-600">
@@ -318,7 +318,7 @@ export default function Home() {
         </div>
 
         {/* Legal Disclaimer */}
-        <div className="mt-28 rounded-2xl border border-gray-200/80 bg-slate-50/80 p-7 sm:p-8 backdrop-blur-sm">
+        <div className="mt-16 sm:mt-24 lg:mt-28 rounded-2xl border border-gray-200/80 bg-slate-50/80 p-5 sm:p-7 lg:p-8 backdrop-blur-sm">
           <p className="text-xs leading-relaxed text-gray-600 sm:text-sm">
             <strong className="font-semibold text-gray-900">{t.home.legalDisclaimer}</strong>
           </p>

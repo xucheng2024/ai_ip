@@ -41,7 +41,7 @@ export default function CertificateContent({
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50/50">
-      <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-4xl px-4 py-6 sm:px-6 sm:py-10 lg:px-8">
         <div className="mb-8">
           <Link
             href={isDemo ? "/videos" : "/dashboard"}
@@ -54,7 +54,7 @@ export default function CertificateContent({
           </Link>
         </div>
 
-        <div className="rounded-2xl border border-gray-200/80 bg-white p-8 shadow-lg sm:p-10 animate-fade-in">
+        <div className="rounded-2xl border border-gray-200/80 bg-white p-5 sm:p-8 lg:p-10 shadow-lg animate-fade-in">
           <CertificateHero evidenceStatus={evidenceStatus} />
 
           <div className="space-y-7 border-t border-gray-200 pt-7">
