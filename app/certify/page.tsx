@@ -111,7 +111,7 @@ export default function CertifyPage() {
       if (videoError) throw videoError
 
       // Create creation metadata
-      const promptHash = prompt ? generateHashFromString(prompt) : null
+      const promptHash = prompt ? await generateHashFromString(prompt) : null
       const { error: metadataError } = await supabase.from('creation_metadata').insert({
         video_id: videoData.id,
         ai_tool: aiTool || null,

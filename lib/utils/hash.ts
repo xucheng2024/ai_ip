@@ -1,25 +1,19 @@
-import CryptoJS from 'crypto-js'
-
+// Use Web Crypto API for better compatibility
 export async function generateFileHash(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader()
-    reader.onload = (e) => {
-      try {
-        const arrayBuffer = e.target?.result as ArrayBuffer
-        const wordArray = CryptoJS.lib.WordArray.create(arrayBuffer)
-        const hash = CryptoJS.SHA256(wordArray).toString()
-        resolve(hash)
-      } catch (error) {
-        reject(error)
-      }
-    }
-    reader.onerror = reject
-    reader.readAsArrayBuffer(file)
-  })
+  const arrayBuffer = await file.arrayBuffer()
+  const hashBuffer = await crypto.subtle.digest('SHA-256', arrayBuffer)
+  const hashArray = Array.from(new Uint8Array(hashBuffer))
+  const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('')
+  return hashHex
 }
 
-export function generateHashFromString(text: string): string {
-  return CryptoJS.SHA256(text).toString()
+export async function generateHashFromString(text: string): Promise<string> {
+  const encoder = new TextEncoder()
+  const data = encoder.encode(text)
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data)
+  const hashArray = Array.from(new Uint8Array(hashBuffer))
+  const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('')
+  return hashHex
 }
 
 export function generateCertificationId(): string {
