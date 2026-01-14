@@ -118,6 +118,7 @@
     "creatingAccount": "正在创建账户...",
     "alreadyHaveAccount": "已有账户？",
     "dontHaveAccount": "还没有账户？",
+    "signupSuccess": "注册成功！请查收邮件确认账户后再登录。",
     "placeholderEmail": "you@example.com",
     "placeholderName": "请输入您的姓名",
     "placeholderPassword": "请输入密码",

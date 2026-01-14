@@ -10,10 +10,23 @@ export default async function DashboardPage() {
     redirect('/auth/login')
   }
 
-  const {
-    data: { user },
-    error: authError,
-  } = await supabase.auth.getUser()
+  // Try to get user, with fallback to session check
+  let user = null
+  let authError = null
+  
+  const userResult = await supabase.auth.getUser()
+  user = userResult.data.user
+  authError = userResult.error
+
+  // If getUser fails, try getSession as fallback (handles timing issues)
+  if (!user && authError?.message?.includes('session')) {
+    const { data: sessionData } = await supabase.auth.getSession()
+    if (sessionData.session) {
+      const retryResult = await supabase.auth.getUser()
+      user = retryResult.data.user
+      authError = retryResult.error
+    }
+  }
 
   if (authError || !user) {
     if (process.env.NODE_ENV === 'development') {

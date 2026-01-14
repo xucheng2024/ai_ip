@@ -13,6 +13,7 @@ export default function SignupPage() {
   const [password, setPassword] = useState('')
   const [displayName, setDisplayName] = useState('')
   const [error, setError] = useState('')
+  const [success, setSuccess] = useState('')
   const [loading, setLoading] = useState(false)
 
   const handleSignup = async (e: React.FormEvent) => {
@@ -21,36 +22,63 @@ export default function SignupPage() {
     setLoading(true)
 
     try {
+      // Basic validation
+      if (!email || !password) {
+        throw new Error('Email and password are required')
+      }
+
+      if (password.length < 6) {
+        throw new Error('Password must be at least 6 characters')
+      }
+
       const supabase = createClient()
       const { data, error: signUpError } = await supabase.auth.signUp({
-        email,
+        email: email.trim(),
         password,
         options: {
           data: {
-            display_name: displayName,
+            display_name: displayName || null,
           },
+          emailRedirectTo: `${window.location.origin}/api/auth/callback`,
         },
       })
 
-      if (signUpError) throw signUpError
-
-      if (data.user) {
-        // Create user profile
-        const { error: profileError } = await supabase.from('users').insert({
-          id: data.user.id,
-          email: data.user.email!,
-          display_name: displayName || null,
-          account_type: 'creator',
-        })
-
-        if (profileError) throw profileError
-
-        router.push('/dashboard')
-        router.refresh()
+      if (signUpError) {
+        console.error('Signup error:', signUpError)
+        throw signUpError
       }
+
+      if (!data.user) {
+        throw new Error('Registration failed: No user data returned')
+      }
+
+      // Check if session exists (email confirmation might be required)
+      const { data: sessionData, error: sessionError } = await supabase.auth.getSession()
+      
+      if (sessionError) {
+        console.error('Session error:', sessionError)
+      }
+
+      if (!sessionData?.session) {
+        // No session - email confirmation is required
+        setLoading(false)
+        setError('Registration successful! Please check your email to confirm your account before logging in.')
+        // Clear form after showing message
+        setTimeout(() => {
+          setEmail('')
+          setPassword('')
+          setDisplayName('')
+        }, 3000)
+        return
+      }
+
+      // User profile is automatically created by database trigger
+      // Redirect to dashboard
+      setLoading(false)
+      window.location.href = '/dashboard'
     } catch (err: any) {
-      setError(err.message || t.errors.signupFailed)
-    } finally {
+      console.error('Signup error:', err)
+      setError(err.message || err.error_description || t.errors.signupFailed)
       setLoading(false)
     }
   }

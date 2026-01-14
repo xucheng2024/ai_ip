@@ -118,6 +118,7 @@
     "creatingAccount": "Creating account...",
     "alreadyHaveAccount": "Already have an account?",
     "dontHaveAccount": "Don't have an account?",
+    "signupSuccess": "Registration successful! Please check your email to confirm your account before logging in.",
     "placeholderEmail": "you@example.com",
     "placeholderName": "Your name",
     "placeholderPassword": "Enter your password",

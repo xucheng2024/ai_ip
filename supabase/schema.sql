@@ -267,3 +267,25 @@ CREATE POLICY "Creators can read own certification support events" ON promotion_
 
 CREATE POLICY "Authenticated users can create support events" ON promotion_support_events
   FOR INSERT WITH CHECK (auth.uid() IS NOT NULL);
+
+-- Function to handle new user creation (runs with SECURITY DEFINER to bypass RLS)
+CREATE OR REPLACE FUNCTION public.handle_new_user()
+RETURNS TRIGGER AS $$
+BEGIN
+  INSERT INTO public.users (id, email, display_name, account_type)
+  VALUES (
+    NEW.id,
+    NEW.email,
+    COALESCE(NEW.raw_user_meta_data->>'display_name', NULL),
+    'creator'
+  )
+  ON CONFLICT (id) DO NOTHING;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Trigger to automatically create user profile on signup
+DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
+CREATE TRIGGER on_auth_user_created
+  AFTER INSERT ON auth.users
+  FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
