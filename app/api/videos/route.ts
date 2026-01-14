@@ -1,10 +1,13 @@
 // API route to fetch public videos (with valid certifications) for the Creation Square
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
     const supabase = await createClient()
+    const searchParams = request.nextUrl.searchParams
+    const limit = parseInt(searchParams.get('limit') || '100')
+    const offset = parseInt(searchParams.get('offset') || '0')
 
     // Fetch videos with valid certifications, sorted by newest first
     const { data: certifications, error } = await supabase
@@ -35,6 +38,7 @@ export async function GET() {
       )
       .eq('status', 'valid')
       .order('created_at', { ascending: false })
+      .range(offset, offset + limit - 1)
 
     if (error) {
       console.error('Error fetching videos:', error)
@@ -66,7 +70,10 @@ export async function GET() {
         }
       })
 
-    return NextResponse.json({ videos })
+    // Add caching headers for better performance
+    const response = NextResponse.json({ videos })
+    response.headers.set('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300')
+    return response
   } catch (error: any) {
     console.error('Videos API error:', error)
     return NextResponse.json(

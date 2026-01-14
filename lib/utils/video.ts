@@ -9,11 +9,25 @@ export interface VideoMetadata {
   metadataHash: string | null
 }
 
+// Cache for metadata extraction to avoid re-processing
+const metadataCache = new Map<string, VideoMetadata>()
+
 /**
  * Extract video metadata including frame and audio hashes
  * Uses browser APIs for client-side extraction
+ * Optimized for performance: reduced frame count, parallel processing
  */
-export async function extractVideoMetadata(file: File): Promise<VideoMetadata> {
+export async function extractVideoMetadata(file: File, useCache = true): Promise<VideoMetadata> {
+  // Check cache first (using file hash as key)
+  if (useCache) {
+    const fileHash = await generateFileHashForCache(file)
+    const cached = metadataCache.get(fileHash)
+    if (cached) {
+      console.log('[VideoMetadata] Using cached metadata')
+      return cached
+    }
+  }
+
   const frameHashes: string[] = []
   let duration: number | null = null
   let frameHash: string | null = null
@@ -26,18 +40,41 @@ export async function extractVideoMetadata(file: File): Promise<VideoMetadata> {
     video.muted = true
     video.playsInline = true
 
+    // Timeout for metadata loading
+    const timeout = setTimeout(() => {
+      video.src = ''
+      URL.revokeObjectURL(video.src)
+      resolve({
+        duration: null,
+        frameHash: null,
+        audioHash: null,
+        frameHashes: [],
+        metadataHash: null,
+      })
+    }, 10000) // 10 second timeout
+
     video.onloadedmetadata = async () => {
+      clearTimeout(timeout)
       try {
         duration = Math.floor(video.duration)
 
-        // Extract key frames (sample at intervals)
-        const frameCount = Math.min(10, Math.floor(duration / 2)) // Up to 10 frames, every 2 seconds
+        // Optimized: Reduce frame count for better performance
+        // Extract fewer frames (max 5 instead of 10) with better distribution
+        const frameCount = Math.min(5, Math.max(1, Math.floor(duration / 3))) // Max 5 frames, every 3 seconds
         const frameInterval = duration / (frameCount + 1)
 
+        // Parallelize frame extraction for better performance
+        const framePromises: Promise<void>[] = []
         for (let i = 1; i <= frameCount; i++) {
           const time = frameInterval * i
-          await seekAndCaptureFrame(video, time, frameHashes)
+          framePromises.push(seekAndCaptureFrame(video, time, frameHashes))
         }
+        
+        // Wait for all frames in parallel (with timeout)
+        await Promise.race([
+          Promise.all(framePromises),
+          new Promise(resolve => setTimeout(resolve, 5000)) // 5s timeout for all frames
+        ])
 
         // Generate frame sequence hash
         if (frameHashes.length > 0) {
@@ -45,31 +82,56 @@ export async function extractVideoMetadata(file: File): Promise<VideoMetadata> {
           frameHash = await generateHashFromString(frameSequence)
         }
 
-        // Extract audio fingerprint using Web Audio API
-        audioHash = await extractAudioFingerprint(video, file)
+        // Extract audio and metadata in parallel
+        const [audioResult, metadataResult] = await Promise.allSettled([
+          extractAudioFingerprint(video, file),
+          Promise.resolve().then(() => {
+            const metadata = {
+              duration,
+              width: video.videoWidth,
+              height: video.videoHeight,
+              codec: video.canPlayType(file.type) || 'unknown',
+            }
+            return generateHashFromString(JSON.stringify(metadata))
+          })
+        ])
 
-        // Generate metadata hash (duration, codec, resolution)
-        const metadata = {
-          duration,
-          width: video.videoWidth,
-          height: video.videoHeight,
-          codec: video.canPlayType(file.type) || 'unknown',
-        }
-        metadataHash = await generateHashFromString(JSON.stringify(metadata))
+        audioHash = audioResult.status === 'fulfilled' ? audioResult.value : null
+        metadataHash = metadataResult.status === 'fulfilled' ? metadataResult.value : null
 
-        resolve({
+        const result: VideoMetadata = {
           duration,
           frameHash,
           audioHash,
           frameHashes,
           metadataHash,
-        })
+        }
+
+        // Cache the result
+        if (useCache) {
+          generateFileHashForCache(file).then(hash => {
+            metadataCache.set(hash, result)
+            // Limit cache size to prevent memory issues
+            if (metadataCache.size > 10) {
+              const firstKey = metadataCache.keys().next().value
+              metadataCache.delete(firstKey)
+            }
+          })
+        }
+
+        // Cleanup
+        URL.revokeObjectURL(video.src)
+        resolve(result)
       } catch (error) {
+        clearTimeout(timeout)
+        URL.revokeObjectURL(video.src)
         reject(error)
       }
     }
 
     video.onerror = () => {
+      clearTimeout(timeout)
+      URL.revokeObjectURL(video.src)
       // Fallback if video can't be loaded
       resolve({
         duration: null,
@@ -85,7 +147,21 @@ export async function extractVideoMetadata(file: File): Promise<VideoMetadata> {
 }
 
 /**
+ * Generate a quick hash for cache key (using file size + name + first bytes)
+ */
+async function generateFileHashForCache(file: File): Promise<string> {
+  // Use a lightweight hash for cache key
+  const firstChunk = await file.slice(0, 1024).arrayBuffer()
+  const chunkHash = Array.from(new Uint8Array(firstChunk))
+    .slice(0, 16)
+    .map(b => b.toString(16).padStart(2, '0'))
+    .join('')
+  return `${file.size}-${file.name}-${chunkHash}`
+}
+
+/**
  * Seek to a specific time and capture frame hash
+ * Optimized: Uses smaller canvas for faster processing
  */
 async function seekAndCaptureFrame(
   video: HTMLVideoElement,
@@ -93,18 +169,36 @@ async function seekAndCaptureFrame(
   frameHashes: string[]
 ): Promise<void> {
   return new Promise((resolve) => {
-    video.currentTime = time
+    const timeout = setTimeout(() => {
+      video.removeEventListener('seeked', onSeeked)
+      resolve()
+    }, 1500) // Reduced timeout
 
     const onSeeked = async () => {
+      clearTimeout(timeout)
       try {
         const canvas = document.createElement('canvas')
-        canvas.width = video.videoWidth || 640
-        canvas.height = video.videoHeight || 360
-        const ctx = canvas.getContext('2d')
+        // Optimize: Use smaller canvas for faster processing (max 320x180)
+        const maxWidth = 320
+        const maxHeight = 180
+        const videoWidth = video.videoWidth || 640
+        const videoHeight = video.videoHeight || 360
+        const aspectRatio = videoWidth / videoHeight
+        
+        if (aspectRatio > 1) {
+          canvas.width = Math.min(maxWidth, videoWidth)
+          canvas.height = Math.round(canvas.width / aspectRatio)
+        } else {
+          canvas.height = Math.min(maxHeight, videoHeight)
+          canvas.width = Math.round(canvas.height * aspectRatio)
+        }
+        
+        const ctx = canvas.getContext('2d', { willReadFrequently: false })
 
         if (ctx) {
           ctx.drawImage(video, 0, 0, canvas.width, canvas.height)
-          const imageData = canvas.toDataURL('image/jpeg', 0.8)
+          // Use lower quality for faster processing
+          const imageData = canvas.toDataURL('image/jpeg', 0.6)
           const frameHash = await generateHashFromString(imageData)
           frameHashes.push(frameHash)
         }
@@ -117,12 +211,7 @@ async function seekAndCaptureFrame(
     }
 
     video.addEventListener('seeked', onSeeked, { once: true })
-
-    // Timeout fallback
-    setTimeout(() => {
-      video.removeEventListener('seeked', onSeeked)
-      resolve()
-    }, 2000)
+    video.currentTime = time
   })
 }
 
@@ -186,28 +275,30 @@ async function extractAudioFingerprint(
     analyser.connect(gainNode)
     gainNode.connect(audioContext.destination)
 
-    // Sample audio at fewer points for performance (5 samples)
-    const sampleCount = 5
+    // Optimized: Reduce audio samples for better performance (3 instead of 5)
+    const sampleCount = 3
     const audioSamples: number[] = []
     const originalTime = video.currentTime
 
-    // Sample audio at intervals
+    // Sample audio at intervals with timeout
     for (let i = 0; i < sampleCount; i++) {
       const seekTime = (duration / (sampleCount + 1)) * (i + 1)
       
       try {
         video.currentTime = seekTime
-        await new Promise((resolve) => {
-          const onSeeked = () => {
-            video.removeEventListener('seeked', onSeeked)
-            resolve(null)
-          }
-          video.addEventListener('seeked', onSeeked, { once: true })
-          setTimeout(() => resolve(null), 1000)
-        })
+        await Promise.race([
+          new Promise((resolve) => {
+            const onSeeked = () => {
+              video.removeEventListener('seeked', onSeeked)
+              resolve(null)
+            }
+            video.addEventListener('seeked', onSeeked, { once: true })
+          }),
+          new Promise(resolve => setTimeout(resolve, 800)) // Reduced timeout
+        ])
 
-        // Small delay to let audio buffer fill
-        await new Promise(resolve => setTimeout(resolve, 100))
+        // Reduced delay for faster processing
+        await new Promise(resolve => setTimeout(resolve, 50))
 
         // Get audio frequency data
         const bufferLength = analyser.frequencyBinCount

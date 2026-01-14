@@ -1,7 +1,10 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useMemo } from 'react'
 import { useI18n } from '@/lib/i18n/context'
+
+// Cache for signed URLs (1 hour expiry)
+const urlCache = new Map<string, { url: string; expiresAt: number }>()
 
 interface VideoPlayerProps {
   url: string | null
@@ -13,6 +16,7 @@ interface VideoPlayerProps {
   playing?: boolean
   onPlay?: () => void
   onPause?: () => void
+  lazy?: boolean // Lazy load video
 }
 
 export default function VideoPlayer({
@@ -25,26 +29,73 @@ export default function VideoPlayer({
   playing = false,
   onPlay,
   onPause,
+  lazy = false,
 }: VideoPlayerProps) {
   const { t } = useI18n()
   const [isPlaying, setIsPlaying] = useState(playing)
   const [hasError, setHasError] = useState(false)
   const [videoUrl, setVideoUrl] = useState<string | null>(url)
   const [loading, setLoading] = useState(false)
+  const [shouldLoad, setShouldLoad] = useState(!lazy)
   const playerRef = useRef<any>(null)
+  const observerRef = useRef<IntersectionObserver | null>(null)
+
+  // Lazy load with Intersection Observer
+  useEffect(() => {
+    if (!lazy || shouldLoad) return
+
+    const videoElement = playerRef.current
+    if (!videoElement) return
+
+    observerRef.current = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          setShouldLoad(true)
+          observerRef.current?.disconnect()
+        }
+      },
+      { rootMargin: '50px' } // Start loading 50px before visible
+    )
+
+    observerRef.current.observe(videoElement)
+
+    return () => {
+      observerRef.current?.disconnect()
+    }
+  }, [lazy, shouldLoad])
 
   // Fetch signed URL if videoId is provided and url is not available
   useEffect(() => {
-    console.log('[VideoPlayer] useEffect triggered:', { url, videoId, urlType: typeof url, urlValue: url })
+    if (!shouldLoad) return
+
+    // Check cache first
     if (videoId && !url) {
+      const cached = urlCache.get(videoId)
+      if (cached && cached.expiresAt > Date.now()) {
+        console.log('[VideoPlayer] Using cached URL')
+        setVideoUrl(cached.url)
+        return
+      }
+
       console.log('[VideoPlayer] Fetching video URL for:', videoId)
       setLoading(true)
       fetch(`/api/video/${videoId}`)
         .then(res => res.json())
         .then(data => {
-          console.log('[VideoPlayer] API response:', { hasUrl: !!data.url, type: data.type, error: data.error })
           if (data.url) {
             setVideoUrl(data.url)
+            // Cache the URL (1 hour expiry)
+            if (videoId) {
+              urlCache.set(videoId, {
+                url: data.url,
+                expiresAt: Date.now() + (data.expiresIn || 3600) * 1000
+              })
+              // Clean old cache entries
+              if (urlCache.size > 50) {
+                const firstKey = urlCache.keys().next().value
+                urlCache.delete(firstKey)
+              }
+            }
           } else {
             console.error('[VideoPlayer] No URL in response:', data)
             setHasError(true)
@@ -58,10 +109,9 @@ export default function VideoPlayer({
           setLoading(false)
         })
     } else {
-      console.log('[VideoPlayer] Using provided URL:', { hasUrl: !!url, videoId, url, urlLength: url?.length })
       setVideoUrl(url)
     }
-  }, [videoId, url])
+  }, [videoId, url, shouldLoad])
 
   if (loading) {
     return (
@@ -105,16 +155,40 @@ export default function VideoPlayer({
     )
   }
 
+  // Memoize video props for performance
+  const videoProps = useMemo(() => ({
+    className: "w-full h-full aspect-video",
+    controls,
+    controlsList: "nodownload" as const,
+    disablePictureInPicture: true,
+    playsInline: true,
+    preload: lazy ? "none" : "metadata" as const, // Lazy: no preload, otherwise metadata only
+    style: {
+      borderRadius: '0.75rem',
+      display: 'block' as const,
+    }
+  }), [controls, lazy])
+
+  if (!shouldLoad && lazy) {
+    return (
+      <div 
+        ref={playerRef}
+        className={`relative rounded-xl overflow-hidden border border-gray-200/80 bg-black aspect-video flex items-center justify-center ${className}`}
+      >
+        <div className="text-center">
+          <div className="text-4xl mb-2 opacity-60">▶</div>
+          <p className="text-sm text-gray-400 font-medium">Click to load video</p>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className={`relative rounded-xl overflow-hidden border border-gray-200/80 bg-black ${className}`}>
       <video
         ref={playerRef}
-        className="w-full h-full aspect-video"
-        controls={controls}
-        controlsList="nodownload"
-        disablePictureInPicture
-        playsInline
-        src={videoUrl}
+        {...videoProps}
+        src={videoUrl || undefined}
         onPlay={() => {
           setIsPlaying(true)
           onPlay?.()
@@ -140,10 +214,6 @@ export default function VideoPlayer({
         }}
         onLoadedData={() => {
           console.log('[VideoPlayer] Video loaded successfully')
-        }}
-        style={{
-          borderRadius: '0.75rem',
-          display: 'block',
         }}
       >
         Your browser does not support the video tag.

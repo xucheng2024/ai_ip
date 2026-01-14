@@ -29,6 +29,7 @@ export default function CertifyPage() {
   const [isDragging, setIsDragging] = useState(false)
   const [compressing, setCompressing] = useState(false)
   const [compressionProgress, setCompressionProgress] = useState(0)
+  const [uploadProgress, setUploadProgress] = useState(0)
   const [enableCompression, setEnableCompression] = useState(true) // Default enabled
   const [compressionQuality, setCompressionQuality] = useState<CompressionOptions['quality']>('lossless') // Default lossless
   const [showAuthModal, setShowAuthModal] = useState(false)
@@ -191,7 +192,7 @@ export default function CertifyPage() {
         // Continue without frame/audio hashes
       }
 
-      // Use enhanced certification API
+      // Use enhanced certification API with upload progress tracking
       const formData = new FormData()
       formData.append('file', videoFile)
       formData.append('title', title || videoFile.name)
@@ -204,21 +205,54 @@ export default function CertifyPage() {
       formData.append('promptPrivate', promptPrivate.toString())
       formData.append('hasThirdPartyMaterials', hasThirdPartyMaterials.toString())
 
-      const response = await fetch('/api/certify', {
-        method: 'POST',
-        body: formData,
+      // Use XMLHttpRequest for upload progress tracking
+      const result = await new Promise<any>((resolve, reject) => {
+        const xhr = new XMLHttpRequest()
+        
+        // Track upload progress
+        xhr.upload.addEventListener('progress', (e) => {
+          if (e.lengthComputable) {
+            const percentComplete = Math.round((e.loaded / e.total) * 100)
+            setUploadProgress(percentComplete)
+          }
+        })
+
+        xhr.addEventListener('load', () => {
+          if (xhr.status >= 200 && xhr.status < 300) {
+            try {
+              const result = JSON.parse(xhr.responseText)
+              resolve(result)
+            } catch (e) {
+              reject(new Error('Invalid response from server'))
+            }
+          } else {
+            try {
+              const error = JSON.parse(xhr.responseText)
+              reject(new Error(error.error || 'Upload failed'))
+            } catch (e) {
+              reject(new Error(`Upload failed with status ${xhr.status}`))
+            }
+          }
+        })
+
+        xhr.addEventListener('error', () => {
+          reject(new Error('Network error during upload'))
+        })
+
+        xhr.addEventListener('abort', () => {
+          reject(new Error('Upload aborted'))
+        })
+
+        xhr.open('POST', '/api/certify')
+        xhr.send(formData)
       })
 
-      const result = await response.json()
-
-      if (!response.ok) {
-        throw new Error(result.error || 'Certification failed')
-      }
-
+      setUploadProgress(100)
       router.push(`/certificate/${result.certificationId}`)
     } catch (err: any) {
       setError(err.message || t.errors.generic)
       setLoading(false)
+      setUploadProgress(0)
     }
   }
 
@@ -266,6 +300,27 @@ export default function CertifyPage() {
             onCompressionQualityChange={setCompressionQuality}
           />
 
+          {/* Upload Progress */}
+          {uploadProgress > 0 && !compressing && (
+            <div className="rounded-lg border border-green-200 bg-green-50 p-4">
+              <div className="flex items-center space-x-3">
+                <svg className="h-5 w-5 text-green-600" fill="none" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                </svg>
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-gray-900">Uploading video...</p>
+                  <div className="mt-1 h-2 w-full rounded-full bg-gray-200">
+                    <div
+                      className="h-2 rounded-full bg-green-600 transition-all duration-300"
+                      style={{ width: `${uploadProgress}%` }}
+                    />
+                  </div>
+                  <p className="text-xs text-gray-600 mt-1">{uploadProgress}%</p>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Video Metadata Form */}
           <VideoMetadataForm
             title={title}
@@ -297,16 +352,16 @@ export default function CertifyPage() {
             </Link>
             <button
               type="submit"
-              disabled={loading || compressing}
+              disabled={loading || compressing || uploadProgress > 0}
               className="flex items-center justify-center rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-2.5 text-sm font-semibold text-white shadow-lg transition-all duration-200 hover:from-blue-700 hover:to-blue-800 hover:shadow-xl hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
             >
-              {(loading || compressing) ? (
+              {(loading || compressing || uploadProgress > 0) ? (
                 <>
                   <svg className="mr-2 h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                   </svg>
-                  {compressing ? t.certify.compressing : t.certify.processing}
+                  {compressing ? t.certify.compressing : uploadProgress > 0 ? 'Uploading...' : t.certify.processing}
                 </>
               ) : (
                 t.certify.certifyVideo

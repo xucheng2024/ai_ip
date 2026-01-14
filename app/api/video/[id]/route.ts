@@ -44,24 +44,31 @@ export async function GET(
 
         if (signedUrlError) {
           // If signed URL fails, try public URL
-          return NextResponse.json({
+          const response = NextResponse.json({
             url: video.file_url,
             type: 'public'
           })
+          response.headers.set('Cache-Control', 'public, s-maxage=300, stale-while-revalidate=600')
+          return response
         }
 
-        return NextResponse.json({
+        const response = NextResponse.json({
           url: signedUrlData.signedUrl,
           type: 'signed',
           expiresIn: 3600
         })
+        // Cache signed URLs for 5 minutes (they're valid for 1 hour)
+        response.headers.set('Cache-Control', 'public, s-maxage=300, stale-while-revalidate=600')
+        return response
       }
 
       // If not a Supabase Storage URL, return as-is
-      return NextResponse.json({
+      const response = NextResponse.json({
         url: video.file_url,
         type: 'external'
       })
+      response.headers.set('Cache-Control', 'public, s-maxage=300, stale-while-revalidate=600')
+      return response
     }
 
     return NextResponse.json(

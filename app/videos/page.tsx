@@ -24,6 +24,9 @@ export default function VideosPage() {
   const [promotionLink, setPromotionLink] = useState<{ [key: string]: string }>({})
   const [videos, setVideos] = useState<Video[]>([])
   const [loading, setLoading] = useState(true)
+  const [page, setPage] = useState(1)
+  const [hasMore, setHasMore] = useState(true)
+  const ITEMS_PER_PAGE = 12
   
   // Demo videos as fallback
   const demoVideos: Video[] = [
@@ -82,26 +85,35 @@ export default function VideosPage() {
         if (response.ok) {
           const data = await response.json()
           if (data.videos && data.videos.length > 0) {
-            setVideos(data.videos)
+            // Paginate: show only first page initially
+            const paginatedVideos = data.videos.slice(0, ITEMS_PER_PAGE * page)
+            setVideos(paginatedVideos)
+            setHasMore(data.videos.length > paginatedVideos.length)
           } else {
             // Fallback to demo videos if no real videos
-            setVideos(demoVideos)
+            const paginatedVideos = demoVideos.slice(0, ITEMS_PER_PAGE * page)
+            setVideos(paginatedVideos)
+            setHasMore(demoVideos.length > paginatedVideos.length)
           }
         } else {
           // Fallback to demo videos on error
-          setVideos(demoVideos)
+          const paginatedVideos = demoVideos.slice(0, ITEMS_PER_PAGE * page)
+          setVideos(paginatedVideos)
+          setHasMore(demoVideos.length > paginatedVideos.length)
         }
       } catch (error) {
         console.error('Error fetching videos:', error)
         // Fallback to demo videos on error
-        setVideos(demoVideos)
+        const paginatedVideos = demoVideos.slice(0, ITEMS_PER_PAGE * page)
+        setVideos(paginatedVideos)
+        setHasMore(demoVideos.length > paginatedVideos.length)
       } finally {
         setLoading(false)
       }
     }
 
     fetchVideos()
-  }, [])
+  }, [page])
 
   const handleGeneratePromotionLink = (videoId: string) => {
     // Generate promotion link pointing to support page
@@ -155,6 +167,7 @@ export default function VideosPage() {
                       videoId={videoId}
                       className="h-full w-full"
                       light={!videoId}
+                      lazy={true}
                     />
                     {/* Verified Badge - Top Left */}
                     <div className="absolute top-3 left-3 z-10">
@@ -235,6 +248,18 @@ export default function VideosPage() {
                 </article>
               )
             })}
+          </div>
+        )}
+        
+        {/* Load More Button */}
+        {!loading && hasMore && videos.length > 0 && (
+          <div className="mt-8 flex justify-center">
+            <button
+              onClick={() => setPage(prev => prev + 1)}
+              className="rounded-xl border border-gray-300 bg-white px-6 py-3 text-sm font-semibold text-gray-700 transition-all hover:bg-gray-50 hover:border-gray-400"
+            >
+              Load More Videos
+            </button>
           </div>
         )}
       </main>
