@@ -4,11 +4,5 @@
       "path": "/api/batch/anchor",
       "schedule": "0 0 * * *"
     }
-  ],
-  "functions": {
-    "app/api/certify/route.ts": {
-      "maxDuration": 60,
-      "memory": 1024
-    }
-  }
+  ]
 }
