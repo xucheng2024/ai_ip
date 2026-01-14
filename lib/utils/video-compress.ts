@@ -150,14 +150,14 @@ export async function compressVideo(
     // FileData can be Uint8Array or string, handle both cases
     let uint8Array: Uint8Array
     if (data instanceof Uint8Array) {
-      // Create a new Uint8Array from the buffer to ensure type compatibility
-      uint8Array = new Uint8Array(data.buffer, data.byteOffset, data.byteLength)
+      // Create a new Uint8Array by copying the data to ensure type compatibility
+      uint8Array = Uint8Array.from(data)
     } else if (typeof data === 'string') {
       uint8Array = new TextEncoder().encode(data)
     } else {
       uint8Array = new Uint8Array(data as ArrayLike<number>)
     }
-    const blob = new Blob([uint8Array], { type: `video/${format}` })
+    const blob = new Blob([uint8Array as BlobPart], { type: `video/${format}` })
     
     if (onProgress) {
       onProgress(100) // Complete
