@@ -2,7 +2,9 @@
 // Lossless compression for Vercel + Supabase architecture
 // Note: This module should only be imported dynamically on the client side
 
-type FFmpeg = any
+import { FFmpeg } from '@ffmpeg/ffmpeg'
+import { fetchFile, toBlobURL } from '@ffmpeg/util'
+
 let ffmpegInstance: FFmpeg | null = null
 let isLoaded = false
 
@@ -20,17 +22,8 @@ async function getFFmpeg(): Promise<FFmpeg> {
   }
 
   try {
-    console.log('[FFmpeg] Importing modules...')
-    
-    // Import from CDN to avoid bundling issues
-    const FFmpegModule = await import('https://esm.sh/@ffmpeg/ffmpeg@0.12.6')
-    const UtilModule = await import('https://esm.sh/@ffmpeg/util@0.12.1')
-    
-    const FFmpegClass = FFmpegModule.FFmpeg
-    const toBlobURL = UtilModule.toBlobURL
-
     console.log('[FFmpeg] Creating instance...')
-    const ffmpeg = new FFmpegClass()
+    const ffmpeg = new FFmpeg()
     const baseURL = 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/esm'
 
     try {
@@ -57,7 +50,7 @@ async function getFFmpeg(): Promise<FFmpeg> {
       // Try alternative loading method (direct URLs)
       try {
         console.log('[FFmpeg] Retrying with direct URLs...')
-        const ffmpegRetry = new FFmpegClass()
+        const ffmpegRetry = new FFmpeg()
         await ffmpegRetry.load({
           coreURL: `${baseURL}/ffmpeg-core.js`,
           wasmURL: `${baseURL}/ffmpeg-core.wasm`,
@@ -72,7 +65,7 @@ async function getFFmpeg(): Promise<FFmpeg> {
       }
     }
   } catch (importError) {
-    console.error('[FFmpeg] Failed to import modules:', importError)
+    console.error('[FFmpeg] Failed to load:', importError)
     throw new Error('Failed to load video compression modules')
   }
 }
@@ -107,11 +100,6 @@ export async function compressVideo(
     const ffmpeg = await getFFmpeg()
     const inputFileName = 'input.' + (file.name.split('.').pop() || 'mp4')
     const outputFileName = `output.${format}`
-
-    // Import fetchFile from CDN
-    console.log('[FFmpeg] Importing util module...')
-    const UtilModule = await import('https://esm.sh/@ffmpeg/util@0.12.1')
-    const fetchFile = UtilModule.fetchFile
 
     console.log('[FFmpeg] Writing input file...')
     // Write input file to FFmpeg virtual file system

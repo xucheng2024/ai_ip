@@ -142,25 +142,20 @@ export default function CertifyPage() {
       let videoFile = file
       if (enableCompression && isCompressionSupported()) {
         try {
-          // TEMPORARILY DISABLED: Video compression causes bundling issues with Turbopack
-          // Skip compression and upload original file directly
-          console.log('[Certify] Skipping video compression (Turbopack compatibility issue)')
-          videoFile = file
+          setCompressing(true)
+          setCompressionProgress(0)
           
-          // setCompressing(true)
-          // setCompressionProgress(0)
+          // Dynamically import the compression module
+          const videoCompressModule = await import('@/lib/utils/video-compress')
+          const compress = videoCompressModule.compressVideo
           
-          // // Dynamically import the compression module
-          // const videoCompressModule = await import('@/lib/utils/video-compress')
-          // const compress = videoCompressModule.compressVideo
-          
-          // videoFile = await compress(file, {
-          //   quality: compressionQuality,
-          //   format: 'mp4',
-          //   onProgress: (progress) => {
-          //     setCompressionProgress(progress)
-          //   },
-          // })
+          videoFile = await compress(file, {
+            quality: compressionQuality,
+            format: 'mp4',
+            onProgress: (progress) => {
+              setCompressionProgress(progress)
+            },
+          })
           
           setCompressionProgress(100)
           setCompressing(false)
