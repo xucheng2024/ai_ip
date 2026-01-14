@@ -168,6 +168,11 @@ export default function CertifyPage() {
         }
       }
 
+      // Ensure we have a valid video file
+      if (!videoFile) {
+        throw new Error('No video file available for certification')
+      }
+
       // Generate file hash (use compressed file if available)
       const fileHash = await generateFileHash(videoFile)
 
