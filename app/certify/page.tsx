@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { generateFileHash } from '@/lib/utils/hash'
 import { extractVideoMetadata } from '@/lib/utils/video'
+import { compressVideo, isCompressionSupported, getEstimatedSize, type CompressionOptions } from '@/lib/utils/video-compress'
 import Link from 'next/link'
 import { useI18n } from '@/lib/i18n/context'
 
@@ -23,6 +24,10 @@ export default function CertifyPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [isDragging, setIsDragging] = useState(false)
+  const [compressing, setCompressing] = useState(false)
+  const [compressionProgress, setCompressionProgress] = useState(0)
+  const [enableCompression, setEnableCompression] = useState(true)
+  const [compressionQuality, setCompressionQuality] = useState<CompressionOptions['quality']>('lossless')
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -107,16 +112,41 @@ export default function CertifyPage() {
         throw new Error(t.certify.limitReached)
       }
 
-      // Generate file hash
-      const fileHash = await generateFileHash(file)
+      // Compress video if enabled and supported
+      let videoFile = file
+      if (enableCompression && isCompressionSupported()) {
+        try {
+          setCompressing(true)
+          setCompressionProgress(0)
+          
+          // Compress video with selected quality
+          videoFile = await compressVideo(file, {
+            quality: compressionQuality,
+            format: 'mp4',
+            onProgress: (progress) => {
+              setCompressionProgress(progress)
+            },
+          })
+          
+          setCompressionProgress(100)
+          setCompressing(false)
+        } catch (compressionError) {
+          console.warn('Video compression failed, using original file:', compressionError)
+          setCompressing(false)
+          // Continue with original file if compression fails
+        }
+      }
 
-      // Extract video metadata (frames, audio)
+      // Generate file hash (use compressed file if available)
+      const fileHash = await generateFileHash(videoFile)
+
+      // Extract video metadata (frames, audio) - use compressed file
       let frameHash: string | null = null
       let audioHash: string | null = null
       let duration: number | null = null
 
       try {
-        const metadata = await extractVideoMetadata(file)
+        const metadata = await extractVideoMetadata(videoFile)
         frameHash = metadata.frameHash
         audioHash = metadata.audioHash
         duration = metadata.duration
@@ -127,7 +157,7 @@ export default function CertifyPage() {
 
       // Use enhanced certification API
       const formData = new FormData()
-      formData.append('file', file)
+      formData.append('file', videoFile)
       formData.append('title', title || file.name)
       formData.append('fileHash', fileHash)
       if (frameHash) formData.append('frameHash', frameHash)
@@ -212,30 +242,91 @@ export default function CertifyPage() {
                 </div>
               </div>
               {file && (
-                <div className="mt-3 rounded-xl border border-gray-200/80 bg-gray-50/80 p-4 shadow-sm">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-3">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-100">
-                        <svg className="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                        </svg>
+                <div className="mt-3 space-y-3">
+                  <div className="rounded-xl border border-gray-200/80 bg-gray-50/80 p-4 shadow-sm">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-3">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-100">
+                          <svg className="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                          </svg>
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-gray-900">{file.name}</p>
+                          <p className="text-xs text-gray-500">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
+                          {enableCompression && isCompressionSupported() && (
+                            <p className="text-xs text-green-600 mt-1">
+                              Estimated after compression: {(getEstimatedSize(file.size, compressionQuality) / 1024 / 1024).toFixed(2)} MB
+                            </p>
+                          )}
+                        </div>
                       </div>
-                      <div>
-                        <p className="text-sm font-medium text-gray-900">{file.name}</p>
-                        <p className="text-xs text-gray-500">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setFile(null)
+                          if (fileInputRef.current) fileInputRef.current.value = ''
+                        }}
+                        className="text-sm text-red-600 hover:text-red-700"
+                      >
+                        {t.certify.remove}
+                      </button>
+                    </div>
+                  </div>
+                  
+                  {/* Compression Options */}
+                  {isCompressionSupported() && (
+                    <div className="rounded-lg border border-blue-200 bg-blue-50/50 p-4">
+                      <div className="flex items-start">
+                        <input
+                          type="checkbox"
+                          id="enableCompression"
+                          checked={enableCompression}
+                          onChange={(e) => setEnableCompression(e.target.checked)}
+                          className="mt-0.5 h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                        />
+                        <label htmlFor="enableCompression" className="ml-3 flex-1">
+                          <span className="text-sm font-medium text-gray-900">Enable video compression</span>
+                          <p className="text-xs text-gray-600 mt-1">Reduce file size while maintaining quality</p>
+                        </label>
+                      </div>
+                      {enableCompression && (
+                        <div className="mt-3 ml-7">
+                          <label className="block text-xs font-medium text-gray-700 mb-2">Compression Quality:</label>
+                          <select
+                            value={compressionQuality}
+                            onChange={(e) => setCompressionQuality(e.target.value as CompressionOptions['quality'])}
+                            className="block w-full rounded-lg border border-gray-300 px-3 py-1.5 text-xs text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                          >
+                            <option value="lossless">Lossless (Best quality, ~30% size reduction)</option>
+                            <option value="high">High (Visually lossless, ~50% size reduction)</option>
+                            <option value="medium">Medium (Good quality, ~70% size reduction)</option>
+                            <option value="low">Low (Acceptable quality, ~80% size reduction)</option>
+                          </select>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                  
+                  {compressing && (
+                    <div className="rounded-lg border border-blue-200 bg-blue-50 p-4">
+                      <div className="flex items-center space-x-3">
+                        <svg className="h-5 w-5 animate-spin text-blue-600" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                        </svg>
+                        <div className="flex-1">
+                          <p className="text-sm font-medium text-gray-900">Compressing video...</p>
+                          <div className="mt-1 h-2 w-full rounded-full bg-gray-200">
+                            <div
+                              className="h-2 rounded-full bg-blue-600 transition-all duration-300"
+                              style={{ width: `${compressionProgress}%` }}
+                            />
+                          </div>
+                        </div>
                       </div>
                     </div>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setFile(null)
-                        if (fileInputRef.current) fileInputRef.current.value = ''
-                      }}
-                      className="text-sm text-red-600 hover:text-red-700"
-                    >
-                      {t.certify.remove}
-                    </button>
-                  </div>
+                  )}
                 </div>
               )}
             </div>
@@ -387,16 +478,16 @@ export default function CertifyPage() {
             </Link>
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || compressing}
               className="flex items-center justify-center rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-2.5 text-sm font-semibold text-white shadow-lg transition-all duration-200 hover:from-blue-700 hover:to-blue-800 hover:shadow-xl hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
             >
-              {loading ? (
+              {(loading || compressing) ? (
                 <>
                   <svg className="mr-2 h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                   </svg>
-                  {t.certify.processing}
+                  {compressing ? 'Compressing...' : t.certify.processing}
                 </>
               ) : (
                 t.certify.certifyVideo
