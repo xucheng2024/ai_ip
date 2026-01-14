@@ -24,49 +24,25 @@ async function getFFmpeg(): Promise<FFmpeg> {
   try {
     console.log('[FFmpeg] Creating instance...')
     const ffmpeg = new FFmpeg()
-    const baseURL = 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/esm'
+    const baseURL = 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd'
 
-    try {
-      console.log('[FFmpeg] Loading with blob URLs...')
-      // Try loading with blob URLs first
-      const coreURL = await toBlobURL(`${baseURL}/ffmpeg-core.js`, 'text/javascript')
-      const wasmURL = await toBlobURL(`${baseURL}/ffmpeg-core.wasm`, 'application/wasm')
-      
-      await ffmpeg.load({
-        coreURL,
-        wasmURL,
-      })
+    // Load FFmpeg with UMD build (better webpack compatibility)
+    console.log('[FFmpeg] Loading FFmpeg from CDN...')
+    await ffmpeg.load({
+      coreURL: `${baseURL}/ffmpeg-core.js`,
+      wasmURL: `${baseURL}/ffmpeg-core.wasm`,
+    })
 
-      ffmpegInstance = ffmpeg
-      isLoaded = true
-      console.log('[FFmpeg] Loaded successfully')
-      return ffmpeg
-    } catch (error) {
-      console.error('[FFmpeg] Failed to load with blob URLs:', error)
-      // Reset state on error so we can retry
-      ffmpegInstance = null
-      isLoaded = false
-      
-      // Try alternative loading method (direct URLs)
-      try {
-        console.log('[FFmpeg] Retrying with direct URLs...')
-        const ffmpegRetry = new FFmpeg()
-        await ffmpegRetry.load({
-          coreURL: `${baseURL}/ffmpeg-core.js`,
-          wasmURL: `${baseURL}/ffmpeg-core.wasm`,
-        })
-        ffmpegInstance = ffmpegRetry
-        isLoaded = true
-        console.log('[FFmpeg] Loaded successfully with direct URLs')
-        return ffmpegRetry
-      } catch (retryError) {
-        console.error('[FFmpeg] Retry also failed:', retryError)
-        throw new Error('Failed to initialize video compression engine')
-      }
-    }
-  } catch (importError) {
-    console.error('[FFmpeg] Failed to load:', importError)
-    throw new Error('Failed to load video compression modules')
+    ffmpegInstance = ffmpeg
+    isLoaded = true
+    console.log('[FFmpeg] ✅ Loaded successfully')
+    return ffmpeg
+  } catch (error) {
+    console.error('[FFmpeg] ❌ Failed to load:', error)
+    // Reset state on error
+    ffmpegInstance = null
+    isLoaded = false
+    throw new Error('Failed to load video compression. Please refresh and try again.')
   }
 }
 
