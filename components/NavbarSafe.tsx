@@ -28,18 +28,6 @@ function NavbarSafe({ user }: { user: any }) {
               </span>
             </Link>
             <div className="hidden items-center gap-4 sm:flex">
-              <Link
-                href="/certify"
-                className="text-sm font-semibold text-gray-900 transition-colors hover:text-blue-600"
-              >
-                {t.common.certifyNav || t.common.certify}
-              </Link>
-              <Link 
-                href="/verify" 
-                className="text-sm font-semibold text-gray-900 transition-colors hover:text-blue-600"
-              >
-                {t.common.verifyNav || t.common.verify}
-              </Link>
               <Link 
                 href="/videos" 
                 className="text-sm font-medium text-gray-600 transition-colors hover:text-gray-900"
@@ -117,20 +105,6 @@ function NavbarSafe({ user }: { user: any }) {
         {mobileMenuOpen && (
           <div id={mobileMenuId} className="sm:hidden border-t border-gray-200 bg-white">
             <div className="px-4 py-3 space-y-3">
-              <Link
-                href="/certify"
-                className="block rounded-lg px-2 py-2 text-sm font-semibold text-gray-900 transition-colors hover:bg-gray-50"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                {t.common.certifyNav || t.common.certify}
-              </Link>
-              <Link
-                href="/verify"
-                className="block rounded-lg px-2 py-2 text-sm font-semibold text-gray-900 transition-colors hover:bg-gray-50"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                {t.common.verifyNav || t.common.verify}
-              </Link>
               <Link
                 href="/videos"
                 className="block rounded-lg px-2 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-50 hover:text-gray-900"
