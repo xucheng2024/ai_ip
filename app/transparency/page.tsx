@@ -18,7 +18,7 @@ export default async function TransparencyPage() {
 
   // Calculate stats
   const totalBatches = batches?.length || 0
-  const totalCertifications = batches?.reduce((sum, b) => sum + (b.certification_count || 0), 0) || 0
+  const totalCertifications = batches?.reduce((sum: number, b: { certification_count?: number | null }) => sum + (b.certification_count || 0), 0) || 0
   const dateRange = batches && batches.length > 0
     ? {
         earliest: batches[batches.length - 1]?.created_at,

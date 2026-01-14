@@ -55,7 +55,7 @@ export default function EvidenceStatusBadge({ status, className = '' }: Evidence
   }
 
   const config = statusConfig[status]
-  const colorClasses = {
+  const colorClasses: Record<string, string> = {
     yellow: 'bg-yellow-50 border-yellow-200 text-yellow-800',
     green: 'bg-green-50 border-green-200 text-green-800',
     blue: 'bg-blue-50 border-blue-200 text-blue-800',
