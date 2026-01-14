@@ -14,19 +14,21 @@ export default async function Navbar() {
   if (hasEnvVars) {
     try {
       const supabase = await createClient()
-      const {
-        data: { user: authUser },
-        error: authError,
-      } = await supabase.auth.getUser()
-      
-      if (authError) {
-        // "Auth session missing!" is normal when user is not logged in
-        // Only log other errors in development
-        if (authError.message !== 'Auth session missing!' && process.env.NODE_ENV === 'development') {
-          console.warn('Navbar auth error:', authError.message)
+      if (supabase) {
+        const {
+          data: { user: authUser },
+          error: authError,
+        } = await supabase.auth.getUser()
+        
+        if (authError) {
+          // "Auth session missing!" is normal when user is not logged in
+          // Only log other errors in development
+          if (authError.message !== 'Auth session missing!' && process.env.NODE_ENV === 'development') {
+            console.warn('Navbar auth error:', authError.message)
+          }
+        } else {
+          user = authUser
         }
-      } else {
-        user = authUser
       }
     } catch (error: any) {
       // Silently fail - don't break the page
