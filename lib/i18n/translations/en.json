@@ -24,8 +24,10 @@
     "transparency": "Transparency"
   },
   "home": {
-    "title": "Protect Your AI Videos with Verifiable Authorship Proof",
-    "subtitle": "Timestamp, fingerprint, and publicly verify when and how your AI video was created — even years later.",
+    "title": "Protect Your AI Videos",
+    "titleLine2": "Generate Independently Verifiable Authorship Proof",
+    "subtitle": "Prove AI video authorship with timestamps and content fingerprints.",
+    "subtitleFull": "Timestamp, fingerprint, and publicly verify when and how your AI video was created, even years later.",
     "slogan": "Each video gets a public, verifiable proof page.",
     "certifyButton": "Certify an AI Video (Free)",
     "verifyButton": "View a Proof Page Example",
