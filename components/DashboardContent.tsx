@@ -1,5 +1,6 @@
 'use client'
 
+import { useMemo } from 'react'
 import Link from 'next/link'
 import { format } from 'date-fns'
 import { useI18n } from '@/lib/i18n/context'
@@ -22,6 +23,14 @@ export default function DashboardContent({
   isNearLimit,
 }: DashboardContentProps) {
   const { t } = useI18n()
+
+  // Memoize formatted certifications list
+  const formattedCertifications = useMemo(() => {
+    return certifications?.map((cert: any) => ({
+      ...cert,
+      formattedDate: format(new Date(cert.created_at), 'PPp'),
+    })) || []
+  }, [certifications])
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50/50">
@@ -107,8 +116,8 @@ export default function DashboardContent({
             <h2 className="text-base font-semibold text-gray-900">{t.dashboard.recentCertifications}</h2>
           </div>
           <div className="divide-y divide-gray-200/80">
-            {certifications && certifications.length > 0 ? (
-              certifications.map((cert: any) => (
+            {formattedCertifications.length > 0 ? (
+              formattedCertifications.map((cert: any) => (
                 <div key={cert.id} className="px-7 py-5 transition-all duration-200 hover:bg-gray-50/50">
                   <div className="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center sm:gap-4">
                     <div className="flex-1">
@@ -119,7 +128,7 @@ export default function DashboardContent({
                         <span className="font-mono text-xs">{cert.id}</span>
                       </p>
                       <p className="mt-1 text-xs text-gray-400">
-                        {format(new Date(cert.created_at), 'PPp')}
+                        {cert.formattedDate}
                       </p>
                     </div>
                     <div className="flex gap-2">

@@ -1,23 +1,48 @@
 'use client'
 
+import { memo } from 'react'
+import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import { format } from 'date-fns'
 import { useI18n } from '@/lib/i18n/context'
-import CertificatePDFWrapper from './CertificatePDFWrapper'
 import HashDisplay from './HashDisplay'
 import CreationTimeline from './CreationTimeline'
 import CertificationBadge from './CertificationBadge'
-import RevokeCertificateButton from './RevokeCertificateButton'
-import ComplaintEvidencePackage from './ComplaintEvidencePackage'
 import EvidenceStatusBadge, { getEvidenceStatus } from './EvidenceStatusBadge'
-import VerificationGuide from './VerificationGuide'
-import EvidenceUsageScenarios from './EvidenceUsageScenarios'
-import CreatorContinuityChain from './CreatorContinuityChain'
 import CertificateHero from './CertificateHero'
 import SummaryCard from './SummaryCard'
 import VerificationAction from './VerificationAction'
-import SupportRecords from './SupportRecords'
 import type { EvidenceStatus } from '@/lib/types'
+
+// Lazy load heavy components
+const CertificatePDFWrapper = dynamic(() => import('./CertificatePDFWrapper'), {
+  ssr: false,
+  loading: () => <div className="h-10" />
+})
+
+const RevokeCertificateButton = dynamic(() => import('./RevokeCertificateButton'), {
+  ssr: false
+})
+
+const ComplaintEvidencePackage = dynamic(() => import('./ComplaintEvidencePackage'), {
+  ssr: false
+})
+
+const VerificationGuide = dynamic(() => import('./VerificationGuide'), {
+  ssr: false
+})
+
+const EvidenceUsageScenarios = dynamic(() => import('./EvidenceUsageScenarios'), {
+  ssr: false
+})
+
+const CreatorContinuityChain = dynamic(() => import('./CreatorContinuityChain'), {
+  ssr: false
+})
+
+const SupportRecords = dynamic(() => import('./SupportRecords'), {
+  ssr: false
+})
 
 interface CertificateContentProps {
   certification: any

@@ -5,9 +5,12 @@ import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { generateFileHash } from '@/lib/utils/hash'
 import { extractVideoMetadata } from '@/lib/utils/video'
-import { compressVideo, isCompressionSupported, getEstimatedSize, type CompressionOptions } from '@/lib/utils/video-compress'
+import { isCompressionSupported, type CompressionOptions } from '@/lib/utils/video-compress'
 import Link from 'next/link'
 import { useI18n } from '@/lib/i18n/context'
+import VideoUploadSection from '@/components/certify/VideoUploadSection'
+import VideoMetadataForm from '@/components/certify/VideoMetadataForm'
+import LegalAgreementSection from '@/components/certify/LegalAgreementSection'
 
 export default function CertifyPage() {
   const router = useRouter()
@@ -20,7 +23,6 @@ export default function CertifyPage() {
   const [promptPrivate, setPromptPrivate] = useState(false)
   const [hasThirdPartyMaterials, setHasThirdPartyMaterials] = useState(false)
   const [legalAgreement, setLegalAgreement] = useState(false)
-  const [showFullDisclaimer, setShowFullDisclaimer] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [isDragging, setIsDragging] = useState(false)
@@ -119,8 +121,9 @@ export default function CertifyPage() {
           setCompressing(true)
           setCompressionProgress(0)
           
-          // Compress video with selected quality
-          videoFile = await compressVideo(file, {
+          // Dynamically import and use compressVideo
+          const { compressVideo: compress } = await import('@/lib/utils/video-compress')
+          videoFile = await compress(file, {
             quality: compressionQuality,
             format: 'mp4',
             onProgress: (progress) => {
@@ -204,277 +207,43 @@ export default function CertifyPage() {
           )}
 
           {/* File Upload */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              {t.certify.videoFile} <span className="text-red-500">*</span>
-            </label>
-            <div className="mt-2">
-              <div
-                onDragOver={handleDragOver}
-                onDragLeave={handleDragLeave}
-                onDrop={handleDrop}
-                className={`flex items-center justify-center rounded-xl border-2 border-dashed p-8 transition-all duration-200 ${
-                  isDragging
-                    ? 'border-blue-500 bg-blue-50/80 shadow-inner'
-                    : 'border-gray-300/80 bg-gray-50/50 hover:border-blue-400 hover:bg-blue-50/50'
-                }`}
-              >
-                <div className="text-center">
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    accept="video/*"
-                    onChange={handleFileChange}
-                    className="hidden"
-                    id="video-upload"
-                  />
-                  <label
-                    htmlFor="video-upload"
-                    className="cursor-pointer text-sm font-medium text-blue-600 hover:text-blue-700"
-                  >
-                    {file ? (
-                      <span className="block">{t.certify.changeVideoFile}</span>
-                    ) : (
-                      <span className="block">{t.certify.uploadOrDragDrop}</span>
-                    )}
-                  </label>
-                  <p className="mt-1 text-xs text-gray-500">{t.certify.fileFormats}</p>
-                </div>
-              </div>
-              {file && (
-                <div className="mt-3 space-y-3">
-                  <div className="rounded-xl border border-gray-200/80 bg-gray-50/80 p-4 shadow-sm">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-3">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-100">
-                          <svg className="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                          </svg>
-                        </div>
-                        <div>
-                          <p className="text-sm font-medium text-gray-900">{file.name}</p>
-                          <p className="text-xs text-gray-500">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
-                          {enableCompression && isCompressionSupported() && (
-                            <p className="text-xs text-green-600 mt-1">
-                              {t.certify.estimatedAfterCompression}: {(getEstimatedSize(file.size, compressionQuality) / 1024 / 1024).toFixed(2)} MB
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setFile(null)
-                          if (fileInputRef.current) fileInputRef.current.value = ''
-                        }}
-                        className="text-sm text-red-600 hover:text-red-700"
-                      >
-                        {t.certify.remove}
-                      </button>
-                    </div>
-                  </div>
-                  
-                  {/* Compression Options - Hidden by default, lossless compression enabled automatically */}
-                  {isCompressionSupported() && enableCompression && (
-                    <div className="rounded-lg border border-green-200 bg-green-50/50 p-3">
-                      <div className="flex items-center">
-                        <svg className="h-5 w-5 text-green-600 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        <div className="flex-1">
-                          <span className="text-sm font-medium text-gray-900">{t.certify.losslessCompressionEnabled}</span>
-                          <p className="text-xs text-gray-600 mt-0.5">{t.certify.losslessCompressionDesc}</p>
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() => setEnableCompression(false)}
-                          className="text-xs text-gray-500 hover:text-gray-700"
-                        >
-                          {t.certify.disableCompression}
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                  
-                  {/* Show compression options if disabled or user wants to change quality */}
-                  {isCompressionSupported() && !enableCompression && (
-                    <div className="rounded-lg border border-blue-200 bg-blue-50/50 p-4">
-                      <div className="flex items-start">
-                        <input
-                          type="checkbox"
-                          id="enableCompression"
-                          checked={enableCompression}
-                          onChange={(e) => setEnableCompression(e.target.checked)}
-                          className="mt-0.5 h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                        />
-                        <label htmlFor="enableCompression" className="ml-3 flex-1">
-                          <span className="text-sm font-medium text-gray-900">{t.certify.enableCompression}</span>
-                          <p className="text-xs text-gray-600 mt-1">{t.certify.enableCompressionDesc}</p>
-                        </label>
-                      </div>
-                    </div>
-                  )}
-                  
-                  {compressing && (
-                    <div className="rounded-lg border border-blue-200 bg-blue-50 p-4">
-                      <div className="flex items-center space-x-3">
-                        <svg className="h-5 w-5 animate-spin text-blue-600" fill="none" viewBox="0 0 24 24">
-                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                        </svg>
-                        <div className="flex-1">
-                          <p className="text-sm font-medium text-gray-900">{t.certify.compressingVideo}</p>
-                          <div className="mt-1 h-2 w-full rounded-full bg-gray-200">
-                            <div
-                              className="h-2 rounded-full bg-blue-600 transition-all duration-300"
-                              style={{ width: `${compressionProgress}%` }}
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-          </div>
+          <VideoUploadSection
+            file={file}
+            isDragging={isDragging}
+            enableCompression={enableCompression}
+            compressionQuality={compressionQuality}
+            compressing={compressing}
+            compressionProgress={compressionProgress}
+            onFileChange={handleFileChange}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+            onRemoveFile={() => setFile(null)}
+            onToggleCompression={() => setEnableCompression(!enableCompression)}
+            onCompressionQualityChange={setCompressionQuality}
+          />
 
-          {/* Title */}
-          <div>
-            <label htmlFor="title" className="block text-sm font-medium text-gray-700">
-              {t.certify.videoTitle} <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="text"
-              id="title"
-              required
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              className="mt-2 block w-full rounded-lg border border-gray-300/80 px-4 py-2.5 text-gray-900 shadow-sm transition-all duration-200 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:ring-offset-0 sm:text-sm"
-              placeholder={t.certify.placeholderTitle}
-            />
-          </div>
-
-          {/* Creator Name */}
-          <div>
-            <label htmlFor="creatorName" className="block text-sm font-medium text-gray-700">
-              {t.certify.creatorName} <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="text"
-              id="creatorName"
-              required
-              value={creatorName}
-              onChange={(e) => setCreatorName(e.target.value)}
-              className="mt-2 block w-full rounded-lg border border-gray-300 px-4 py-2.5 text-gray-900 shadow-sm transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 sm:text-sm"
-              placeholder={t.certify.placeholderCreator}
-            />
-          </div>
-
-          {/* AI Tool */}
-          <div>
-            <label htmlFor="aiTool" className="block text-sm font-medium text-gray-700">
-              {t.certify.aiTool} <span className="text-gray-400">{t.certify.aiToolOptional}</span>
-            </label>
-            <select
-              id="aiTool"
-              value={aiTool}
-              onChange={(e) => setAiTool(e.target.value)}
-              className="mt-2 block w-full rounded-lg border border-gray-300 px-4 py-2.5 text-gray-900 shadow-sm transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 sm:text-sm"
-            >
-              <option value="">{t.certify.selectAITool}</option>
-              <option value="runway">{t.certify.aiToolRunway}</option>
-              <option value="pika">{t.certify.aiToolPika}</option>
-              <option value="sora">{t.certify.aiToolSora}</option>
-              <option value="other">{t.certify.aiToolOther}</option>
-            </select>
-          </div>
-
-          {/* Prompt */}
-          <div>
-            <label htmlFor="prompt" className="block text-sm font-medium text-gray-700">
-              {t.certify.prompt} <span className="text-gray-400">{t.certify.promptOptional}</span>
-            </label>
-            <textarea
-              id="prompt"
-              rows={4}
-              value={prompt}
-              onChange={(e) => setPrompt(e.target.value)}
-              className="mt-2 block w-full rounded-lg border border-gray-300 px-4 py-2.5 text-gray-900 shadow-sm transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 sm:text-sm"
-              placeholder={t.certify.placeholderPrompt}
-            />
-            <div className="mt-2 flex items-center">
-              <input
-                type="checkbox"
-                id="promptPrivate"
-                checked={promptPrivate}
-                onChange={(e) => setPromptPrivate(e.target.checked)}
-                className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-              />
-              <label htmlFor="promptPrivate" className="ml-2 text-sm text-gray-600">
-                {t.certify.keepPromptPrivate}
-              </label>
-            </div>
-          </div>
-
-          {/* Third Party Materials */}
-          <div className="rounded-lg border border-amber-200 bg-amber-50 p-4">
-            <div className="flex items-start">
-              <input
-                type="checkbox"
-                id="hasThirdPartyMaterials"
-                checked={hasThirdPartyMaterials}
-                onChange={(e) => setHasThirdPartyMaterials(e.target.checked)}
-                className="mt-0.5 h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-              />
-              <label 
-                htmlFor="hasThirdPartyMaterials" 
-                className="ml-3 text-sm text-gray-700 cursor-pointer"
-                title={t.certify.thirdPartyMaterialsTooltip}
-              >
-                {t.certify.thirdPartyMaterials}
-                {t.certify.thirdPartyMaterialsTooltip && (
-                  <span className="ml-2 text-xs text-gray-500">(ℹ️ {t.certify.thirdPartyMaterialsTooltip})</span>
-                )}
-              </label>
-            </div>
-            {hasThirdPartyMaterials && t.certify.thirdPartyMaterialsWarning && (
-              <p className="mt-2 text-xs font-medium text-amber-800 bg-amber-100 rounded p-2 border border-amber-300">
-                ⚠️ {t.certify.thirdPartyMaterialsWarning}
-              </p>
-            )}
-          </div>
+          {/* Video Metadata Form */}
+          <VideoMetadataForm
+            title={title}
+            creatorName={creatorName}
+            aiTool={aiTool}
+            prompt={prompt}
+            promptPrivate={promptPrivate}
+            hasThirdPartyMaterials={hasThirdPartyMaterials}
+            onTitleChange={setTitle}
+            onCreatorNameChange={setCreatorName}
+            onAiToolChange={setAiTool}
+            onPromptChange={setPrompt}
+            onPromptPrivateChange={setPromptPrivate}
+            onThirdPartyMaterialsChange={setHasThirdPartyMaterials}
+          />
 
           {/* Legal Agreement */}
-          <div className="rounded-lg border-2 border-gray-200 bg-gray-50 p-4">
-            <div className="flex items-start">
-              <input
-                type="checkbox"
-                id="legalAgreement"
-                required
-                checked={legalAgreement}
-                onChange={(e) => setLegalAgreement(e.target.checked)}
-                className="mt-0.5 h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-              />
-              <label htmlFor="legalAgreement" className="ml-3 text-sm leading-relaxed text-gray-700">
-                {t.certify.legalAgreement} <span className="text-red-500">*</span>
-              </label>
-            </div>
-            {t.certify.readFullDisclaimer && (
-              <button
-                type="button"
-                onClick={() => setShowFullDisclaimer(!showFullDisclaimer)}
-                className="mt-2 ml-7 text-xs text-blue-600 hover:text-blue-700 underline focus:outline-none"
-              >
-                {showFullDisclaimer ? (t.certify.hideFullDisclaimer || 'Hide') : t.certify.readFullDisclaimer}
-              </button>
-            )}
-            {showFullDisclaimer && t.certify.legalAgreementFull && (
-              <div className="mt-3 ml-7 rounded-lg border border-gray-200 bg-white p-3 text-xs leading-relaxed text-gray-600">
-                {t.certify.legalAgreementFull}
-              </div>
-            )}
-          </div>
+          <LegalAgreementSection
+            legalAgreement={legalAgreement}
+            onLegalAgreementChange={setLegalAgreement}
+          />
 
           <div className="flex flex-col gap-3 sm:flex-row sm:justify-end">
             <Link

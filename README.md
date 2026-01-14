@@ -161,6 +161,8 @@ See `supabase/schema.sql` for full schema.
   /utils         - Hash generation, utilities
   /types         - TypeScript types
 /components      - React components
+  /certify       - Certification form components
+  /home          - Home page sections
 /supabase        - Database schema
 ```
 
