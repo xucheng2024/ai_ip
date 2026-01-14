@@ -45,8 +45,7 @@ export async function extractVideoMetadata(file: File): Promise<VideoMetadata> {
           frameHash = await generateHashFromString(frameSequence)
         }
 
-        // Extract audio fingerprint (simplified - hash audio track data)
-        // In production, use Web Audio API for proper audio fingerprinting
+        // Extract audio fingerprint using Web Audio API
         audioHash = await extractAudioFingerprint(video, file)
 
         // Generate metadata hash (duration, codec, resolution)
@@ -128,23 +127,126 @@ async function seekAndCaptureFrame(
 }
 
 /**
- * Extract audio fingerprint
- * Simplified implementation - in production use Web Audio API for proper audio analysis
+ * Extract audio fingerprint using Web Audio API
+ * Extracts actual audio track data and generates fingerprint
+ * Returns null if video has no audio (valid case)
  */
 async function extractAudioFingerprint(
   video: HTMLVideoElement,
   file: File
 ): Promise<string | null> {
+  let audioContext: AudioContext | null = null
+  
   try {
-    // For now, hash a portion of the file as audio fingerprint
-    // In production, extract actual audio track and analyze
-    const audioSlice = await file.slice(0, Math.min(1024 * 1024, file.size)) // First 1MB
-    const arrayBuffer = await audioSlice.arrayBuffer()
-    const hash = await generateHashFromString(
-      new TextDecoder().decode(arrayBuffer.slice(0, 1024))
-    )
+    // Check if Web Audio API is available
+    const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext
+    if (!AudioContextClass) {
+      console.warn('Web Audio API not supported')
+      return null
+    }
+
+    audioContext = new AudioContextClass()
+    
+    // Unmute video temporarily to access audio
+    const wasMuted = video.muted
+    video.muted = false
+    
+    // Wait for video to be ready
+    if (video.readyState < 2) {
+      await new Promise((resolve) => {
+        video.addEventListener('loadeddata', () => resolve(null), { once: true })
+        setTimeout(() => resolve(null), 3000)
+      })
+    }
+
+    const duration = video.duration || 0
+    if (duration === 0 || !isFinite(duration)) {
+      video.muted = wasMuted
+      audioContext.close()
+      return null
+    }
+
+    // Try to create audio source (will fail if no audio track)
+    let source: MediaElementAudioSourceNode
+    try {
+      source = audioContext.createMediaElementSource(video)
+    } catch (error) {
+      // Video likely has no audio track
+      video.muted = wasMuted
+      audioContext.close()
+      return null
+    }
+
+    const analyser = audioContext.createAnalyser()
+    analyser.fftSize = 2048
+    const gainNode = audioContext.createGain()
+    gainNode.gain.value = 0 // Mute output to avoid playing sound
+    
+    source.connect(analyser)
+    analyser.connect(gainNode)
+    gainNode.connect(audioContext.destination)
+
+    // Sample audio at fewer points for performance (5 samples)
+    const sampleCount = 5
+    const audioSamples: number[] = []
+    const originalTime = video.currentTime
+
+    // Sample audio at intervals
+    for (let i = 0; i < sampleCount; i++) {
+      const seekTime = (duration / (sampleCount + 1)) * (i + 1)
+      
+      try {
+        video.currentTime = seekTime
+        await new Promise((resolve) => {
+          const onSeeked = () => {
+            video.removeEventListener('seeked', onSeeked)
+            resolve(null)
+          }
+          video.addEventListener('seeked', onSeeked, { once: true })
+          setTimeout(() => resolve(null), 1000)
+        })
+
+        // Small delay to let audio buffer fill
+        await new Promise(resolve => setTimeout(resolve, 100))
+
+        // Get audio frequency data
+        const bufferLength = analyser.frequencyBinCount
+        const dataArray = new Uint8Array(bufferLength)
+        analyser.getByteFrequencyData(dataArray)
+        
+        // Calculate fingerprint from frequency spectrum
+        // Use first 20% of frequencies (most significant) and average
+        const significantFreqs = Math.floor(bufferLength * 0.2)
+        const avg = dataArray.slice(0, significantFreqs).reduce((a, b) => a + b, 0) / significantFreqs
+        audioSamples.push(Math.round(avg))
+      } catch (error) {
+        console.warn(`Audio sampling at ${seekTime}s failed:`, error)
+      }
+    }
+
+    // Restore original state
+    video.currentTime = originalTime
+    video.muted = wasMuted
+    audioContext.close()
+
+    // If no valid samples, video likely has no audio
+    if (audioSamples.length === 0) {
+      return null
+    }
+
+    // Generate hash from audio samples
+    const audioData = audioSamples.join(',')
+    const hash = await generateHashFromString(audioData)
     return hash
   } catch (error) {
+    // Cleanup on error
+    if (audioContext) {
+      try {
+        audioContext.close()
+      } catch {}
+    }
+    video.muted = true // Ensure muted
+    
     console.warn('Audio fingerprint extraction failed:', error)
     return null
   }

@@ -26,8 +26,8 @@ export default function CertifyPage() {
   const [isDragging, setIsDragging] = useState(false)
   const [compressing, setCompressing] = useState(false)
   const [compressionProgress, setCompressionProgress] = useState(0)
-  const [enableCompression, setEnableCompression] = useState(true)
-  const [compressionQuality, setCompressionQuality] = useState<CompressionOptions['quality']>('lossless')
+  const [enableCompression, setEnableCompression] = useState(true) // Default enabled
+  const [compressionQuality, setCompressionQuality] = useState<CompressionOptions['quality']>('lossless') // Default lossless
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -274,8 +274,30 @@ export default function CertifyPage() {
                     </div>
                   </div>
                   
-                  {/* Compression Options */}
-                  {isCompressionSupported() && (
+                  {/* Compression Options - Hidden by default, lossless compression enabled automatically */}
+                  {isCompressionSupported() && enableCompression && (
+                    <div className="rounded-lg border border-green-200 bg-green-50/50 p-3">
+                      <div className="flex items-center">
+                        <svg className="h-5 w-5 text-green-600 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <div className="flex-1">
+                          <span className="text-sm font-medium text-gray-900">Lossless compression enabled</span>
+                          <p className="text-xs text-gray-600 mt-0.5">Videos will be compressed without quality loss</p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setEnableCompression(false)}
+                          className="text-xs text-gray-500 hover:text-gray-700"
+                        >
+                          Disable
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                  
+                  {/* Show compression options if disabled or user wants to change quality */}
+                  {isCompressionSupported() && !enableCompression && (
                     <div className="rounded-lg border border-blue-200 bg-blue-50/50 p-4">
                       <div className="flex items-start">
                         <input
@@ -290,21 +312,6 @@ export default function CertifyPage() {
                           <p className="text-xs text-gray-600 mt-1">Reduce file size while maintaining quality</p>
                         </label>
                       </div>
-                      {enableCompression && (
-                        <div className="mt-3 ml-7">
-                          <label className="block text-xs font-medium text-gray-700 mb-2">Compression Quality:</label>
-                          <select
-                            value={compressionQuality}
-                            onChange={(e) => setCompressionQuality(e.target.value as CompressionOptions['quality'])}
-                            className="block w-full rounded-lg border border-gray-300 px-3 py-1.5 text-xs text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                          >
-                            <option value="lossless">Lossless (Best quality, ~30% size reduction)</option>
-                            <option value="high">High (Visually lossless, ~50% size reduction)</option>
-                            <option value="medium">Medium (Good quality, ~70% size reduction)</option>
-                            <option value="low">Low (Acceptable quality, ~80% size reduction)</option>
-                          </select>
-                        </div>
-                      )}
                     </div>
                   )}
                   
