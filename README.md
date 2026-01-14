@@ -151,6 +151,8 @@ See `supabase/schema.sql` for full schema.
   /certify       - Video certification flow
   /certificate   - Certificate display and PDF
   /dashboard     - User dashboard
+  /videos        - AI Creation Square (certified video gallery)
+  /support       - Support and promotion pages
   /verify        - Public verification
 /lib
   /supabase      - Supabase client setup

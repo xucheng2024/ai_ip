@@ -3,12 +3,10 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useI18n } from "@/lib/i18n/context";
-import SupportModal from "@/components/SupportModal";
 
 export default function VideosPage() {
   const { t } = useI18n()
   const [selectedFilter, setSelectedFilter] = useState<string>('all')
-  const [supportModalOpen, setSupportModalOpen] = useState<string | null>(null)
   const [promotionLink, setPromotionLink] = useState<{ [key: string]: string }>({})
   
   const demoVideos = [
@@ -76,22 +74,15 @@ export default function VideosPage() {
   const filteredVideos = filterVideos(selectedFilter)
 
   const handleGeneratePromotionLink = (videoId: string) => {
-    // In a real implementation, this would generate a unique promoter ID
-    // For demo, we'll use a simple approach
+    // Generate promotion link pointing to support page
     const promoterId = `promoter_${Date.now()}`
     const baseUrl = typeof window !== 'undefined' ? window.location.origin : ''
-    const link = `${baseUrl}/certificate/${videoId}?promoter=${promoterId}`
+    const link = `${baseUrl}/support/${videoId}?promoter=${promoterId}`
     setPromotionLink({ ...promotionLink, [videoId]: link })
     
     // Copy to clipboard
     navigator.clipboard.writeText(link)
     alert(t.promotionSupport.linkCopied)
-  }
-
-  const getPromoterIdFromUrl = () => {
-    if (typeof window === 'undefined') return null
-    const params = new URLSearchParams(window.location.search)
-    return params.get('promoter')
   }
   
   return (
@@ -195,21 +186,17 @@ export default function VideosPage() {
                   )}
                 </div>
 
-                {/* Support Section */}
-                <div className="mb-3 rounded-lg border border-gray-200 bg-gray-50 p-3">
-                  <p className="mb-2 text-xs font-medium text-gray-700">{t.promotionSupport.supportThisWork}</p>
-                  <ul className="mb-3 space-y-1 text-xs text-gray-600">
-                    <li>• {t.promotionSupport.creatorSupport}</li>
-                    <li>• {t.promotionSupport.promotionReward}</li>
-                    <li>• {t.promotionSupport.allocationNote}</li>
-                  </ul>
+                {/* Support Section - Lightweight */}
+                <div className="mb-3 rounded-lg border border-gray-200 bg-gray-50/50 p-3">
+                  <p className="mb-1 text-xs font-medium text-gray-700">{t.promotionSupport.supportThisWork}</p>
+                  <p className="mb-3 text-xs text-gray-500">{t.promotionSupport.supportCardSubtitle}</p>
                   <div className="flex gap-2">
-                    <button
-                      onClick={() => setSupportModalOpen(video.id)}
-                      className="flex-1 rounded-lg border border-blue-300 bg-blue-50 px-3 py-1.5 text-xs font-medium text-blue-700 transition-colors hover:bg-blue-100"
+                    <Link
+                      href={`/support/${video.id}`}
+                      className="flex-1 rounded-lg bg-gradient-to-r from-blue-600 to-blue-700 px-3 py-1.5 text-center text-xs font-semibold text-white shadow-sm transition-all hover:from-blue-700 hover:to-blue-800"
                     >
-                      {t.promotionSupport.supportThisWork}
-                    </button>
+                      {t.promotionSupport.supportCreator}
+                    </Link>
                     <button
                       onClick={() => handleGeneratePromotionLink(video.id)}
                       className="flex-1 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 transition-colors hover:bg-gray-50"
@@ -238,17 +225,6 @@ export default function VideosPage() {
             ))}
           </div>
         </div>
-
-        {/* Support Modals */}
-        {filteredVideos.map((video) => (
-          <SupportModal
-            key={video.id}
-            isOpen={supportModalOpen === video.id}
-            onClose={() => setSupportModalOpen(null)}
-            certificateId={video.id}
-            promoterId={getPromoterIdFromUrl()}
-          />
-        ))}
 
         <div className="mt-20 text-center">
           <Link

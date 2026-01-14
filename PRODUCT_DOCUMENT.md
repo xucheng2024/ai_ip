@@ -113,7 +113,7 @@ Key differentiator: Moving from "tool" to "infrastructure."
 
 Second moat feature.
 
-### 12. Public Transparency Log Page
+### 12. Public Records Page
 - **Public Auditability:** Daily batch counts, Merkle roots, chain transactions
 - **Time Range:** Complete historical records
 - **Certificate Transparency Style:** But for AI content evidence
@@ -184,7 +184,7 @@ No crypto knowledge required. Users don't need wallets, tokens, or blockchain ex
 Structured evidence packages designed for legal use cases, with clear disclaimers and compliance considerations. Third-party verification guides enable legal teams to verify independently.
 
 ### 8. **Transparency & Auditability**
-Public transparency log page showing all batches and transactions, similar to Certificate Transparency. Demonstrates platform integrity and auditability.
+Public records page showing all batches and transactions, similar to Certificate Transparency. Demonstrates platform integrity and auditability.
 
 ### 9. **Scalable Architecture**
 - Built on Next.js 16 (serverless-ready)
@@ -260,7 +260,7 @@ Public transparency log page showing all batches and transactions, similar to Ce
 - ✅ Evidence usage scenario templates
 - ✅ Hash Manifest indexing
 - ✅ Creator continuity proof
-- ✅ Public transparency log page
+- ✅ Public records page
 - ✅ Promotion Support (Promotion-based Support)
 
 ### Phase 2 (Planned)
@@ -316,7 +316,7 @@ Public transparency log page showing all batches and transactions, similar to Ce
    - Evidence Status Model provides clarity for legal teams and investors (not just a concept)
    - Creator Continuity Proof forms second moat (appeals to MCNs/studios)
    - Third-party verification guides enhance platform trust
-   - Public transparency log demonstrates integrity and auditability
+   - Public records demonstrates integrity and auditability
 8. **Infrastructure Positioning:** Not just a certification tool—it's the infrastructure entry point for AI video publishing. Each video gets a public, verifiable proof page that can be watched, verified, and cited with one link.
 
 ### Market Timing

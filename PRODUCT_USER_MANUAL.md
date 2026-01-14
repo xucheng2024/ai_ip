@@ -313,7 +313,7 @@ Each template includes:
 5. Support event is recorded and publicly verifiable
 
 **Generating Promotion Links:**
-1. On the videos page, click "Share & Promote" on any video card
+1. On the AI Creation Square page, click "Share & Promote" on any video card
 2. A promotion link is generated with your promoter ID
 3. Share the link - when others support through your link, you earn rewards
 4. All support events are tracked and verifiable
@@ -565,7 +565,7 @@ A: No. All allocation ratios are clearly displayed before support and are public
 A: No. Each promotion is only valid for a single support action, with no hierarchical relationship. There are no multi-level promotion structures.
 
 **Q: How do I generate a promotion link?**
-A: On the videos page, click "Share & Promote" on any video card. A unique promotion link will be generated that you can share. When others support through your link, you earn a reward.
+A: On the AI Creation Square page, click "Share & Promote" on any video card. A unique promotion link will be generated that you can share. When others support through your link, you earn a reward.
 
 **Q: Can creators disable promotion support?**
 A: Yes. Creators can enable/disable promotion support for their certifications. By default, promotion support is enabled.
@@ -613,8 +613,8 @@ A: Your certification is still valid with server timestamps and TSA tokens. Bloc
 **Q: How do Merkle proofs work?**
 A: Merkle proofs allow verification that your certification is included in a batch without revealing other certifications. They prove inclusion in the Merkle root stored on-chain.
 
-**Q: What is the Transparency Log?**
-A: The Transparency Log (`/transparency`) is a public page showing all blockchain-anchored batches. It's similar to Certificate Transparency but for AI content evidence, allowing anyone to audit platform integrity and view all anchored Merkle roots.
+**Q: What is the Public Records?**
+A: The Public Records (`/transparency`) is a public page showing all blockchain-anchored batches. It's similar to Certificate Transparency but for AI content evidence, allowing anyone to audit platform integrity and view all anchored Merkle roots.
 
 **Q: What is Creator Continuity?**
 A: Creator Continuity is a hash chain linking your certifications together. Each new certification references the previous one's evidence hash, creating a continuous chain that proves long-term creative activity. This is valuable for studios and MCNs.
@@ -672,7 +672,7 @@ A: Account information (email, display name), video metadata (title, hashes), ce
 - **Certify:** `/certify` - Certify a new video
 - **Verify:** `/verify` - Public verification
 - **Certificate:** `/certificate/{id}` - View specific certificate
-- **Transparency Log:** `/transparency` - Public log of all blockchain-anchored batches
+- **Public Records:** `/transparency` - Public records of all blockchain-anchored batches
 
 ### Contact
 

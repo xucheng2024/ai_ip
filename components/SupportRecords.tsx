@@ -72,7 +72,7 @@ export default function SupportRecords({ certificateId }: SupportRecordsProps) {
           <p className="text-lg font-semibold text-gray-900">{stats.total_supports}</p>
         </div>
         <div>
-          <p className="text-xs text-gray-500">{t.promotionSupport.totalAmount}</p>
+          <p className="text-xs text-gray-500">{t.promotionSupport.totalAmountRecords}</p>
           <p className="text-lg font-semibold text-gray-900">${stats.total_amount.toFixed(2)}</p>
         </div>
       </div>
