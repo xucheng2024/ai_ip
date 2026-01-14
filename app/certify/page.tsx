@@ -18,6 +18,7 @@ export default function CertifyPage() {
   const [legalAgreement, setLegalAgreement] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [isDragging, setIsDragging] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -25,6 +26,34 @@ export default function CertifyPage() {
       const selectedFile = e.target.files[0]
       if (selectedFile.type.startsWith('video/')) {
         setFile(selectedFile)
+        setError('')
+        if (!title) {
+          setTitle(selectedFile.name.replace(/\.[^/.]+$/, ''))
+        }
+      } else {
+        setError('Please select a video file')
+      }
+    }
+  }
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault()
+    setIsDragging(true)
+  }
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault()
+    setIsDragging(false)
+  }
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault()
+    setIsDragging(false)
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      const selectedFile = e.dataTransfer.files[0]
+      if (selectedFile.type.startsWith('video/')) {
+        setFile(selectedFile)
+        setError('')
         if (!title) {
           setTitle(selectedFile.name.replace(/\.[^/.]+$/, ''))
         }
@@ -151,37 +180,86 @@ export default function CertifyPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
       <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 lg:px-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Certify Your Video</h1>
-          <p className="mt-2 text-sm text-gray-600">
+          <h1 className="text-3xl font-bold text-gray-900 sm:text-4xl">Certify Your Video</h1>
+          <p className="mt-2 text-base text-gray-600">
             Upload your AI video to get a trusted timestamp and certification
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6 rounded-lg bg-white p-6 shadow-sm">
+        <form onSubmit={handleSubmit} className="space-y-6 rounded-xl bg-white p-6 shadow-lg sm:p-8">
           {error && (
-            <div className="rounded-md bg-red-50 p-4">
-              <p className="text-sm text-red-800">{error}</p>
+            <div className="rounded-lg border border-red-200 bg-red-50 p-4">
+              <p className="text-sm font-medium text-red-800">{error}</p>
             </div>
           )}
 
           {/* File Upload */}
           <div>
-            <label className="block text-sm font-medium text-gray-700">Video File *</label>
+            <label className="block text-sm font-medium text-gray-700">
+              Video File <span className="text-red-500">*</span>
+            </label>
             <div className="mt-2">
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="video/*"
-                onChange={handleFileChange}
-                className="block w-full text-sm text-gray-500 file:mr-4 file:rounded-md file:border-0 file:bg-blue-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-blue-700 hover:file:bg-blue-100"
-              />
+              <div
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+                className={`flex items-center justify-center rounded-lg border-2 border-dashed p-6 transition-colors ${
+                  isDragging
+                    ? 'border-blue-500 bg-blue-100'
+                    : 'border-gray-300 bg-gray-50 hover:border-blue-400 hover:bg-blue-50'
+                }`}
+              >
+                <div className="text-center">
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="video/*"
+                    onChange={handleFileChange}
+                    className="hidden"
+                    id="video-upload"
+                  />
+                  <label
+                    htmlFor="video-upload"
+                    className="cursor-pointer text-sm font-medium text-blue-600 hover:text-blue-700"
+                  >
+                    {file ? (
+                      <span className="block">Change video file</span>
+                    ) : (
+                      <span className="block">Click to upload or drag and drop</span>
+                    )}
+                  </label>
+                  <p className="mt-1 text-xs text-gray-500">MP4, MOV, AVI, or other video formats</p>
+                </div>
+              </div>
               {file && (
-                <p className="mt-2 text-sm text-gray-600">
-                  Selected: {file.name} ({(file.size / 1024 / 1024).toFixed(2)} MB)
-                </p>
+                <div className="mt-3 rounded-lg border border-gray-200 bg-gray-50 p-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <div className="flex h-10 w-10 items-center justify-center rounded bg-blue-100">
+                        <svg className="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                        </svg>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-900">{file.name}</p>
+                        <p className="text-xs text-gray-500">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setFile(null)
+                        if (fileInputRef.current) fileInputRef.current.value = ''
+                      }}
+                      className="text-sm text-red-600 hover:text-red-700"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                </div>
               )}
             </div>
           </div>
@@ -189,7 +267,7 @@ export default function CertifyPage() {
           {/* Title */}
           <div>
             <label htmlFor="title" className="block text-sm font-medium text-gray-700">
-              Video Title *
+              Video Title <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
@@ -197,14 +275,15 @@ export default function CertifyPage() {
               required
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
+              className="mt-2 block w-full rounded-lg border border-gray-300 px-4 py-2.5 text-gray-900 shadow-sm transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 sm:text-sm"
+              placeholder="Enter video title"
             />
           </div>
 
           {/* Creator Name */}
           <div>
             <label htmlFor="creatorName" className="block text-sm font-medium text-gray-700">
-              Creator Name / Account *
+              Creator Name / Account <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
@@ -212,20 +291,21 @@ export default function CertifyPage() {
               required
               value={creatorName}
               onChange={(e) => setCreatorName(e.target.value)}
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
+              className="mt-2 block w-full rounded-lg border border-gray-300 px-4 py-2.5 text-gray-900 shadow-sm transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 sm:text-sm"
+              placeholder="Your name or account name"
             />
           </div>
 
           {/* AI Tool */}
           <div>
             <label htmlFor="aiTool" className="block text-sm font-medium text-gray-700">
-              AI Tool (Optional)
+              AI Tool <span className="text-gray-400">(Optional)</span>
             </label>
             <select
               id="aiTool"
               value={aiTool}
               onChange={(e) => setAiTool(e.target.value)}
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
+              className="mt-2 block w-full rounded-lg border border-gray-300 px-4 py-2.5 text-gray-900 shadow-sm transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 sm:text-sm"
             >
               <option value="">Select AI Tool</option>
               <option value="runway">Runway</option>
@@ -238,14 +318,15 @@ export default function CertifyPage() {
           {/* Prompt */}
           <div>
             <label htmlFor="prompt" className="block text-sm font-medium text-gray-700">
-              Prompt (Optional)
+              Prompt <span className="text-gray-400">(Optional)</span>
             </label>
             <textarea
               id="prompt"
-              rows={3}
+              rows={4}
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
+              className="mt-2 block w-full rounded-lg border border-gray-300 px-4 py-2.5 text-gray-900 shadow-sm transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 sm:text-sm"
+              placeholder="Enter the prompt used to generate this video"
             />
             <div className="mt-2 flex items-center">
               <input
@@ -262,21 +343,21 @@ export default function CertifyPage() {
           </div>
 
           {/* Third Party Materials */}
-          <div className="flex items-center">
+          <div className="flex items-start rounded-lg border border-gray-200 bg-gray-50 p-4">
             <input
               type="checkbox"
               id="hasThirdPartyMaterials"
               checked={hasThirdPartyMaterials}
               onChange={(e) => setHasThirdPartyMaterials(e.target.checked)}
-              className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+              className="mt-0.5 h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
             />
-            <label htmlFor="hasThirdPartyMaterials" className="ml-2 text-sm text-gray-600">
+            <label htmlFor="hasThirdPartyMaterials" className="ml-3 text-sm text-gray-700">
               This video contains third-party materials
             </label>
           </div>
 
           {/* Legal Agreement */}
-          <div className="rounded-md bg-gray-50 p-4">
+          <div className="rounded-lg border-2 border-gray-200 bg-gray-50 p-4">
             <div className="flex items-start">
               <input
                 type="checkbox"
@@ -284,31 +365,41 @@ export default function CertifyPage() {
                 required
                 checked={legalAgreement}
                 onChange={(e) => setLegalAgreement(e.target.checked)}
-                className="mt-1 h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                className="mt-0.5 h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
               />
-              <label htmlFor="legalAgreement" className="ml-2 text-sm text-gray-700">
+              <label htmlFor="legalAgreement" className="ml-3 text-sm leading-relaxed text-gray-700">
                 I declare that this content is my legal creation. I understand that this platform
                 provides creation time and content consistency proof, and does not constitute
                 government copyright registration or legal judgment. The platform does not judge
-                the legality of infringement. *
+                the legality of infringement. <span className="text-red-500">*</span>
               </label>
             </div>
           </div>
 
-          <div className="flex space-x-4">
-            <button
-              type="submit"
-              disabled={loading}
-              className="flex-1 rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50"
-            >
-              {loading ? 'Processing...' : 'Certify Video'}
-            </button>
+          <div className="flex flex-col gap-3 sm:flex-row sm:justify-end">
             <Link
               href="/dashboard"
-              className="rounded-md border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50"
+              className="flex items-center justify-center rounded-lg border border-gray-300 bg-white px-6 py-2.5 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
             >
               Cancel
             </Link>
+            <button
+              type="submit"
+              disabled={loading}
+              className="flex items-center justify-center rounded-lg bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-blue-700 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {loading ? (
+                <>
+                  <svg className="mr-2 h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                  </svg>
+                  Processing...
+                </>
+              ) : (
+                'Certify Video'
+              )}
+            </button>
           </div>
         </form>
       </div>

@@ -134,31 +134,32 @@ function VerifyPageContent() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
       <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
         <div className="mb-8 text-center">
-          <h1 className="text-3xl font-bold text-gray-900">Verify Certification</h1>
-          <p className="mt-2 text-sm text-gray-600">
+          <h1 className="text-3xl font-bold text-gray-900 sm:text-4xl">Verify Certification</h1>
+          <p className="mt-2 text-base text-gray-600">
             Verify a video certification by ID or upload a video file
           </p>
         </div>
 
         <div className="space-y-6">
           {/* Verify by ID */}
-          <div className="rounded-lg bg-white p-6 shadow-sm">
+          <div className="rounded-xl bg-white p-6 shadow-sm sm:p-8">
             <h2 className="mb-4 text-lg font-semibold text-gray-900">Verify by Certification ID</h2>
-            <div className="flex space-x-2">
+            <div className="flex flex-col gap-3 sm:flex-row">
               <input
                 type="text"
                 value={certificationId}
                 onChange={(e) => setCertificationId(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleVerifyById()}
                 placeholder="Enter Certification ID (e.g., AIV-1234567890-abc123)"
-                className="flex-1 rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
+                className="flex-1 rounded-lg border border-gray-300 px-4 py-2.5 text-gray-900 shadow-sm transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 sm:text-sm"
               />
               <button
                 onClick={handleVerifyById}
-                disabled={loading}
-                className="rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-500 disabled:opacity-50"
+                disabled={loading || !certificationId.trim()}
+                className="rounded-lg bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white transition-all hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Verify
               </button>
@@ -166,19 +167,26 @@ function VerifyPageContent() {
           </div>
 
           {/* Verify by File */}
-          <div className="rounded-lg bg-white p-6 shadow-sm">
+          <div className="rounded-xl bg-white p-6 shadow-sm sm:p-8">
             <h2 className="mb-4 text-lg font-semibold text-gray-900">Verify by Video File</h2>
-            <div className="flex space-x-2">
-              <input
-                type="file"
-                accept="video/*"
-                onChange={(e) => setFile(e.target.files?.[0] || null)}
-                className="flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-500 file:mr-4 file:rounded-md file:border-0 file:bg-blue-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-blue-700 hover:file:bg-blue-100"
-              />
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <div className="flex-1">
+                <input
+                  type="file"
+                  accept="video/*"
+                  onChange={(e) => setFile(e.target.files?.[0] || null)}
+                  className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-500 file:mr-4 file:rounded-lg file:border-0 file:bg-blue-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-blue-700 transition-colors hover:file:bg-blue-100 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0"
+                />
+                {file && (
+                  <p className="mt-2 text-sm text-gray-600">
+                    Selected: {file.name} ({(file.size / 1024 / 1024).toFixed(2)} MB)
+                  </p>
+                )}
+              </div>
               <button
                 onClick={handleVerifyByFile}
                 disabled={loading || !file}
-                className="rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-500 disabled:opacity-50"
+                className="rounded-lg bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white transition-all hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Verify
               </button>
@@ -186,72 +194,91 @@ function VerifyPageContent() {
           </div>
 
           {error && (
-            <div className="rounded-md bg-red-50 p-4">
-              <p className="text-sm text-red-800">{error}</p>
+            <div className="rounded-lg border border-red-200 bg-red-50 p-4">
+              <p className="text-sm font-medium text-red-800">{error}</p>
             </div>
           )}
 
           {loading && (
-            <div className="rounded-lg bg-white p-6 text-center shadow-sm">
-              <p className="text-sm text-gray-600">Verifying...</p>
+            <div className="rounded-xl bg-white p-12 text-center shadow-sm">
+              <svg className="mx-auto h-12 w-12 animate-spin text-blue-600" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+              </svg>
+              <p className="mt-4 text-sm font-medium text-gray-600">Verifying certification...</p>
             </div>
           )}
 
           {result && (
-            <div className="rounded-lg bg-white p-6 shadow-sm">
-              <h2 className="mb-4 text-lg font-semibold text-gray-900">Verification Result</h2>
+            <div className="rounded-xl bg-white p-6 shadow-sm sm:p-8">
+              <h2 className="mb-6 text-lg font-semibold text-gray-900">Verification Result</h2>
               {result.exists ? (
-                <div className="space-y-4">
-                  <div className="rounded-md bg-green-50 p-4">
-                    <p className="text-sm font-semibold text-green-800">
-                      ✓ Certification Found and Verified
-                    </p>
+                <div className="space-y-6">
+                  <div className="rounded-lg border border-green-200 bg-green-50 p-4">
+                    <div className="flex items-center">
+                      <svg className="h-5 w-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      <p className="ml-2 text-sm font-semibold text-green-800">
+                        Certification Found and Verified
+                      </p>
+                    </div>
                   </div>
-                  <div className="space-y-2 text-sm">
-                    <div>
-                      <span className="font-medium text-gray-700">Certification ID:</span>{' '}
-                      <span className="text-gray-900">{result.certification?.id}</span>
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
+                      <p className="text-xs font-medium uppercase tracking-wide text-gray-500">Certification ID</p>
+                      <p className="mt-1 font-mono text-sm font-semibold text-gray-900">{result.certification?.id}</p>
                     </div>
-                    <div>
-                      <span className="font-medium text-gray-700">Video Title:</span>{' '}
-                      <span className="text-gray-900">{result.video?.title}</span>
+                    <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
+                      <p className="text-xs font-medium uppercase tracking-wide text-gray-500">Video Title</p>
+                      <p className="mt-1 text-sm font-semibold text-gray-900">{result.video?.title}</p>
                     </div>
-                    <div>
-                      <span className="font-medium text-gray-700">Certified At:</span>{' '}
-                      <span className="text-gray-900">
+                    <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
+                      <p className="text-xs font-medium uppercase tracking-wide text-gray-500">Certified At</p>
+                      <p className="mt-1 text-sm font-semibold text-gray-900">
                         {format(new Date(result.certification?.timestamp_utc), 'PPp')}
-                      </span>
+                      </p>
                     </div>
                     {result.metadata?.ai_tool && (
-                      <div>
-                        <span className="font-medium text-gray-700">AI Tool:</span>{' '}
-                        <span className="text-gray-900 capitalize">{result.metadata.ai_tool}</span>
+                      <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
+                        <p className="text-xs font-medium uppercase tracking-wide text-gray-500">AI Tool</p>
+                        <p className="mt-1 text-sm font-semibold text-gray-900 capitalize">{result.metadata.ai_tool}</p>
                       </div>
                     )}
-                    <div>
-                      <span className="font-medium text-gray-700">File Hash:</span>{' '}
-                      <span className="font-mono text-xs text-gray-600">
-                        {result.video?.file_hash?.substring(0, 32)}...
-                      </span>
-                    </div>
-                    <div className="pt-4">
-                      <a
-                        href={`/certificate/${result.certification?.id}`}
-                        className="text-blue-600 hover:text-blue-500"
-                      >
-                        View Full Certificate →
-                      </a>
-                    </div>
+                  </div>
+                  <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
+                    <p className="text-xs font-medium uppercase tracking-wide text-gray-500">File Hash</p>
+                    <p className="mt-1 break-all font-mono text-xs text-gray-600">
+                      {result.video?.file_hash}
+                    </p>
+                  </div>
+                  <div className="pt-2">
+                    <a
+                      href={`/certificate/${result.certification?.id}`}
+                      className="inline-flex items-center rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                    >
+                      View Full Certificate
+                      <svg className="ml-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </a>
                   </div>
                 </div>
               ) : (
-                <div className="rounded-md bg-yellow-50 p-4">
-                  <p className="text-sm font-semibold text-yellow-800">
-                    ⚠ No certification found for this ID or file
-                  </p>
-                  <p className="mt-2 text-sm text-yellow-700">
-                    This video may not be certified, or the certification ID/file is incorrect.
-                  </p>
+                <div className="rounded-lg border border-yellow-200 bg-yellow-50 p-4">
+                  <div className="flex items-start">
+                    <svg className="h-5 w-5 text-yellow-600 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                    <div className="ml-3">
+                      <p className="text-sm font-semibold text-yellow-800">
+                        No certification found
+                      </p>
+                      <p className="mt-1 text-sm text-yellow-700">
+                        This video may not be certified, or the certification ID/file is incorrect.
+                      </p>
+                    </div>
+                  </div>
                 </div>
               )}
             </div>
