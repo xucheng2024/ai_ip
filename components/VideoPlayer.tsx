@@ -50,23 +50,28 @@ export default function VideoPlayer({
   // Fetch signed URL if videoId is provided and url is not available
   useEffect(() => {
     if (videoId && !url) {
+      console.log('[VideoPlayer] Fetching video URL for:', videoId)
       setLoading(true)
       fetch(`/api/video/${videoId}`)
         .then(res => res.json())
         .then(data => {
+          console.log('[VideoPlayer] API response:', { hasUrl: !!data.url, type: data.type, error: data.error })
           if (data.url) {
             setVideoUrl(data.url)
           } else {
+            console.error('[VideoPlayer] No URL in response:', data)
             setHasError(true)
           }
         })
-        .catch(() => {
+        .catch((err) => {
+          console.error('[VideoPlayer] Fetch error:', err)
           setHasError(true)
         })
         .finally(() => {
           setLoading(false)
         })
     } else {
+      console.log('[VideoPlayer] Using provided URL:', { hasUrl: !!url, videoId })
       setVideoUrl(url)
     }
   }, [videoId, url])

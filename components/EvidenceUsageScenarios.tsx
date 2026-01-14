@@ -10,9 +10,9 @@ interface EvidenceUsageScenariosProps {
     evidence_hash: string
   }
   video: {
-    title: string
-    file_hash: string
-  }
+    title?: string
+    file_hash?: string
+  } | null
   className?: string
 }
 
@@ -33,7 +33,7 @@ export default function EvidenceUsageScenarios({
         { label: 'Certification ID', value: certification.id },
         { label: 'Evidence Hash', value: certification.evidence_hash },
         { label: 'Creation Timestamp', value: new Date(certification.timestamp_utc).toISOString() },
-        { label: 'Content Fingerprint', value: video.file_hash },
+        { label: 'Content Fingerprint', value: video?.file_hash || 'N/A' },
       ],
       instructions: [
         'Include the Certification ID in your DMCA complaint',
@@ -86,7 +86,7 @@ export default function EvidenceUsageScenarios({
       description: t.usageScenarios.archiveDesc,
       fields: [
         { label: 'Evidence Hash', value: certification.evidence_hash },
-        { label: 'File Hash', value: video.file_hash },
+        { label: 'File Hash', value: video?.file_hash || 'N/A' },
         { label: 'Certification ID', value: certification.id },
       ],
       instructions: [

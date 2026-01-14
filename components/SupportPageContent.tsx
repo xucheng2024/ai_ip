@@ -157,10 +157,10 @@ export default function SupportPageContent({
               <p>{t.promotionSupport.certifiedOn}: {format(new Date(certification.timestamp_utc), 'MMM d, yyyy')}</p>
             </div>
           </div>
-          {(video?.file_url || video?.id) && (
+          {video?.id && (
             <VideoPlayer 
               url={video.file_url || null}
-              videoId={video?.id || null}
+              videoId={video.id}
               title={video?.title}
               className="shadow-sm"
             />

@@ -98,12 +98,12 @@ export default function CertificateContent({
             />
 
             {/* Video Player */}
-            {(video?.file_url || video?.id) && (
+            {video?.id && (
               <div>
                 <h3 className="text-sm font-semibold text-gray-900 mb-3">{t.certificate.video || 'Video'}</h3>
                 <VideoPlayer 
                   url={video.file_url || null}
-                  videoId={video?.id || null}
+                  videoId={video.id}
                   title={video?.title}
                   className="shadow-sm"
                 />

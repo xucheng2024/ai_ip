@@ -137,6 +137,18 @@ export async function POST(request: NextRequest) {
       data: { publicUrl },
     } = supabase.storage.from('videos').getPublicUrl(fileName)
 
+    console.log('[Certify] Video uploaded:', {
+      fileName,
+      publicUrl,
+      fileSize: file.size,
+      hasUrl: !!publicUrl
+    })
+
+    if (!publicUrl) {
+      console.error('[Certify] Public URL is empty after upload')
+      throw new Error('Failed to generate video URL')
+    }
+
     // Create video record with multi-layer hashes
     const { data: videoData, error: videoError } = await supabase
       .from('videos')
@@ -154,7 +166,15 @@ export async function POST(request: NextRequest) {
       .select()
       .single()
 
-    if (videoError) throw videoError
+    if (videoError) {
+      console.error('[Certify] Video insert error:', videoError)
+      throw videoError
+    }
+
+    console.log('[Certify] Video record created:', {
+      id: videoData.id,
+      hasFileUrl: !!videoData.file_url
+    })
 
     // Log: upload_received
     // (We'll log after certification is created)
