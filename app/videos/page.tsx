@@ -5,6 +5,8 @@ import Link from "next/link";
 import { useI18n } from "@/lib/i18n/context";
 import VideoPlayer from "@/components/VideoPlayer";
 
+// Force rebuild: 2026-01-15
+
 interface Video {
   id: string
   videoId?: string
