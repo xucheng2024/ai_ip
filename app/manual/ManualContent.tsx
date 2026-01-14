@@ -1,42 +1,40 @@
-import { readFile } from 'fs/promises'
-import { join } from 'path'
+'use client'
+
+import { useState, useEffect } from 'react'
 import ReactMarkdown from 'react-markdown'
 import Link from 'next/link'
-import type { Metadata } from 'next'
-import ManualContent from './ManualContent'
+import { useI18n } from '@/lib/i18n/context'
 
-export const metadata: Metadata = {
-  title: 'User Manual - AIVerify',
-  description: 'Complete user guide for AIVerify - AI Video Originality Certification & Creation Proof Platform',
+interface ManualContentProps {
+  enContent: string
+  zhContent: string
 }
 
-async function getManualContent(locale: string) {
-  try {
-    const fileName = locale === 'zh' ? 'PRODUCT_USER_MANUAL_CN.md' : 'PRODUCT_USER_MANUAL.md'
-    const filePath = join(process.cwd(), fileName)
-    const content = await readFile(filePath, 'utf-8')
-    return content
-  } catch (error) {
-    console.error('Error reading manual:', error)
-    // Fallback to English if Chinese version doesn't exist
-    if (locale === 'zh') {
-      try {
-        const filePath = join(process.cwd(), 'PRODUCT_USER_MANUAL.md')
-        const content = await readFile(filePath, 'utf-8')
-        return content
-      } catch (fallbackError) {
-        return '# 用户手册\n\n内容暂不可用。'
-      }
-    }
-    return '# User Manual\n\nContent not available.'
-  }
-}
+export default function ManualContent({ enContent, zhContent }: ManualContentProps) {
+  const { language } = useI18n()
+  const [mounted, setMounted] = useState(false)
 
-export default async function ManualPage() {
-  const enContent = await getManualContent('en')
-  const zhContent = await getManualContent('zh')
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
-  return <ManualContent enContent={enContent} zhContent={zhContent} />
+  const content = mounted && language === 'zh' ? zhContent : enContent
+  const isZh = mounted && language === 'zh'
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+      <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
+        <div className="mb-6 flex items-center justify-between">
+          <Link
+            href="/"
+            className="inline-flex items-center text-sm font-medium text-blue-600 transition-colors hover:text-blue-700"
+          >
+            <svg className="mr-1 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+            {isZh ? '返回首页' : 'Back to Home'}
+          </Link>
+        </div>
 
         <div className="rounded-xl bg-white p-8 shadow-lg sm:p-10">
           <div className="prose prose-lg max-w-none">
