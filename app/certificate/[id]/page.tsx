@@ -12,6 +12,9 @@ import type { EvidenceStatus } from '@/lib/types'
 import VerificationGuide from '@/components/VerificationGuide'
 import EvidenceUsageScenarios from '@/components/EvidenceUsageScenarios'
 import CreatorContinuityChain from '@/components/CreatorContinuityChain'
+import CertificateHero from '@/components/CertificateHero'
+import SummaryCard from '@/components/SummaryCard'
+import VerificationAction from '@/components/VerificationAction'
 import Link from 'next/link'
 
 export default async function CertificatePage({ params }: { params: Promise<{ id: string }> }) {
@@ -145,7 +148,7 @@ export default async function CertificatePage({ params }: { params: Promise<{ id
   const timelineEvents = isDemo ? [
     {
       time: format(certTimestamp, 'HH:mm:ss'),
-      label: 'Video Certified',
+      label: 'Certification Completed',
       description: 'Certificate generated (Demo)',
       status: 'completed' as const,
     }
@@ -192,23 +195,22 @@ export default async function CertificatePage({ params }: { params: Promise<{ id
         </div>
 
         <div className="rounded-2xl border border-gray-200/80 bg-white p-8 shadow-lg sm:p-10 animate-fade-in">
-          <div className="mb-10 text-center">
-            <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-blue-100 shadow-sm">
-              <svg className="h-8 w-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
-            <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">Authorship Evidence Certificate</h1>
-            <p className="mt-4 text-sm text-gray-600 leading-relaxed">
-              Creation Proof & Content Fingerprint
-            </p>
-            <div className="mt-4 flex justify-center">
-              <EvidenceStatusBadge status={evidenceStatus} />
-            </div>
-          </div>
+          <CertificateHero evidenceStatus={evidenceStatus} />
 
           <div className="space-y-7 border-t border-gray-200 pt-7">
-            {/* Creation Timeline */}
+            {/* Summary Card */}
+            <SummaryCard
+              creator={video?.users?.display_name || video?.users?.email || 'Anonymous'}
+              certifiedDate={new Date(certification.timestamp_utc)}
+              verificationStatus="Publicly Verifiable"
+              evidenceStatus={{
+                label: evidenceStatus,
+                status: evidenceStatus === 'anchored' ? 'Time-Stamped · Blockchain Anchored' : 
+                       evidenceStatus === 'timestamped' ? 'Time-Stamped' : 'Time-Stamped'
+              }}
+            />
+
+            {/* Creation Timeline - Reduced prominence */}
             <CreationTimeline events={timelineEvents} />
 
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
@@ -242,10 +244,10 @@ export default async function CertificatePage({ params }: { params: Promise<{ id
               )}
             </div>
 
-            {/* Readable Hash Display */}
+            {/* Content Fingerprint - Collapsible */}
             <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
               <p className="text-xs font-medium uppercase tracking-wide text-gray-500 mb-3">Content Fingerprint</p>
-              <HashDisplay hash={video?.file_hash || ''} />
+              <HashDisplay hash={video?.file_hash || ''} collapsible={true} />
             </div>
 
             {metadata?.prompt_hash && !metadata?.prompt_plaintext && (
@@ -258,18 +260,6 @@ export default async function CertificatePage({ params }: { params: Promise<{ id
               </div>
             )}
 
-            <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
-              <p className="text-xs font-medium uppercase tracking-wide text-gray-500">Verification URL</p>
-              <a
-                href={certification.verification_url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-2 block break-all text-sm font-medium text-blue-600 hover:text-blue-700"
-              >
-                {certification.verification_url}
-              </a>
-            </div>
-
             {/* Embeddable Badge */}
             <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
               <p className="text-xs font-medium uppercase tracking-wide text-gray-500 mb-3">Embeddable Badge</p>
@@ -280,41 +270,56 @@ export default async function CertificatePage({ params }: { params: Promise<{ id
                 embeddable={true}
               />
               <p className="mt-3 text-xs text-gray-600">
-                Copy this badge to embed on your website, Notion, or portfolio.
+                Use this badge to signal that your AI video has verifiable authorship evidence.
               </p>
             </div>
 
+            {/* Demo Notice */}
+            {isDemo && (
+              <div className="rounded-lg border border-amber-200 bg-amber-50 p-4">
+                <p className="text-sm text-amber-800">
+                  <strong>Demo Certificate:</strong> This is a sample certificate for demonstration purposes. 
+                  <Link href="/certify" className="ml-1 text-amber-900 underline hover:text-amber-700">
+                    Create your own certificate
+                  </Link>
+                </p>
+              </div>
+            )}
+
+            {/* Action Buttons */}
             <div className="flex flex-col gap-3 sm:flex-row">
-              <CertificatePDFWrapper
-                certification={certification}
-                video={video}
-                metadata={metadata}
-              />
-              <Link
-                href={`/verify?id=${certification.id}`}
-                className="flex items-center justify-center rounded-lg border border-gray-300 bg-white px-6 py-2.5 text-center text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
-              >
-                Verify Certificate
-              </Link>
               {isOwner && !isDemo && (
-                <a
-                  href={`/api/evidence/${certification.id}`}
-                  download
-                  className="flex items-center justify-center rounded-lg border border-blue-300 bg-blue-50 px-6 py-2.5 text-center text-sm font-semibold text-blue-700 transition-colors hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                >
-                  Download Evidence Package
-                </a>
-              )}
-              {isDemo && (
-                <div className="rounded-lg border border-amber-200 bg-amber-50 p-4">
-                  <p className="text-sm text-amber-800">
-                    <strong>Demo Certificate:</strong> This is a sample certificate for demonstration purposes. 
-                    <Link href="/certify" className="ml-1 text-amber-900 underline hover:text-amber-700">
-                      Create your own certificate
-                    </Link>
+                <div className="flex-1">
+                  <a
+                    href={`/api/evidence/${certification.id}`}
+                    download
+                    className="flex w-full items-center justify-center rounded-lg border border-blue-300 bg-blue-50 px-6 py-2.5 text-center text-sm font-semibold text-blue-700 transition-colors hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                  >
+                    Download Evidence Package
+                  </a>
+                  <p className="mt-1 text-xs text-gray-500 text-center">
+                    For legal records or long-term storage
                   </p>
                 </div>
               )}
+              <div className="flex-1">
+                <Link
+                  href={`/verify?id=${certification.id}`}
+                  className="flex w-full items-center justify-center rounded-lg border border-gray-300 bg-white px-6 py-2.5 text-center text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+                >
+                  Verify Certificate
+                </Link>
+                <p className="mt-1 text-xs text-gray-500 text-center">
+                  For third-party independent verification
+                </p>
+              </div>
+              <div className="flex-1">
+                <CertificatePDFWrapper
+                  certification={certification}
+                  video={video}
+                  metadata={metadata}
+                />
+              </div>
             </div>
 
             {/* Trust Features */}
@@ -370,6 +375,9 @@ export default async function CertificatePage({ params }: { params: Promise<{ id
               )}
             </div>
 
+            {/* Verification Action */}
+            <VerificationAction verificationUrl={certification.verification_url} />
+
             {/* Verification Guide */}
             {!isDemo && <VerificationGuide certificationId={certification.id} />}
 
@@ -407,9 +415,8 @@ export default async function CertificatePage({ params }: { params: Promise<{ id
 
             <div className="rounded-lg border border-yellow-200 bg-yellow-50 p-4">
               <p className="text-xs leading-relaxed text-yellow-800">
-                <strong className="font-semibold">Legal Disclaimer:</strong> This service provides creation time and content
-                consistency proof (Authorship Evidence). It does not constitute government copyright registration or legal
-                judgment. <strong>This platform does not judge the legality of infringement.</strong> Users must declare that content is their legal creation.
+                <strong className="font-semibold">Legal Disclaimer:</strong> This service provides technical evidence of creation time and content consistency.
+                It does not constitute copyright registration or legal judgment.
               </p>
             </div>
           </div>

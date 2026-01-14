@@ -16,15 +16,15 @@ interface CreationTimelineProps {
 
 export default function CreationTimeline({ events, className = '' }: CreationTimelineProps) {
   return (
-    <div className={`space-y-4 ${className}`}>
-      <h3 className="text-sm font-semibold text-gray-900">Certification Timeline</h3>
+    <div className={`space-y-3 ${className}`}>
+      <h3 className="text-xs font-medium uppercase tracking-wide text-gray-500">Certification Timeline</h3>
       <div className="relative">
-        <div className="absolute left-4 top-0 bottom-0 w-0.5 bg-gray-200" />
-        <div className="space-y-6">
+        <div className="absolute left-3 top-0 bottom-0 w-0.5 bg-gray-200" />
+        <div className="space-y-4">
           {events.map((event, index) => (
-            <div key={index} className="relative flex items-start gap-4">
+            <div key={index} className="relative flex items-start gap-3">
               <div
-                className={`relative z-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 ${
+                className={`relative z-10 flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-2 ${
                   event.status === 'completed'
                     ? 'border-green-500 bg-green-50'
                     : 'border-gray-300 bg-white'
@@ -32,7 +32,7 @@ export default function CreationTimeline({ events, className = '' }: CreationTim
               >
                 {event.status === 'completed' && (
                   <svg
-                    className="h-4 w-4 text-green-600"
+                    className="h-3 w-3 text-green-600"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -46,12 +46,12 @@ export default function CreationTimeline({ events, className = '' }: CreationTim
                   </svg>
                 )}
               </div>
-              <div className="flex-1 pb-6">
+              <div className="flex-1 pb-4">
                 <div className="flex items-baseline justify-between gap-2">
-                  <p className="text-sm font-semibold text-gray-900">{event.label}</p>
-                  <p className="text-xs font-mono text-gray-500">{event.time}</p>
+                  <p className="text-xs font-medium text-gray-700">{event.label}</p>
+                  <p className="text-xs font-mono text-gray-400">{event.time}</p>
                 </div>
-                <p className="mt-1 text-xs text-gray-600">{event.description}</p>
+                <p className="mt-0.5 text-xs text-gray-500">{event.description}</p>
               </div>
             </div>
           ))}
