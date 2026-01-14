@@ -140,7 +140,7 @@ export default function CertifyPage() {
 
       // Compress video if enabled and supported
       let videoFile = file
-      if (enableCompression && isCompressionSupported()) {
+      if (enableCompression && isCompressionSupported() && file) {
         try {
           setCompressing(true)
           setCompressionProgress(0)
